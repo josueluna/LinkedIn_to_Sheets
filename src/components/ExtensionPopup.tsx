@@ -548,191 +548,197 @@ export default function ExtensionPopup() {
             </section>
 
             {isConnected && (
-              <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Destination
-                </span>
+  <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
+    
+    {/* HEADER */}
+    <div className="flex items-center justify-between">
+      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        Destination
+      </span>
 
-                <div className="space-y-1.5">
-                  <div className="relative">
-                    <Label className="text-[11px] text-muted-foreground">
-                      Spreadsheet
-                    </Label>
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-6 text-[10px] px-2"
+        onClick={() =>
+          window.open(
+            "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
+            "_blank"
+          )
+        }
+      >
+        Google Sheet Template
+      </Button>
+    </div>
 
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        const nextOpen = !sheetPickerOpen;
-                        setSheetPickerOpen(nextOpen);
-                        setTabPickerOpen(false);
-                        setSearchQuery("");
+    {/* CONTENT */}
+    <div className="space-y-1.5">
 
-                        if (nextOpen) {
-                          await loadSpreadsheets(true);
-                        }
-                      }}
-                      className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
-                    >
-                      <span className="flex items-center gap-1.5 truncate">
-                        <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
-                        <span
-                          className={
-                            spreadsheetName
-                              ? "text-foreground"
-                              : "text-muted-foreground"
-                          }
-                        >
-                          {spreadsheetName || "Choose a spreadsheet…"}
-                        </span>
-                      </span>
+      {/* SPREADSHEET */}
+      <div className="relative">
+        <Label className="text-[11px] text-muted-foreground">
+          Spreadsheet
+        </Label>
 
-                      {isLoadingSpreadsheets ? (
-                        <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-                      ) : (
-                        <ChevronDown
-                          className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform ${
-                            sheetPickerOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      )}
-                    </button>
+        <button
+          type="button"
+          onClick={async () => {
+            const nextOpen = !sheetPickerOpen;
+            setSheetPickerOpen(nextOpen);
+            setTabPickerOpen(false);
+            setSearchQuery("");
 
-                    {sheetPickerOpen && (
-                      <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-                        <div className="p-1.5 border-b border-border">
-                          <div className="relative">
-                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
-                            <input
-                              type="text"
-                              placeholder="Search spreadsheets…"
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
-                              autoFocus
-                            />
-                          </div>
-                        </div>
+            if (nextOpen) {
+              await loadSpreadsheets(true);
+            }
+          }}
+          className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
+        >
+          <span className="flex items-center gap-1.5 truncate">
+            <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
+            <span className={spreadsheetName ? "text-foreground" : "text-muted-foreground"}>
+              {spreadsheetName || "Choose a spreadsheet…"}
+            </span>
+          </span>
 
-                        <div className="max-h-[180px] overflow-y-auto">
-                          {isLoadingSpreadsheets ? (
-                            <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-                              Loading spreadsheets...
-                            </div>
-                          ) : filteredSpreadsheets.length === 0 ? (
-                            <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-                              No spreadsheets found
-                            </div>
-                          ) : (
-                            filteredSpreadsheets.map((sheet) => (
-                              <button
-                                key={sheet.id}
-                                type="button"
-                                onClick={() => void handleSelectSpreadsheet(sheet)}
-                                className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-                                  spreadsheetId === sheet.id ? "bg-accent/30" : ""
-                                }`}
-                              >
-                                <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-xs text-foreground truncate">
-                                    {sheet.name}
-                                  </div>
-                                  <div className="text-[10px] text-muted-foreground truncate">
-                                    {sheet.url}
-                                  </div>
-                                </div>
-                                {spreadsheetId === sheet.id && (
-                                  <Check className="w-3 h-3 text-primary shrink-0" />
-                                )}
-                              </button>
-                            ))
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+          {isLoadingSpreadsheets ? (
+            <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+          ) : (
+            <ChevronDown
+              className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform ${
+                sheetPickerOpen ? "rotate-180" : ""
+              }`}
+            />
+          )}
+        </button>
 
-                  <div className="relative">
-                    <Label className="text-[11px] text-muted-foreground">
-                      Tab
-                    </Label>
+        {sheetPickerOpen && (
+          <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
+            <div className="p-1.5 border-b border-border">
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search spreadsheets…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
+                  autoFocus
+                />
+              </div>
+            </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (availableTabs.length) {
-                          setTabPickerOpen(!tabPickerOpen);
-                          setSheetPickerOpen(false);
-                        }
-                      }}
-                      disabled={!spreadsheetId || isLoadingTabs}
-                      className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
-                        spreadsheetId
-                          ? "bg-card text-foreground hover:bg-accent/50"
-                          : "bg-muted/30 text-muted-foreground cursor-not-allowed"
-                      }`}
-                    >
-                      <span className="flex items-center gap-1.5 truncate">
-                        <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-                        <span
-                          className={
-                            selectedTab
-                              ? "text-foreground"
-                              : "text-muted-foreground"
-                          }
-                        >
-                          {isLoadingTabs
-                            ? "Loading tabs..."
-                            : selectedTab || "Choose a tab…"}
-                        </span>
-                      </span>
-
-                      {isLoadingTabs ? (
-                        <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-                      ) : (
-                        <ChevronDown
-                          className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform ${
-                            tabPickerOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      )}
-                    </button>
-
-                    {tabPickerOpen && availableTabs.length > 0 && (
-                      <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-                        <div className="max-h-[140px] overflow-y-auto">
-                          {availableTabs.map((tab) => (
-                            <button
-                              key={tab}
-                              type="button"
-                              onClick={() => void handleSelectTab(tab)}
-                              className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-                                selectedTab === tab ? "bg-accent/30" : ""
-                              }`}
-                            >
-                              <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-                              <span className="text-xs text-foreground">{tab}</span>
-                              {selectedTab === tab && (
-                                <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+            <div className="max-h-[180px] overflow-y-auto">
+              {isLoadingSpreadsheets ? (
+                <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                  Loading spreadsheets...
                 </div>
+              ) : filteredSpreadsheets.length === 0 ? (
+                <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                  No spreadsheets found
+                </div>
+              ) : (
+                filteredSpreadsheets.map((sheet) => (
+                  <button
+                    key={sheet.id}
+                    type="button"
+                    onClick={() => void handleSelectSpreadsheet(sheet)}
+                    className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+                      spreadsheetId === sheet.id ? "bg-accent/30" : ""
+                    }`}
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-foreground truncate">
+                        {sheet.name}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground truncate">
+                        {sheet.url}
+                      </div>
+                    </div>
+                    {spreadsheetId === sheet.id && (
+                      <Check className="w-3 h-3 text-primary shrink-0" />
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
-                {spreadsheetName && selectedTab && (
-                  <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
-                    <Check className="w-3 h-3 text-primary shrink-0" />
-                    <span className="text-[10px] text-foreground truncate">
-                      {spreadsheetName} → {selectedTab}
-                    </span>
-                  </div>
-                )}
-              </section>
-            )}
+      {/* TAB */}
+      <div className="relative">
+        <Label className="text-[11px] text-muted-foreground">
+          Tab
+        </Label>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (availableTabs.length) {
+              setTabPickerOpen(!tabPickerOpen);
+              setSheetPickerOpen(false);
+            }
+          }}
+          disabled={!spreadsheetId || isLoadingTabs}
+          className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
+            spreadsheetId
+              ? "bg-card text-foreground hover:bg-accent/50"
+              : "bg-muted/30 text-muted-foreground cursor-not-allowed"
+          }`}
+        >
+          <span className="flex items-center gap-1.5 truncate">
+            <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+            <span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
+              {isLoadingTabs
+                ? "Loading tabs..."
+                : selectedTab || "Choose a tab…"}
+            </span>
+          </span>
+
+          {isLoadingTabs ? (
+            <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+          ) : (
+            <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+          )}
+          {tabPickerOpen && availableTabs.length > 0 && (
+  <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
+    <div className="max-h-[140px] overflow-y-auto">
+      {availableTabs.map((tab) => (
+        <button
+          key={tab}
+          type="button"
+          onClick={() => void handleSelectTab(tab)}
+          className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+            selectedTab === tab ? "bg-accent/30" : ""
+          }`}
+        >
+          <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+          <span className="text-xs text-foreground">{tab}</span>
+          {selectedTab === tab && (
+            <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
+          )}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+        </button>
+      </div>
+
+      {/* SUMMARY */}
+      {spreadsheetName && selectedTab && (
+        <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+          <Check className="w-3 h-3 text-primary shrink-0" />
+          <span className="text-[10px] text-foreground truncate">
+            {spreadsheetName} → {selectedTab}
+          </span>
+        </div>
+      )}
+    </div>
+  </section>
+)}
 
             {isConnected && (
               <section className="space-y-2">
