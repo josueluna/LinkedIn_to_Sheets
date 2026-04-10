@@ -44,7 +44,7 @@ The extension extracts:
 
 You can use a ready-to-use Google Sheets template:
 
- [Use template](https://docs.google.com/spreadsheets/d/TU_TEMPLATE_ID/copy)
+ [Use template](https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy)
 
 Recommended columns:
 
