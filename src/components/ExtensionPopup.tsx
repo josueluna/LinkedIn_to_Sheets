@@ -842,6 +842,8 @@ export default function ExtensionPopup() {
             <div className="flex items-center justify-between pt-2">
               <a
                 href="https://forms.gle/Lv1kRo4pW3xxQv1fA"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 Send feedback
