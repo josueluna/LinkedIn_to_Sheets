@@ -855,7 +855,7 @@ export default function ExtensionPopup() {
                 rel="noopener noreferrer"
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                👾Created by Josué Luna
+                👾Developed by Josué Luna
               </a>
             </div>
 
