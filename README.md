@@ -6,7 +6,7 @@ Built for recruiters and sourcing teams who want to turn LinkedIn profiles into 
 
 ---
 
-## ✨ Features
+##  Features
 
 - Extract LinkedIn profile data automatically
 - Save profiles into Google Sheets
@@ -17,18 +17,18 @@ Built for recruiters and sourcing teams who want to turn LinkedIn profiles into 
 
 ---
 
-## 📸 How it works
+##  How it works
 
 1. Open a LinkedIn profile  
 2. Click the extension  
 3. Select your Google Sheet & Tab  
 4. Click **Paste Current Profile**
 
-Done ✅
+Done 
 
 ---
 
-## 📊 Data captured
+##  Data captured
 
 The extension extracts:
 
@@ -40,11 +40,11 @@ The extension extracts:
 
 ---
 
-## 🧩 Template (recommended)
+##  Template (recommended)
 
 You can use a ready-to-use Google Sheets template:
 
-👉 [Use template](https://docs.google.com/spreadsheets/d/TU_TEMPLATE_ID/copy)
+ [Use template](https://docs.google.com/spreadsheets/d/TU_TEMPLATE_ID/copy)
 
 Recommended columns:
 
@@ -54,7 +54,7 @@ Recommended columns:
 
 ---
 
-## 🔐 Permissions
+##  Permissions
 
 This extension uses:
 
@@ -66,7 +66,7 @@ No data is stored externally.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - React + Vite
 - Chrome Extensions (Manifest V3)
