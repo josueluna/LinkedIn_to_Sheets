@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn to Sheets",
+  "version": "0.1.4",
+  "description": "Paste LinkedIn profile data from LinkedIn into Google Sheets.",
+  "action": {
+    "default_title": "LinkedIn to Sheets",
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "identity",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "https://www.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "assets/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/in/*"],
+      "js": ["assets/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "oauth2": {
+    "client_id": "747154493699-6bjeestoihc6km3gh7l3nn64h684ciad.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/drive.metadata.readonly"
+    ]
+  },
+  "content_security_policy": {
+  "extension_pages": "script-src 'self'; object-src 'self';"
+}
+}
