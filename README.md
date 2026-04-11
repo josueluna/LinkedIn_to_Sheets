@@ -6,6 +6,12 @@ Built for recruiters and sourcing teams who want to turn LinkedIn profiles into 
 
 ---
 
+## Changelog
+
+[Changelog](./CHANGELOG.md)
+
+---
+
 ##  Features
 
 - Extract LinkedIn profile data automatically
