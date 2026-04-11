@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v0.1.4] - 2026-04-11
+## [v0.1.4]
 
 ### Added
 - Dev/production manifest setup (`manifest.dev.json` and `manifest.prod.json`)
@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [v0.1.3] - 2026-04-10
+## [v0.1.3]
 
 ### Added
 - Google Sheets template copy button
