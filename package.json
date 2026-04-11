@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "dev": "cp public/manifest.dev.json public/manifest.json && vite build",
+    "build": "cp public/manifest.prod.json public/manifest.json && vite build",
+    "build:dev": "cp public/manifest.dev.json public/manifest.json && vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
