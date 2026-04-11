@@ -91,21 +91,15 @@
       font-size: 13px;
     }
 
-    a {
-      color: #1a73e8;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    /* BOTÓN CONTACTO */
-    .contact {
+    /* BOTONES */
+    .buttons {
       margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .email {
+    .btn {
       display: inline-block;
       padding: 10px 16px;
       border-radius: 6px;
@@ -117,7 +111,7 @@
       transition: 0.2s;
     }
 
-    .email:hover {
+    .btn:hover {
       background: #1558b0;
     }
 
@@ -223,10 +217,11 @@
       This extension only processes data locally and writes to your selected Google Sheet.
     </p>
 
-    <p>
-      <a href="https://josueluna.github.io/LinkedIn_to_Sheets/privacy.html" target="_blank">
-      Privacy Policy</a>
-    </p>
+    <div class="buttons">
+      <a class="btn" href="https://josueluna.github.io/LinkedIn_to_Sheets/privacy.html" target="_blank">
+        Privacy Policy
+      </a>
+    </div>
 
     <p>
       No data is stored, tracked, or transmitted outside of the user's Google account.
@@ -245,9 +240,8 @@
     <p><strong>Duplicate profiles</strong><br>
     → The extension checks existing profile URLs before inserting</p>
 
-    <!-- BOTÓN CON GOOGLE FORM -->
-    <div class="contact">
-      <a class="email" href="https://forms.gle/xmCiUB8Tzs3ocM616" target="_blank">
+    <div class="buttons">
+      <a class="btn" href="https://forms.gle/xmCiUB8Tzs3ocM616" target="_blank">
         Contact Support
       </a>
     </div>
