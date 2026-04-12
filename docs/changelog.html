@@ -178,7 +178,7 @@
 
   <!-- SCRIPT -->
   <script>
-    fetch("https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/CHANGELOG.md")
+    fetch("https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/refs/heads/develop/CHANGELOG.md")
       .then(response => response.text())
       .then(markdown => {
         document.getElementById("changelog-content").innerHTML = marked.parse(markdown);

@@ -40,7 +40,7 @@
     "128": "icon128.png"
   },
   "oauth2": {
-    "client_id": "747154493699-p58qvb1gm27npgclnkci4bc0cu0isv7v.apps.googleusercontent.com",
+    "client_id": "747154493699-6bjeestoihc6km3gh7l3nn64h684ciad.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/spreadsheets",
       "https://www.googleapis.com/auth/drive.metadata.readonly"
