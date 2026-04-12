@@ -78,13 +78,13 @@ No data is stored externally.
 ## Troubleshooting
 
 Unexpected error  
-Try reconnecting your Google account  
+&rarr;Try reconnecting your Google account  
 
 Can't select spreadsheet  
-Make sure permissions were granted  
+&rarr;Make sure permissions were granted  
 
 Duplicate profiles  
-The extension checks existing profile URLs before inserting  
+&rarr;The extension checks existing profile URLs before inserting  
 
 [Contact Support](https://forms.gle/xmCiUB8Tzs3ocM616)
 
