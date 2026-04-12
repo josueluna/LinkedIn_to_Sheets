@@ -101,5 +101,4 @@ The extension checks existing profile URLs before inserting
 
 ## Author
 
-Developed by Josué Luna  
-https://www.linkedin.com/in/josuelunagamboa/
+Developed by [Josué Luna](https://www.linkedin.com/in/josuelunagamboa/)
