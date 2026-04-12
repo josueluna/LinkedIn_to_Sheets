@@ -86,7 +86,7 @@ Make sure permissions were granted
 Duplicate profiles  
 The extension checks existing profile URLs before inserting  
 
-Support: https://forms.gle/xmCiUB8Tzs3ocM616  
+[Support](https://forms.gle/xmCiUB8Tzs3ocM616)
 
 ---
 
