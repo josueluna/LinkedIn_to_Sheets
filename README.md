@@ -10,7 +10,7 @@ This Chrome extension is designed for recruiters and sourcing professionals who 
 
 - User Guide: https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html  
 - Privacy Policy: https://josueluna.github.io/LinkedIn_to_Sheets/docs/privacy.html  
-- Changelog: (/CHANGELOG.md)[/CHANGELOG.md]
+- Changelog: (/CHANGELOG.md)
 
 ---
 
