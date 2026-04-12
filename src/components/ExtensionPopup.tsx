@@ -839,25 +839,21 @@ export default function ExtensionPopup() {
               )}
             </div>
 
-            <div className="flex items-center justify-between pt-2">
-              <a
-                href="https://forms.gle/Lv1kRo4pW3xxQv1fA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
+            <div className="text-xs text-muted-foreground flex justify-between">
+            <div className="space-x-2">
+              <a href="https://forms.gle/xmCiUB8Tzs3ocM616" target="_blank">
                 Send feedback
               </a>
-
-              <a
-                href="https://www.linkedin.com/in/josuelunagamboa/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                👾Developed by Josué Luna
+              <span>·</span>
+              <a href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html" target="_blank">
+                Changelog
               </a>
             </div>
+
+            <a href="https://www.linkedin.com/in/josuelunagamboa/" target="_blank">
+              Developed by Josué Luna
+            </a>
+          </div>
 
             {appState === "empty" && !isConnected && !feedbackMessage && (
               <div className="flex items-center gap-2 p-2 rounded-md bg-warning/10 border border-warning/20">
