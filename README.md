@@ -8,7 +8,7 @@ This Chrome extension is designed for recruiters and sourcing professionals who 
 
 ## Documentation
 
-- User Guide: https://josueluna.github.io/LinkedIn_to_Sheets/wiki.html  
+- User Guide: https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html  
 - Privacy Policy: https://josueluna.github.io/LinkedIn_to_Sheets/privacy.html  
 - Changelog: [Changelog](./CHANGELOG.md) 
 
