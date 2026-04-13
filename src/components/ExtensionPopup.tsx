@@ -846,7 +846,7 @@ export default function ExtensionPopup() {
               </a>
               <span>·</span>
               <a href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html" target="_blank">
-                Changelog-
+                Changelog
               </a>
             </div>
 
