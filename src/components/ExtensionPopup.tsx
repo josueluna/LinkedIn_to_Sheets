@@ -78,6 +78,10 @@ export default function ExtensionPopup() {
 
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastType, setToastType] = useState<"success" | "error" | "warning">("warning");
+    function showToast(message: string, type: "success" | "error" | "warning") {
+    setToastMessage(message);
+    setToastType(type);
+}
 
     const isConnected = connectionStatus === "connected";
 
@@ -104,11 +108,6 @@ export default function ExtensionPopup() {
         if (!selectedTab) return "Choose a Tab";
         return "Paste Current Profile";
     }, [appState, profile, spreadsheetId, selectedTab]);
-
-    function showSuccess(message: string) {
-        setFeedbackMessage(message);
-        setFeedbackTone("success");
-    }
 
     function showError(message: string) {
         setFeedbackMessage(message);
@@ -210,7 +209,7 @@ export default function ExtensionPopup() {
 
             setConnectionStatus("connected");
             setAppState("connected");
-            showSuccess("Google account connected.");
+            showToast("Google account connected.", "success");
 
             await loadSpreadsheets(true);
             await loadCurrentProfile(false);
@@ -251,7 +250,7 @@ export default function ExtensionPopup() {
             setSearchQuery("");
             setIsDisconnectHover(false);
 
-            showSuccess("Google account disconnected.");
+            showToast("Google account disconnected.", "success");
         } catch (error) {
             setAppState("error");
             showError(
@@ -282,7 +281,7 @@ export default function ExtensionPopup() {
             }
 
             if (showLoadedMessage) {
-                showSuccess("LinkedIn profile loaded.");
+                showToast("LinkedIn profile loaded.", "success");
             }
         } catch (error) {
             setProfile(null);
@@ -367,7 +366,7 @@ export default function ExtensionPopup() {
         });
 
         await loadTabs(sheet.id);
-        showSuccess("Destination spreadsheet saved.");
+        showToast("Destination spreadsheet saved.", "success");
         setAppState("connected");
     }
 
@@ -381,7 +380,7 @@ export default function ExtensionPopup() {
             sheetName: tab,
         });
 
-        showSuccess("Destination tab saved.");
+        showToast("Destination tab saved.", "success");
         setAppState("connected");
     }
 
@@ -437,9 +436,6 @@ export default function ExtensionPopup() {
             }
 
             setAppState("success");
-            showSuccess(
-                `Profile pasted successfully in row ${response.result?.row ?? "?"}.`
-            );
 
             setTimeout(() => {
                 setAppState("connected");
