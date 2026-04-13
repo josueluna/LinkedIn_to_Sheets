@@ -494,7 +494,7 @@ export default function ExtensionPopup() {
             <section className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Account
+                  Google Account
                 </span>
 
                 {isConnected ? (
