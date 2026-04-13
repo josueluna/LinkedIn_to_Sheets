@@ -1,45 +1,41 @@
 # LinkedIn to Sheets
 
-Save LinkedIn profiles directly into Google Sheets with one click.
+![Version](https://img.shields.io/badge/version-v0.1.7-blue)
+![Status](https://img.shields.io/badge/status-beta-orange)
+![Platform](https://img.shields.io/badge/platform-chrome-lightgrey)
 
-This Chrome extension is designed for recruiters and sourcing professionals who need to quickly capture and organize publicly available LinkedIn profile data.
+Save LinkedIn profiles directly into Google Sheets in seconds.
 
----
-
-## Documentation
-
-- User Guide: https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html  
-- Privacy Policy: https://josueluna.github.io/LinkedIn_to_Sheets/docs/privacy.html  
-- Changelog: https://josueluna.github.io/LinkedIn_to_Sheets/docs/changelog.html
+Built for recruiters and sourcing professionals who want a faster, cleaner way to capture and organize candidate data — without copy-paste.
 
 ---
 
-## Features
+## 🚀 Key Features
 
-- Extract LinkedIn profile data with one click  
-- Save profiles directly into Google Sheets  
-- Select spreadsheet and tab  
-- Avoid duplicate entries  
-- Simple and fast workflow  
-- Google OAuth integration  
+- One-click LinkedIn profile extraction  
+- Direct save into Google Sheets  
+- Spreadsheet and tab selection  
+- Duplicate detection (by profile URL)  
+- Clean and simple workflow  
+- Secure Google OAuth integration  
 
 ---
 
-## How it works
+## ⚡ How it works
 
-1. Open a LinkedIn profile  
+1. Open any LinkedIn profile  
 2. Click the extension  
 3. Connect your Google account  
 4. Select your Google Sheet and tab  
-5. Click "Paste Current Profile"  
+5. Click **"Paste Current Profile"**
 
-The data will be automatically inserted into your selected Google Sheet.
+Done. The profile is instantly saved.
 
 ---
 
-## Data captured
+## 📊 Data captured
 
-The extension extracts the following publicly available information:
+The extension extracts publicly available data:
 
 - Name  
 - Current company  
@@ -49,13 +45,13 @@ The extension extracts the following publicly available information:
 
 ---
 
-## Template (recommended)
+## 📄 Template (recommended)
 
-You can use a ready-to-use Google Sheets template:
+Use the ready-to-use Google Sheets template:
 
-Use template
+👉 https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy
 
-Recommended columns:
+Recommended structure:
 
 | A | B    | C       | D     | E        | F   |
 |---|------|--------|------|----------|-----|
@@ -63,34 +59,42 @@ Recommended columns:
 
 ---
 
-## Permissions
+## 🔐 Permissions
 
 This extension uses:
 
-- LinkedIn (to read profile data)  
-- Google Sheets API (to write data)  
-- Google Drive API (to list spreadsheets)  
+- LinkedIn → to read profile data  
+- Google Sheets API → to write data  
+- Google Drive API → to list spreadsheets  
 
 No data is stored externally.
 
 ---
 
-## Troubleshooting
+## 🧩 Troubleshooting
 
-Unexpected error  
-&rarr;Try reconnecting your Google account  
+**Unexpected error**  
+→ Try reconnecting your Google account  
 
-Can't select spreadsheet  
-&rarr;Make sure permissions were granted  
+**Can't select spreadsheet**  
+→ Make sure permissions were granted  
 
-Duplicate profiles  
-&rarr;The extension checks existing profile URLs before inserting  
+**Duplicate profiles**  
+→ The extension checks existing profile URLs before inserting  
 
-[Contact Support](https://forms.gle/xmCiUB8Tzs3ocM616)
+👉 [Contact Support](https://forms.gle/xmCiUB8Tzs3ocM616)
 
 ---
 
-## Tech Stack
+## 📚 Documentation
+
+- User Guide: https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html  
+- Privacy Policy: https://josueluna.github.io/LinkedIn_to_Sheets/docs/privacy.html  
+- Changelog: https://josueluna.github.io/LinkedIn_to_Sheets/docs/changelog.html  
+
+---
+
+## 🛠 Tech Stack
 
 - React + Vite  
 - Chrome Extensions (Manifest V3)  
@@ -99,6 +103,6 @@ Duplicate profiles
 
 ---
 
-## Author
+## 👤 Author
 
 Developed by [Josué Luna](https://www.linkedin.com/in/josuelunagamboa/)
