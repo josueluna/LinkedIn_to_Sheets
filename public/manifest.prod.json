@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LinkedIn to Sheets",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Paste LinkedIn profile data from LinkedIn into Google Sheets.",
   "action": {
     "default_title": "LinkedIn to Sheets",
