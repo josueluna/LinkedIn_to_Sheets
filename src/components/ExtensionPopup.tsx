@@ -1,3 +1,4 @@
+import { Toast } from "@/components/ui/toast";
 import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,9 @@ export default function ExtensionPopup() {
     const [isLoadingTabs, setIsLoadingTabs] = useState(false);
     const [isDisconnectHover, setIsDisconnectHover] = useState(false);
     const [isDisconnecting, setIsDisconnecting] = useState(false);
+
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<"success" | "error" | "warning">("warning");
 
     const isConnected = connectionStatus === "connected";
 
@@ -385,6 +389,7 @@ export default function ExtensionPopup() {
         try {
             setAppState("saving");
             clearFeedback();
+            setToastMessage(null);
 
             if (!spreadsheetId) {
                 throw new Error("Choose a spreadsheet first.");
@@ -422,10 +427,13 @@ export default function ExtensionPopup() {
 
             if (response.result?.duplicate) {
                 setAppState("connected");
-                showWarning(
-                    `This LinkedIn profile already exists in row ${response.result?.row ?? "?"}.`
+
+                setToastMessage(
+                `This LinkedIn profile already exists in row ${response.result?.row ?? "?"}.`
                 );
-                return;
+                setToastType("warning");
+
+            return;
             }
 
             setAppState("success");
@@ -878,6 +886,13 @@ Please connect your Google account
 )}
 </div>
 </>
+)}
+{toastMessage && (
+  <Toast
+    message={toastMessage}
+    type={toastType}
+    onClose={() => setToastMessage(null)}
+  />
 )}
 </div>
     );
