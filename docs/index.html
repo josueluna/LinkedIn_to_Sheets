@@ -5,10 +5,8 @@
   <title>LinkedIn to Sheets</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- FAVICON -->
   <link rel="icon" type="image/png"
     href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png">
-  <!-- ENDS FAVICON -->
 
   <style>
     body {
@@ -35,7 +33,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 10px;
     }
 
     .logo {
@@ -48,6 +46,13 @@
       margin: 0;
       font-size: 24px;
       font-weight: 500;
+    }
+
+    .version {
+      font-size: 12px;
+      color: #9aa0a6;
+      margin-left: 48px;
+      margin-bottom: 10px;
     }
 
     h2 {
@@ -92,7 +97,6 @@
       font-size: 13px;
     }
 
-    /* BOTONES */
     .buttons {
       margin-top: 20px;
       display: flex;
@@ -130,25 +134,34 @@
   <div class="container">
 
     <div class="header">
-      <img 
-        src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" 
-        class="logo"
-      >
-      <h1>LinkedIn to Sheets Chrome Extension</h1>
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" class="logo">
+      <h1>LinkedIn to Sheets</h1>
     </div>
+
+    <div class="version">Version 0.1.7</div>
 
     <p>
       A Chrome extension that extracts publicly available LinkedIn profile data and sends it directly to a Google Sheet.
     </p>
 
+    <!-- CTA -->
+    <div class="buttons">
+      <a class="btn" href="#" target="_blank">
+        Add to Chrome
+      </a>
+      <a class="btn" href="https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy" target="_blank">
+        Use Template
+      </a>
+      <a class="btn" href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html" target="_blank">
+        View Changelog
+      </a>
+    </div>
+
     <hr>
 
     <h2>🚀 What does it do?</h2>
     <p>
-      This extension allows you to quickly collect publicly available LinkedIn profile information and store it in a structured Google Sheet.
-    </p>
-    <p>
-      It is designed for recruiters, researchers, and professionals who need to organize LinkedIn data efficiently.
+      Quickly collect LinkedIn profile data and store it in Google Sheets with a fast and minimal workflow.
     </p>
 
     <h3>Extracted data:</h3>
@@ -165,102 +178,60 @@
     <h2>⚙️ How it works</h2>
     <ol>
       <li>Open a LinkedIn profile</li>
-      <li>Click the extension icon</li>
-      <li>Connect your Google account</li>
-      <li>Select a spreadsheet and tab</li>
-      <li>Click <strong>"Paste Current Profile"</strong></li>
+      <li>Click the extension</li>
+      <li>Connect Google</li>
+      <li>Select spreadsheet & tab</li>
+      <li>Click "Paste Current Profile"</li>
     </ol>
-
-    <p>The data will be automatically inserted into your Google Sheet.</p>
-
-    <hr>
-
-    <h2>🎯 Use Cases</h2>
-    <ul>
-      <li>Recruiting pipelines</li>
-      <li>Lead generation</li>
-      <li>Market research</li>
-      <li>Candidate tracking</li>
-    </ul>
 
     <hr>
 
     <h2>✨ Features</h2>
     <ul>
-      <li>🔗 One-click LinkedIn profile extraction</li>
-      <li>📊 Direct integration with Google Sheets</li>
-      <li>📁 Spreadsheet and tab selection</li>
-      <li>🚫 Duplicate profile detection</li>
-      <li>🔢 Automatic row management</li>
+      <li>🔗 One-click LinkedIn extraction</li>
+      <li>📊 Direct Google Sheets integration</li>
+      <li>📁 Spreadsheet & tab selection</li>
+      <li>💾 Remembers your configuration</li>
+      <li>🚫 Smart duplicate detection</li>
+      <li>⚡ Fast, minimal workflow</li>
     </ul>
 
     <hr>
 
-    <h2>🔐 Permissions explained</h2>
-    <p>This extension requires:</p>
+    <h2>🔐 Permissions</h2>
     <ul>
-      <li><code>storage</code> → to save user preferences</li>
-      <li><code>identity</code> → to connect to your Google account</li>
-      <li><code>activeTab</code> → to read the current LinkedIn page</li>
-      <li><code>scripting</code> → to extract profile data</li>
-    </ul>
-
-    <p>Google API scopes:</p>
-    <ul>
-      <li><code>spreadsheets</code> → to write data</li>
-      <li><code>drive.metadata.readonly</code> → to list your spreadsheets</li>
+      <li><code>storage</code> → save preferences</li>
+      <li><code>identity</code> → Google login</li>
+      <li><code>activeTab</code> → read LinkedIn</li>
+      <li><code>scripting</code> → extract data</li>
     </ul>
 
     <hr>
 
     <h2>🔒 Privacy</h2>
     <p>
-      This extension only processes data locally and writes to your selected Google Sheet.
+      No data is stored or tracked. Everything stays in your Google account.
     </p>
 
-    <!-- BUTTON -->
     <div class="buttons">
       <a class="btn" href="https://josueluna.github.io/LinkedIn_to_Sheets/privacy.html" target="_blank">
         Privacy Policy
       </a>
-    <!-- ENDS BUTTON -->
-      
     </div>
-
-    <p>
-      No data is stored, tracked, or transmitted outside of the user's Google account.
-    </p>
 
     <hr>
 
     <h2>🛠 Troubleshooting</h2>
 
-    <p><strong>Unexpected error</strong><br>
-    → Try reconnecting your Google account</p>
+    <p><strong>Unexpected error</strong><br>Reconnect Google account</p>
+    <p><strong>Can't select spreadsheet</strong><br>Check permissions</p>
+    <p><strong>Duplicate profiles</strong><br>Detected automatically</p>
 
-    <p><strong>Can't select spreadsheet</strong><br>
-    → Make sure permissions were granted</p>
-
-    <p><strong>Duplicate profiles</strong><br>
-    → The extension checks existing profile URLs before inserting</p>
-    
-    <!-- BUTTON -->
     <div class="buttons">
       <a class="btn" href="https://forms.gle/xmCiUB8Tzs3ocM616" target="_blank">
         Contact Support
       </a>
     </div>
-    <!-- ENDS BUTTON -->
-
-    <hr>
-
-    <h2>📌 Roadmap</h2>
-    <ul>
-      <li>Custom column mapping</li>
-      <li>Batch profile processing (user-assisted)</li>
-      <li>UI improvements</li>
-      <li>Multi-sheet workflows</li>
-    </ul>
 
     <hr>
 
@@ -272,7 +243,7 @@
     </p>
 
     <div class="footer">
-      © LinkedIn to Sheets
+      LinkedIn to Sheets · v0.1.7
     </div>
 
   </div>
