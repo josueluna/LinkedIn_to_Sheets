@@ -85,6 +85,8 @@ export default function ExtensionPopup() {
 
     const isConnected = connectionStatus === "connected";
 
+    const version = chrome.runtime.getManifest().version;
+
     const filteredSpreadsheets = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
         if (!q) return allSpreadsheets;
@@ -102,12 +104,12 @@ export default function ExtensionPopup() {
         appState !== "saving";
 
     const pasteButtonLabel = useMemo(() => {
-        if (appState === "saving") return "Pasting...";
-        if (!profile) return "Load a LinkedIn Profile First";
-        if (!spreadsheetId) return "Choose a Spreadsheet";
-        if (!selectedTab) return "Choose a Tab";
-        return "Paste Current Profile";
-    }, [appState, profile, spreadsheetId, selectedTab]);
+    if (appState === "saving") return "Pasting...";
+    if (!profile) return "Load a LinkedIn Profile First";
+    if (!spreadsheetId) return "Choose a Spreadsheet";
+    if (!selectedTab) return "Choose a Tab";
+    return "Paste Current Profile";
+}, [appState, profile, spreadsheetId, selectedTab]);
 
     function showError(message: string) {
         setFeedbackMessage(message);
@@ -337,7 +339,15 @@ export default function ExtensionPopup() {
             }
 
             const tabs = Array.isArray(response.tabs) ? response.tabs : [];
-            setAvailableTabs(tabs);
+setAvailableTabs(tabs);
+
+// 🧠 intento de auto-selección inteligente
+const stored = await chrome.storage.local.get(["sheetName"]);
+const storedTab = stored.sheetName;
+
+if (storedTab && tabs.includes(storedTab)) {
+    setSelectedTab(storedTab);
+}
         } catch (error) {
             setAvailableTabs([]);
             setAppState("error");
@@ -842,34 +852,38 @@ className={
 )}
 </div>
 
-<div className="text-xs text-muted-foreground flex justify-between">
-<div className="space-x-2">
-<a
-href="https://forms.gle/xmCiUB8Tzs3ocM616"
-target="_blank"
-className="hover:text-primary transition-colors"
->
-Send feedback
-</a>
+<div className="text-xs text-muted-foreground flex justify-between items-center">
+  <div className="space-x-2">
+    <a
+      href="https://forms.gle/xmCiUB8Tzs3ocM616"
+      target="_blank"
+      className="hover:text-primary transition-colors"
+    >
+      Send feedback
+    </a>
 
-<span>·</span>
+    <span>·</span>
 
-<a
-href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
-target="_blank"
-className="hover:text-primary transition-colors"
->
-Changelog
-</a>
-</div>
+    <a
+      href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
+      target="_blank"
+      className="hover:text-primary transition-colors"
+    >
+      Changelog
+    </a>
+  </div>
 
-<a
-href="https://www.linkedin.com/in/josuelunagamboa/"
-target="_blank"
-className="hover:text-primary transition-colors"
->
-Developed by Josué Luna
-</a>
+  <div className="flex items-center gap-2">
+    <a
+      href="https://www.linkedin.com/in/josuelunagamboa/"
+      target="_blank"
+      className="hover:text-primary transition-colors"
+    >
+      Developed by Josué
+    </a>
+
+    <span className="opacity-70">v{version}</span>
+  </div>
 </div>
 
 {appState === "empty" && !isConnected && !feedbackMessage && (
