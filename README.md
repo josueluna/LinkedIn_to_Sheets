@@ -103,6 +103,6 @@ No data is stored externally.
 
 ---
 
-## 👤 Author
+## 👨‍💻 Author
 
 Developed by [Josué Luna](https://www.linkedin.com/in/josuelunagamboa/)
