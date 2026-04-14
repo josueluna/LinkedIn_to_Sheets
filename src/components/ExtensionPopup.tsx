@@ -582,14 +582,6 @@ return (
       );
       })}
       </div>
-      {hasDuplicateColumns && (
-          <div className="flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2">
-          <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-          <span className="text-[11px] text-amber-700 font-medium">
-          Each field must use a different column.
-          </span>
-          </div>
-          )}
       <div className="flex justify-between gap-2 pt-1">
       <Button
       variant="outline"
