@@ -42,11 +42,18 @@ type SpreadsheetItem = {
 };
 
 type StoredConfig = {
-    isConnected ? : boolean;
-    spreadsheetId ? : string;
-    spreadsheetName ? : string;
-    spreadsheetUrl ? : string;
-    sheetName ? : string;
+    isConnected?: boolean;
+    spreadsheetId?: string;
+    spreadsheetName?: string;
+    spreadsheetUrl?: string;
+    sheetName?: string;
+    columnMapping?: {
+        name: string;
+        company: string;
+        title: string;
+        location: string;
+        profileUrl: string;
+    };
 };
 
 export default function ExtensionPopup() {
@@ -86,496 +93,499 @@ export default function ExtensionPopup() {
 
     const [showColumnMapping, setShowColumnMapping] = useState(false);
 
-const [columnMapping, setColumnMapping] = useState({
-    name: "B",
-    company: "C",
-    title: "D",
-    location: "E",
-    profileUrl: "F",
-});
+    const defaultColumnMapping = {
+        name: "B",
+        company: "C",
+        title: "D",
+        location: "E",
+        profileUrl: "F",
+    };
+
+    const [columnMapping, setColumnMapping] = useState(defaultColumnMapping);
 
     const isConnected = connectionStatus === "connected";
 
-const version = chrome.runtime.getManifest().version;
+    const version = chrome.runtime.getManifest().version;
 
-const columnOptions = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+    const columnOptions = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
-const mappingFields = [
-  { key: "name", label: "Name", icon: User },
-  { key: "company", label: "Company", icon: Building2 },
-  { key: "title", label: "Title", icon: Briefcase },
-  { key: "location", label: "Location", icon: MapPin },
-  { key: "profileUrl", label: "Profile URL", icon: ExternalLink },
-] as const;
+    const mappingFields = [
+      { key: "name", label: "Name", icon: User },
+      { key: "company", label: "Company", icon: Building2 },
+      { key: "title", label: "Title", icon: Briefcase },
+      { key: "location", label: "Location", icon: MapPin },
+      { key: "profileUrl", label: "Profile URL", icon: ExternalLink },
+  ] as const;
 
-    const filteredSpreadsheets = useMemo(() => {
-        const q = searchQuery.trim().toLowerCase();
-        if (!q) return allSpreadsheets;
-        return allSpreadsheets.filter((sheet) =>
-            sheet.name.toLowerCase().includes(q)
-            );
-    }, [allSpreadsheets, searchQuery]);
+  const filteredSpreadsheets = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return allSpreadsheets;
+    return allSpreadsheets.filter((sheet) =>
+        sheet.name.toLowerCase().includes(q)
+        );
+}, [allSpreadsheets, searchQuery]);
 
-    const canPaste =
-    isConnected &&
-    !!profile &&
-    !!spreadsheetId &&
-    !!selectedTab &&
-    !isRefreshingProfile &&
-    appState !== "saving";
+  const canPaste =
+  isConnected &&
+  !!profile &&
+  !!spreadsheetId &&
+  !!selectedTab &&
+  !isRefreshingProfile &&
+  appState !== "saving";
+  async function handleSaveColumnMapping() {
+    await chrome.storage.local.set({
+        columnMapping,
+    });
 
-    const pasteButtonLabel = useMemo(() => {
-      if (appState === "saving") return "Pasting...";
-      return "Paste Current Profile";
-  }, [appState]);
-
-    function showError(message: string) {
-        setFeedbackMessage(message);
-        setFeedbackTone("error");
-    }
-
-    function showWarning(message: string) {
-        setFeedbackMessage(message);
-        setFeedbackTone("warning");
-    }
-
-    function clearFeedback() {
-        setFeedbackMessage("");
-        setFeedbackTone("");
-    }
-
-    useEffect(() => {
-        if (!feedbackMessage) return;
-
-        const timeout = window.setTimeout(() => {
-            clearFeedback();
-        }, 3000);
-
-        return () => window.clearTimeout(timeout);
-    }, [feedbackMessage]);
-
-    useEffect(() => {
-        void hydrate();
-
-        const onChanged = (
-            changes: Record < string, chrome.storage.StorageChange > ,
-            areaName: string
-            ) => {
-            if (areaName !== "local") return;
-
-            if (
-                changes.isConnected ||
-                changes.spreadsheetId ||
-                changes.spreadsheetName ||
-                changes.spreadsheetUrl ||
-                changes.sheetName
-                ) {
-                void hydrate();
-        }
-    };
-
-    chrome.storage.onChanged.addListener(onChanged);
-    return () => chrome.storage.onChanged.removeListener(onChanged);
-}, []);
-
-    async function hydrate() {
-        const data = (await chrome.storage.local.get([
-            "isConnected",
-            "spreadsheetId",
-            "spreadsheetName",
-            "spreadsheetUrl",
-            "sheetName",
-        ])) as StoredConfig;
-
-        const connected = Boolean(data.isConnected);
-        setConnectionStatus(connected ? "connected" : "disconnected");
-        setAppState(connected ? "connected" : "empty");
-
-        setSpreadsheetId(data.spreadsheetId ?? "");
-        setSpreadsheetName(data.spreadsheetName ?? "");
-        setSpreadsheetUrl(data.spreadsheetUrl ?? "");
-        setSelectedTab(data.sheetName ?? "");
-        setSearchQuery("");
-
-        if (connected) {
-            await Promise.all([loadCurrentProfile(false), loadSpreadsheets(true)]);
-        } else {
-            setProfile(null);
-            setAllSpreadsheets([]);
-            setAvailableTabs([]);
-        }
-
-        if (data.spreadsheetId) {
-            await loadTabs(data.spreadsheetId);
-        } else {
-            setAvailableTabs([]);
-        }
-    }
-
-    async function handleConnect() {
-        try {
-            setIsConnecting(true);
-            clearFeedback();
-
-            const response = await chrome.runtime.sendMessage({
-                type: "AUTH_GOOGLE",
-            });
-
-            if (!response?.ok) {
-                throw new Error(response?.error || "Google authentication failed.");
-            }
-
-            await chrome.storage.local.set({ isConnected: true });
-
-            setConnectionStatus("connected");
-            setAppState("connected");
-            showToast("Google account connected.", "success");
-
-            await loadSpreadsheets(true);
-            await loadCurrentProfile(false);
-        } catch (error) {
-            setAppState("error");
-            showError(
-                error instanceof Error ? error.message : "Google authentication failed."
-                );
-        } finally {
-            setIsConnecting(false);
-        }
-    }
-
-    async function handleDisconnect() {
-        try {
-            setIsDisconnecting(true);
-            clearFeedback();
-
-            const response = await chrome.runtime.sendMessage({
-                type: "DISCONNECT_GOOGLE",
-            });
-
-            if (!response?.ok) {
-                throw new Error(response?.error || "Could not disconnect Google account.");
-            }
-
-            setConnectionStatus("disconnected");
-            setAppState("empty");
-            setProfile(null);
-            setSpreadsheetId("");
-            setSpreadsheetName("");
-            setSpreadsheetUrl("");
-            setSelectedTab("");
-            setAllSpreadsheets([]);
-            setAvailableTabs([]);
-            setSheetPickerOpen(false);
-            setTabPickerOpen(false);
-            setSearchQuery("");
-            setIsDisconnectHover(false);
-
-            showToast("Google account disconnected.", "success");
-        } catch (error) {
-            setAppState("error");
-            showError(
-                error instanceof Error ? error.message : "Could not disconnect Google account."
-                );
-        } finally {
-            setIsDisconnecting(false);
-        }
-    }
-
-    async function loadCurrentProfile(showLoadedMessage = true) {
-        try {
-            setIsRefreshingProfile(true);
-            if (showLoadedMessage) clearFeedback();
-
-            const response = await chrome.runtime.sendMessage({
-                type: "GET_ACTIVE_PROFILE",
-            });
-
-            if (!response?.ok || !response.profile) {
-    setProfile(null);
-    if (appState === "error") {
-        setAppState("connected");
-    }
-
-    return;
+    showToast("Column mapping saved.", "success");
+    setShowColumnMapping(false);
 }
 
-            setProfile(response.profile as LinkedinProfile);
+const pasteButtonLabel = useMemo(() => {
+    if (appState === "saving") return "Pasting...";
+    return "Paste Current Profile";
+}, [appState]);
+function showError(message: string) {
+    setFeedbackMessage(message);
+    setFeedbackTone("error");
+}
 
+function showWarning(message: string) {
+    setFeedbackMessage(message);
+    setFeedbackTone("warning");
+}
+
+function clearFeedback() {
+    setFeedbackMessage("");
+    setFeedbackTone("");
+}
+
+useEffect(() => {
+    if (!feedbackMessage) return;
+
+    const timeout = window.setTimeout(() => {
+        clearFeedback();
+    }, 3000);
+
+    return () => window.clearTimeout(timeout);
+}, [feedbackMessage]);
+
+useEffect(() => {
+    void hydrate();
+
+    const onChanged = (
+        changes: Record < string, chrome.storage.StorageChange > ,
+        areaName: string
+        ) => {
+        if (areaName !== "local") return;
+
+        if (
+            changes.isConnected ||
+            changes.spreadsheetId ||
+            changes.spreadsheetName ||
+            changes.spreadsheetUrl ||
+            changes.sheetName
+            ) {
+            void hydrate();
+    }
+};
+
+chrome.storage.onChanged.addListener(onChanged);
+return () => chrome.storage.onChanged.removeListener(onChanged);
+}, []);
+
+async function hydrate() {
+    const data = (await chrome.storage.local.get([
+        "isConnected",
+        "spreadsheetId",
+        "spreadsheetName",
+        "spreadsheetUrl",
+        "sheetName",
+        "columnMapping",
+    ])) as StoredConfig;
+
+    const connected = Boolean(data.isConnected);
+    setConnectionStatus(connected ? "connected" : "disconnected");
+    setAppState(connected ? "connected" : "empty");
+
+    setSpreadsheetId(data.spreadsheetId ?? "");
+    setSpreadsheetName(data.spreadsheetName ?? "");
+    setSpreadsheetUrl(data.spreadsheetUrl ?? "");
+    setSelectedTab(data.sheetName ?? "");
+    setSearchQuery("");
+    setColumnMapping(data.columnMapping ?? defaultColumnMapping);
+
+    if (connected) {
+        await Promise.all([loadCurrentProfile(false), loadSpreadsheets(true)]);
+    } else {
+        setProfile(null);
+        setAllSpreadsheets([]);
+        setAvailableTabs([]);
+    }
+
+    if (data.spreadsheetId) {
+        await loadTabs(data.spreadsheetId);
+    } else {
+        setAvailableTabs([]);
+    }
+}
+
+async function handleConnect() {
+    try {
+        setIsConnecting(true);
+        clearFeedback();
+
+        const response = await chrome.runtime.sendMessage({
+            type: "AUTH_GOOGLE",
+        });
+
+        if (!response?.ok) {
+            throw new Error(response?.error || "Google authentication failed.");
+        }
+
+        await chrome.storage.local.set({ isConnected: true });
+
+        setConnectionStatus("connected");
+        setAppState("connected");
+        showToast("Google account connected.", "success");
+
+        await loadSpreadsheets(true);
+        await loadCurrentProfile(false);
+    } catch (error) {
+        setAppState("error");
+        showError(
+            error instanceof Error ? error.message : "Google authentication failed."
+            );
+    } finally {
+        setIsConnecting(false);
+    }
+}
+
+async function handleDisconnect() {
+    try {
+        setIsDisconnecting(true);
+        clearFeedback();
+
+        const response = await chrome.runtime.sendMessage({
+            type: "DISCONNECT_GOOGLE",
+        });
+
+        if (!response?.ok) {
+            throw new Error(response?.error || "Could not disconnect Google account.");
+        }
+
+        setConnectionStatus("disconnected");
+        setAppState("empty");
+        setProfile(null);
+        setSpreadsheetId("");
+        setSpreadsheetName("");
+        setSpreadsheetUrl("");
+        setSelectedTab("");
+        setAllSpreadsheets([]);
+        setAvailableTabs([]);
+        setSheetPickerOpen(false);
+        setTabPickerOpen(false);
+        setSearchQuery("");
+        setIsDisconnectHover(false);
+
+        showToast("Google account disconnected.", "success");
+    } catch (error) {
+        setAppState("error");
+        showError(
+            error instanceof Error ? error.message : "Could not disconnect Google account."
+            );
+    } finally {
+        setIsDisconnecting(false);
+    }
+}
+
+async function loadCurrentProfile(showLoadedMessage = true) {
+    try {
+        setIsRefreshingProfile(true);
+        if (showLoadedMessage) clearFeedback();
+
+        const response = await chrome.runtime.sendMessage({
+            type: "GET_ACTIVE_PROFILE",
+        });
+
+        if (!response?.ok || !response.profile) {
+            setProfile(null);
             if (appState === "error") {
                 setAppState("connected");
             }
 
-            if (showLoadedMessage) {
-                showToast("LinkedIn profile loaded.", "success");
-            }
-        } catch (_error) {
-    setProfile(null);
-    if (appState === "error") {
-        setAppState("connected");
-    }
-} finally {
-            setIsRefreshingProfile(false);
+            return;
         }
-    }
 
-    async function loadSpreadsheets(forceRefresh: boolean) {
-        try {
-            setIsLoadingSpreadsheets(true);
+        setProfile(response.profile as LinkedinProfile);
 
-            const response = await chrome.runtime.sendMessage({
-                type: "LIST_SPREADSHEETS",
-                forceRefresh,
-            });
-
-            if (!response?.ok) {
-                throw new Error(response?.error || "Could not load spreadsheets.");
-            }
-
-            const spreadsheets = Array.isArray(response.spreadsheets) ?
-            response.spreadsheets : [];
-
-            setAllSpreadsheets(spreadsheets);
-            setSearchQuery("");
-        } catch (error) {
-            setAllSpreadsheets([]);
-            setAppState("error");
-            showError(
-                error instanceof Error ? error.message : "Could not load spreadsheets."
-                );
-        } finally {
-            setIsLoadingSpreadsheets(false);
+        if (appState === "error") {
+            setAppState("connected");
         }
+
+        if (showLoadedMessage) {
+            showToast("LinkedIn profile loaded.", "success");
+        }
+    } catch (_error) {
+        setProfile(null);
+        if (appState === "error") {
+            setAppState("connected");
+        }
+    } finally {
+        setIsRefreshingProfile(false);
     }
+}
 
-    async function loadTabs(id: string) {
-        try {
-            setIsLoadingTabs(true);
+async function loadSpreadsheets(forceRefresh: boolean) {
+    try {
+        setIsLoadingSpreadsheets(true);
 
-            const response = await chrome.runtime.sendMessage({
-                type: "GET_SHEET_TABS",
-                spreadsheetId: id,
-            });
+        const response = await chrome.runtime.sendMessage({
+            type: "LIST_SPREADSHEETS",
+            forceRefresh,
+        });
 
-            if (!response?.ok) {
-                throw new Error(response?.error || "Could not load spreadsheet tabs.");
-            }
+        if (!response?.ok) {
+            throw new Error(response?.error || "Could not load spreadsheets.");
+        }
 
-            const tabs = Array.isArray(response.tabs) ? response.tabs : [];
-            setAvailableTabs(tabs);
+        const spreadsheets = Array.isArray(response.spreadsheets) ?
+        response.spreadsheets : [];
+
+        setAllSpreadsheets(spreadsheets);
+        setSearchQuery("");
+    } catch (error) {
+        setAllSpreadsheets([]);
+        setAppState("error");
+        showError(
+            error instanceof Error ? error.message : "Could not load spreadsheets."
+            );
+    } finally {
+        setIsLoadingSpreadsheets(false);
+    }
+}
+
+async function loadTabs(id: string) {
+    try {
+        setIsLoadingTabs(true);
+
+        const response = await chrome.runtime.sendMessage({
+            type: "GET_SHEET_TABS",
+            spreadsheetId: id,
+        });
+
+        if (!response?.ok) {
+            throw new Error(response?.error || "Could not load spreadsheet tabs.");
+        }
+
+        const tabs = Array.isArray(response.tabs) ? response.tabs : [];
+        setAvailableTabs(tabs);
 
 // 🧠 intento de auto-selección inteligente
-            const stored = await chrome.storage.local.get(["sheetName"]);
-            const storedTab = stored.sheetName;
+        const stored = await chrome.storage.local.get(["sheetName"]);
+        const storedTab = stored.sheetName;
 
-            if (storedTab && tabs.includes(storedTab)) {
-                setSelectedTab(storedTab);
-            }
-        } catch (error) {
-            setAvailableTabs([]);
-            setAppState("error");
-            showError(error instanceof Error ? error.message : "Could not load tabs.");
-        } finally {
-            setIsLoadingTabs(false);
+        if (storedTab && tabs.includes(storedTab)) {
+            setSelectedTab(storedTab);
         }
+    } catch (error) {
+        setAvailableTabs([]);
+        setAppState("error");
+        showError(error instanceof Error ? error.message : "Could not load tabs.");
+    } finally {
+        setIsLoadingTabs(false);
     }
+}
 
-    async function handleSelectSpreadsheet(sheet: SpreadsheetItem) {
-        clearFeedback();
+async function handleSelectSpreadsheet(sheet: SpreadsheetItem) {
+    clearFeedback();
 
-        setSpreadsheetId(sheet.id);
-        setSpreadsheetName(sheet.name);
-        setSpreadsheetUrl(sheet.url);
-        setSelectedTab("");
-        setSheetPickerOpen(false);
-        setTabPickerOpen(false);
-        setSearchQuery("");
+    setSpreadsheetId(sheet.id);
+    setSpreadsheetName(sheet.name);
+    setSpreadsheetUrl(sheet.url);
+    setSelectedTab("");
+    setSheetPickerOpen(false);
+    setTabPickerOpen(false);
+    setSearchQuery("");
 
-        await chrome.storage.local.set({
-            spreadsheetId: sheet.id,
-            spreadsheetName: sheet.name,
-            spreadsheetUrl: sheet.url,
-            sheetName: "",
-        });
+    await chrome.storage.local.set({
+        spreadsheetId: sheet.id,
+        spreadsheetName: sheet.name,
+        spreadsheetUrl: sheet.url,
+        sheetName: "",
+    });
 
-        await loadTabs(sheet.id);
-        showToast("Destination spreadsheet saved.", "success");
-        setAppState("connected");
-    }
+    await loadTabs(sheet.id);
+    showToast("Destination spreadsheet saved.", "success");
+    setAppState("connected");
+}
 
-    async function handleSelectTab(tab: string) {
-        clearFeedback();
+async function handleSelectTab(tab: string) {
+    clearFeedback();
 
-        setSelectedTab(tab);
-        setTabPickerOpen(false);
+    setSelectedTab(tab);
+    setTabPickerOpen(false);
 
-        await chrome.storage.local.set({
-            sheetName: tab,
-        });
+    await chrome.storage.local.set({
+        sheetName: tab,
+    });
 
-        showToast("Destination tab saved.", "success");
-        setAppState("connected");
-    }
+    showToast("Destination tab saved.", "success");
+    setAppState("connected");
+}
 
-    async function handlePasteProfile() {
+async function handlePasteProfile() {
     try {
         setAppState("saving");
         clearFeedback();
         setToastMessage(null);
 
         if (!profile) {
-    showToast("Please load a LinkedIn profile first.", "warning");
+            showToast("Please load a LinkedIn profile first.", "warning");
     return;  // Aquí el flujo de la función se detiene y muestra el mensaje en lugar de la alerta.
 }
 
-        if (!spreadsheetId) {
-            throw new Error("Choose a spreadsheet first.");
-        }
+if (!spreadsheetId) {
+    throw new Error("Choose a spreadsheet first.");
+}
 
-        if (!selectedTab) {
-            throw new Error("Choose a destination tab first.");
-        }
+if (!selectedTab) {
+    throw new Error("Choose a destination tab first.");
+}
 
-        let currentProfile = profile;
+let currentProfile = profile;
 
-        if (!currentProfile) {
-            const response = await chrome.runtime.sendMessage({
-                type: "GET_ACTIVE_PROFILE",
-            });
+if (!currentProfile) {
+    const response = await chrome.runtime.sendMessage({
+        type: "GET_ACTIVE_PROFILE",
+    });
 
-            if (!response?.ok || !response.profile) {
-                throw new Error(response?.error || "Could not load LinkedIn profile.");
-            }
-
-            currentProfile = response.profile as LinkedinProfile;
-            setProfile(currentProfile);
-        }
-
-        const response = await chrome.runtime.sendMessage({
-            type: "APPEND_PROFILE",
-            spreadsheetId,
-            sheetName: selectedTab,
-            profile: currentProfile,
-        });
-
-        if (!response?.ok) {
-            throw new Error(response?.error || "Could not write to Google Sheets.");
-        }
-
-        if (response.result?.duplicate) {
-            setAppState("connected");
-
-            setToastMessage(
-                `This LinkedIn profile already exists in row ${response.result?.row ?? "?"}.`
-            );
-            setToastType("warning");
-
-            return;
-        }
-
-        setAppState("success");
-
-        setTimeout(() => {
-            setAppState("connected");
-        }, 2200);
-    } catch (error) {
-        setAppState("error");
-        showError(
-            error instanceof Error ? error.message : "Could not paste profile."
-        );
+    if (!response?.ok || !response.profile) {
+        throw new Error(response?.error || "Could not load LinkedIn profile.");
     }
+
+    currentProfile = response.profile as LinkedinProfile;
+    setProfile(currentProfile);
+}
+
+const response = await chrome.runtime.sendMessage({
+    type: "APPEND_PROFILE",
+    spreadsheetId,
+    sheetName: selectedTab,
+    profile: currentProfile,
+});
+
+if (!response?.ok) {
+    throw new Error(response?.error || "Could not write to Google Sheets.");
+}
+
+if (response.result?.duplicate) {
+    setAppState("connected");
+
+    setToastMessage(
+`This LinkedIn profile already exists in row ${response.result?.row ?? "?"}.`
+);
+    setToastType("warning");
+
+    return;
+}
+
+setAppState("success");
+
+setTimeout(() => {
+    setAppState("connected");
+}, 2200);
+} catch (error) {
+    setAppState("error");
+    showError(
+        error instanceof Error ? error.message : "Could not paste profile."
+        );
+}
 }
 
 return (
   <div className="w-[380px] bg-background text-foreground">
-    {showColumnMapping ? (
-  <div className="px-4 py-4 space-y-4">
-    <div className="flex items-center justify-between">
+  {showColumnMapping ? (
+      <div className="px-4 py-4 space-y-4">
+      <div className="flex items-center justify-between">
       <div>
-        <div className="flex items-center gap-1.5">
-  <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
-  <h2 className="text-sm font-semibold text-[#434343]">
-    Column Mapping
-  </h2>
-</div>
-<p className="text-[11px] text-[#434343]">
-  Choose which column receives each LinkedIn field
-</p>
+      <div className="flex items-center gap-1.5">
+      <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
+      <h2 className="text-sm font-semibold text-[#434343]">
+      Column Mapping
+      </h2>
+      </div>
+      <p className="text-[11px] text-[#434343]">
+      Choose which column receives each LinkedIn field
+      </p>
       </div>
 
       <Button
-  size="sm"
-  className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
-  onClick={() => setShowColumnMapping(false)}
->
-  ← Back
-</Button>
-    </div>
-
-    <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
-  <div className="space-y-2">
-    {mappingFields.map((field) => {
-  const Icon = field.icon;
-
-  return (
-    <div
-      key={field.key}
-      className="w-full flex items-center justify-between gap-3 rounded-md border border-input bg-card px-3 py-2.5"
-    >
-      <div className="flex items-center gap-2 min-w-0">
-        <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-        <span className="text-xs text-[#434343]">{field.label}</span>
+      size="sm"
+      className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
+      onClick={() => setShowColumnMapping(false)}
+      >
+      ← Back
+      </Button>
       </div>
 
-      <select
-        value={columnMapping[field.key]}
-        onChange={(e) =>
-          setColumnMapping((prev) => ({
-            ...prev,
-            [field.key]: e.target.value,
-          }))
+      <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
+      <div className="space-y-2">
+      {mappingFields.map((field) => {
+          const Icon = field.icon;
+
+          return (
+            <div
+            key={field.key}
+            className="w-full flex items-center justify-between gap-3 rounded-md border border-input bg-card px-3 py-2.5"
+            >
+            <div className="flex items-center gap-2 min-w-0">
+            <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            <span className="text-xs text-[#434343]">{field.label}</span>
+            </div>
+
+            <select
+            value={columnMapping[field.key]}
+            onChange={(e) =>
+            setColumnMapping((prev) => ({
+                ...prev,
+                [field.key]: e.target.value,
+            }))
         }
         className="h-8 min-w-[72px] rounded-md border border-input bg-background px-2 text-xs text-[#434343] outline-none"
-      >
+        >
         {columnOptions.map((col) => (
           <option key={col} value={col}>
-            {col}
+          {col}
           </option>
-        ))}
-      </select>
-    </div>
-  );
-})}
-  </div>
+          ))}
+        </select>
+        </div>
+        );
+      })}
+      </div>
 
-  <div className="flex justify-between gap-2 pt-1">
-    <Button
+      <div className="flex justify-between gap-2 pt-1">
+      <Button
       variant="outline"
       size="sm"
       className="h-8 text-xs text-[#434343]"
-      onClick={() =>
-        setColumnMapping({
-          name: "B",
-          company: "C",
-          title: "D",
-          location: "E",
-          profileUrl: "F",
-        })
-      }
-    >
+      onClick={() => setColumnMapping(defaultColumnMapping)}
+      >
       Reset to Default
-    </Button>
+      </Button>
 
-    <Button
+      <Button
       size="sm"
       className="h-8 text-xs"
-      onClick={() => setShowColumnMapping(false)}
-    >
+      onClick={() => void handleSaveColumnMapping()}
+      >
       Done
-    </Button>
-  </div>
-</div>
-  </div>
-) : appState === "success" ? (
+      </Button>
+      </div>
+      </div>
+      </div>
+      ) : appState === "success" ? (
       <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
       <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
       <CheckCircle2 className="w-6 h-6 text-success" />
@@ -680,36 +690,36 @@ return (
 
 {/* HEADER */}
           <div className="flex items-center justify-between gap-2">
-  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
-    Destination
-  </span>
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
+          Destination
+          </span>
 
-  <div className="flex items-center gap-2">
-    <Button
+          <div className="flex items-center gap-2">
+          <Button
+          variant="outline"
+          size="sm"
+          className="h-6 text-[10px] px-2"
+          onClick={() =>
+          window.open(
+              "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
+              "_blank"
+              )
+      }
+      >
+      Google Sheet Template
+      </Button>
+
+      <Button
       variant="outline"
       size="sm"
       className="h-6 text-[10px] px-2"
-      onClick={() =>
-        window.open(
-          "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
-          "_blank"
-        )
-      }
-    >
-      Google Sheet Template
-    </Button>
-
-    <Button
-  variant="outline"
-  size="sm"
-  className="h-6 text-[10px] px-2"
-  onClick={() => setShowColumnMapping(true)}
->
-  <SlidersHorizontal className="w-3 h-3 mr-1" />
-  Config Columns
-</Button>
-  </div>
-</div>
+      onClick={() => setShowColumnMapping(true)}
+      >
+      <SlidersHorizontal className="w-3 h-3 mr-1" />
+      Config Columns
+      </Button>
+      </div>
+      </div>
 
 {/* CONTENT */}
       <div className="space-y-1.5">
@@ -868,17 +878,17 @@ return (
     </div>
 
 {/* SUMMARY */}
-{spreadsheetName && selectedTab && (
-  <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
-    <Check className="w-3 h-3 text-primary shrink-0" />
-    <span className="text-[10px] text-foreground truncate">
+    {spreadsheetName && selectedTab && (
+      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+      <Check className="w-3 h-3 text-primary shrink-0" />
+      <span className="text-[10px] text-foreground truncate">
       {spreadsheetName} → {selectedTab}
-    </span>
-  </div>
-)}
-</div>
-</section>
-)}
+      </span>
+      </div>
+      )}
+    </div>
+    </section>
+    )}
 
 {isConnected && (
     <section className="space-y-2">
