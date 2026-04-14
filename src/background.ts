@@ -39,8 +39,8 @@ async function getProfileFromActiveTab(): Promise<LinkedinProfile> {
   const tab = await getActiveTab();
 
   if (!isLinkedInProfileUrl(tab.url)) {
-    throw new Error("Open a LinkedIn profile page first.");
-  }
+  return null as unknown as LinkedinProfile;
+}
 
   await ensureContentScript(tab.id!);
 

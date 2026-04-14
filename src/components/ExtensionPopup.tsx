@@ -270,8 +270,12 @@ export default function ExtensionPopup() {
             });
 
             if (!response?.ok || !response.profile) {
-                throw new Error(response?.error || "No LinkedIn profile detected.");
-            }
+    setProfile(null);
+    if (appState === "error") {
+        setAppState("connected");
+    }
+    return;
+}
 
             setProfile(response.profile as LinkedinProfile);
 
@@ -282,13 +286,12 @@ export default function ExtensionPopup() {
             if (showLoadedMessage) {
                 showToast("LinkedIn profile loaded.", "success");
             }
-        } catch (error) {
-            setProfile(null);
-            setAppState("error");
-            showError(
-                error instanceof Error ? error.message : "No LinkedIn profile detected."
-                );
-        } finally {
+        } catch (_error) {
+    setProfile(null);
+    if (appState === "error") {
+        setAppState("connected");
+    }
+} finally {
             setIsRefreshingProfile(false);
         }
     }
