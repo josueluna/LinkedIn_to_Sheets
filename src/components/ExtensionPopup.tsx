@@ -72,6 +72,9 @@ export default function ExtensionPopup() {
 
     const [allSpreadsheets, setAllSpreadsheets] = useState < SpreadsheetItem[] > ([]);
     const [availableTabs, setAvailableTabs] = useState < string[] > ([]);
+    const [availableHeaders, setAvailableHeaders] = useState<
+  { column: string; header: string }[]
+>([]);
 
     const [sheetPickerOpen, setSheetPickerOpen] = useState(false);
     const [tabPickerOpen, setTabPickerOpen] = useState(false);
@@ -142,7 +145,6 @@ export default function ExtensionPopup() {
   appState !== "saving";
   async function handleSaveColumnMapping() {
     if (hasDuplicateColumns) {
-        showToast("Each field must use a different column.", "warning");
         return;
     }
 
@@ -237,9 +239,34 @@ async function hydrate() {
     }
 
     if (data.spreadsheetId) {
-        await loadTabs(data.spreadsheetId);
-    } else {
-        setAvailableTabs([]);
+    await loadTabs(data.spreadsheetId);
+} else {
+    setAvailableTabs([]);
+}
+
+if (data.spreadsheetId && data.sheetName) {
+    await loadHeaders(data.spreadsheetId, data.sheetName);
+} else {
+    setAvailableHeaders([]);
+}
+}
+
+async function loadHeaders(spreadsheetId: string, sheetName: string) {
+    try {
+        const response = await chrome.runtime.sendMessage({
+            type: "GET_SHEET_HEADERS",
+            spreadsheetId,
+            sheetName,
+        });
+
+        if (!response?.ok) {
+            throw new Error(response?.error || "Could not load sheet headers.");
+        }
+
+        const headers = Array.isArray(response.headers) ? response.headers : [];
+        setAvailableHeaders(headers);
+    } catch {
+        setAvailableHeaders([]);
     }
 }
 
@@ -417,6 +444,7 @@ async function handleSelectSpreadsheet(sheet: SpreadsheetItem) {
     setSpreadsheetName(sheet.name);
     setSpreadsheetUrl(sheet.url);
     setSelectedTab("");
+    setAvailableHeaders([]);
     setSheetPickerOpen(false);
     setTabPickerOpen(false);
     setSearchQuery("");
@@ -442,6 +470,12 @@ async function handleSelectTab(tab: string) {
     await chrome.storage.local.set({
         sheetName: tab,
     });
+
+    if (spreadsheetId) {
+        await loadHeaders(spreadsheetId, tab);
+    } else {
+        setAvailableHeaders([]);
+    }
 
     showToast("Destination tab saved.", "success");
     setAppState("connected");
@@ -520,89 +554,96 @@ setTimeout(() => {
 return (
   <div className="w-[380px] bg-background text-foreground">
   {showColumnMapping ? (
-      <div className="px-4 py-4 space-y-4">
-      <div className="flex items-center justify-between">
+  <div className="px-4 py-4 space-y-4">
+    <div className="flex items-center justify-between">
       <div>
-      <div className="flex items-center gap-1.5">
-      <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
-      <h2 className="text-sm font-semibold text-[#434343]">
-      Column Mapping
-      </h2>
-      </div>
-      <p className="text-[11px] text-[#434343]">
-      Choose which column receives each LinkedIn field
-      </p>
+        <div className="flex items-center gap-1.5">
+          <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
+          <h2 className="text-sm font-semibold text-[#434343]">
+            Column Mapping
+          </h2>
+        </div>
+        <p className="text-[11px] text-[#434343]">
+          Choose which column receives each LinkedIn field
+        </p>
       </div>
 
       <Button
-      size="sm"
-      className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
-      onClick={() => setShowColumnMapping(false)}
+        size="sm"
+        className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
+        onClick={() => setShowColumnMapping(false)}
       >
-      ← Back
+        ← Back
       </Button>
-      </div>
+    </div>
 
-      <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
-      <div className="space-y-2">
-      {mappingFields.map((field) => {
+    <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
+      <div className="rounded-lg border border-input bg-card overflow-hidden">
+        {mappingFields.map((field) => {
           const Icon = field.icon;
+          const isDuplicate =
+            mappedColumns.filter((col) => col === columnMapping[field.key]).length > 1;
 
           return (
             <div
-            key={field.key}
-            className={`w-full flex items-center justify-between gap-3 rounded-md px-3 py-2.5 ${
-              mappedColumns.filter((col) => col === columnMapping[field.key]).length > 1
-              ? "border border-amber-500/40 bg-amber-500/5"
-              : "border border-input bg-card"
-          }`}
-          >
-          <div className="flex items-center gap-2 min-w-0">
-          <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          <span className="text-xs text-[#434343]">{field.label}</span>
-          </div>
+              key={field.key}
+              className={`flex items-center justify-between gap-3 px-3 py-3 ${
+  isDuplicate ? "bg-amber-500/5" : ""
+}`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <span className="text-xs text-[#434343]">{field.label}</span>
+              </div>
 
-          <select
-          value={columnMapping[field.key]}
-          onChange={(e) =>
-          setColumnMapping((prev) => ({
-            ...prev,
-            [field.key]: e.target.value,
-        }))
-      }
-      className="h-8 min-w-[72px] rounded-md border border-input bg-background px-2 text-xs text-[#434343] outline-none"
-      >
-      {columnOptions.map((col) => (
-          <option key={col} value={col}>
-          {col}
-          </option>
-          ))}
-      </select>
+              <select
+                value={columnMapping[field.key]}
+                onChange={(e) =>
+                  setColumnMapping((prev) => ({
+                    ...prev,
+                    [field.key]: e.target.value,
+                  }))
+                }
+                className={`h-8 w-[180px] rounded-md border bg-background pl-2 pr-7 text-xs text-[#434343] outline-none truncate ${
+                  isDuplicate ? "border-amber-500/40" : "border-input"
+                }`}
+              >
+                {(availableHeaders.length
+                  ? availableHeaders
+                  : columnOptions.map((col) => ({ column: col, header: "" }))
+                ).map((item) => (
+                  <option key={item.column} value={item.column}>
+                    {item.header ? `${item.column} : ${item.header}` : item.column}
+                  </option>
+                ))}
+              </select>
+            </div>
+          );
+        })}
       </div>
-      );
-      })}
-      </div>
+
       <div className="flex justify-between gap-2 pt-1">
-      <Button
-      variant="outline"
-      size="sm"
-      className="h-8 text-xs text-[#434343]"
-      onClick={() => setColumnMapping(defaultColumnMapping)}
-      >
-      Reset to Default
-      </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 text-xs text-[#434343]"
+          onClick={() => setColumnMapping(defaultColumnMapping)}
+        >
+          Reset to Default
+        </Button>
 
-      <Button
-      size="sm"
-      className="h-8 text-xs"
-      onClick={() => void handleSaveColumnMapping()}
-      disabled={hasDuplicateColumns}
-      >
-      Done
-      </Button>
+        <Button
+          size="sm"
+          className="h-8 text-xs"
+          onClick={() => void handleSaveColumnMapping()}
+          disabled={hasDuplicateColumns}
+        >
+          Done
+        </Button>
       </div>
-      </div>
-      </div>
+    </div>
+  </div>
+
       ) : appState === "success" ? (
       <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
       <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">

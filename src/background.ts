@@ -177,6 +177,41 @@ async function getSheetTabs(spreadsheetId: string) {
 
   return data.sheets.map((s: any) => s.properties.title);
 }
+function columnOptionsFromHeaders(headers: string[]) {
+  return Array.from({ length: 10 }, (_, index) => {
+    const column = String.fromCharCode(65 + index);
+    const header = headers[index] ?? "";
+
+    return {
+      column,
+      header,
+    };
+  });
+}
+async function getSheetHeaders(spreadsheetId: string, sheetName: string) {
+  const token = await getGoogleAuthTokenSafe();
+
+  const range = `${sheetName}!A1:J1`;
+
+  const response = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.error?.message || "Unable to load sheet headers.");
+  }
+
+  const headers = Array.isArray(data.values?.[0]) ? data.values[0] : [];
+
+  return columnOptionsFromHeaders(headers);
+}
 
 // --------------------
 // WRITE PROFILE (FIXED)
@@ -327,6 +362,15 @@ case "LIST_SPREADSHEETS": {
 case "GET_SHEET_TABS": {
   const tabs = await getSheetTabs(message.spreadsheetId);
   sendResponse({ ok: true, tabs });
+  break;
+}
+
+case "GET_SHEET_HEADERS": {
+  const headers = await getSheetHeaders(
+    message.spreadsheetId,
+    message.sheetName
+  );
+  sendResponse({ ok: true, headers });
   break;
 }
 
