@@ -101,11 +101,11 @@ const version = chrome.runtime.getManifest().version;
 const columnOptions = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
 const mappingFields = [
-  { key: "name", label: "Name" },
-  { key: "company", label: "Company" },
-  { key: "title", label: "Title" },
-  { key: "location", label: "Location" },
-  { key: "profileUrl", label: "Profile URL" },
+  { key: "name", label: "Name", icon: User },
+  { key: "company", label: "Company", icon: Building2 },
+  { key: "title", label: "Title", icon: Briefcase },
+  { key: "location", label: "Location", icon: MapPin },
+  { key: "profileUrl", label: "Profile URL", icon: ExternalLink },
 ] as const;
 
     const filteredSpreadsheets = useMemo(() => {
@@ -491,78 +491,89 @@ return (
   <div className="px-4 py-4 space-y-4">
     <div className="flex items-center justify-between">
       <div>
-        <h2 className="text-sm font-semibold text-[#434343]">
-  Column Mapping
-</h2>
+        <div className="flex items-center gap-1.5">
+  <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
+  <h2 className="text-sm font-semibold text-[#434343]">
+    Column Mapping
+  </h2>
+</div>
 <p className="text-[11px] text-[#434343]">
   Choose which column receives each LinkedIn field
 </p>
       </div>
 
       <Button
-  variant="ghost"
   size="sm"
-  className="h-7 px-2 text-[11px] text-[#434343]"
+  className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
   onClick={() => setShowColumnMapping(false)}
 >
-  Back
+  ← Back
 </Button>
     </div>
 
-    <div className="space-y-2">
-      {mappingFields.map((field) => (
-        <div
-          key={field.key}
-          className="flex items-center justify-between gap-3 rounded-md border border-border bg-card px-3 py-2"
-        >
-          <span className="text-xs text-[#434343]">{field.label}</span>
+    <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
+  <div className="space-y-2">
+    {mappingFields.map((field) => {
+  const Icon = field.icon;
 
-          <select
-            value={columnMapping[field.key]}
-            onChange={(e) =>
-              setColumnMapping((prev) => ({
-                ...prev,
-                [field.key]: e.target.value,
-              }))
-            }
-            className="h-8 min-w-[72px] rounded-md border border-input bg-background px-2 text-xs text-[#434343] outline-none"
-          >
-            {columnOptions.map((col) => (
-              <option key={col} value={col}>
-                {col}
-              </option>
-            ))}
-          </select>
-        </div>
-      ))}
-    </div>
+  return (
+    <div
+      key={field.key}
+      className="w-full flex items-center justify-between gap-3 rounded-md border border-input bg-card px-3 py-2.5"
+    >
+      <div className="flex items-center gap-2 min-w-0">
+        <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+        <span className="text-xs text-[#434343]">{field.label}</span>
+      </div>
 
-    <div className="flex justify-between gap-2">
-      <Button
-  variant="outline"
-  size="sm"
-  className="h-8 text-xs text-[#434343]"
-        onClick={() =>
-          setColumnMapping({
-            name: "B",
-            company: "C",
-            title: "D",
-            location: "E",
-            profileUrl: "F",
-          })
+      <select
+        value={columnMapping[field.key]}
+        onChange={(e) =>
+          setColumnMapping((prev) => ({
+            ...prev,
+            [field.key]: e.target.value,
+          }))
         }
+        className="h-8 min-w-[72px] rounded-md border border-input bg-background px-2 text-xs text-[#434343] outline-none"
       >
-        Reset to Default
-      </Button>
-
-      <Button
-        size="sm"
-        className="h-8 text-xs"
-        onClick={() => setShowColumnMapping(false)}
-      >
-        Done
-      </Button>
+        {columnOptions.map((col) => (
+          <option key={col} value={col}>
+            {col}
+          </option>
+        ))}
+      </select>
     </div>
+  );
+})}
+  </div>
+
+  <div className="flex justify-between gap-2 pt-1">
+    <Button
+      variant="outline"
+      size="sm"
+      className="h-8 text-xs text-[#434343]"
+      onClick={() =>
+        setColumnMapping({
+          name: "B",
+          company: "C",
+          title: "D",
+          location: "E",
+          profileUrl: "F",
+        })
+      }
+    >
+      Reset to Default
+    </Button>
+
+    <Button
+      size="sm"
+      className="h-8 text-xs"
+      onClick={() => setShowColumnMapping(false)}
+    >
+      Done
+    </Button>
+  </div>
+</div>
   </div>
 ) : appState === "success" ? (
       <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
