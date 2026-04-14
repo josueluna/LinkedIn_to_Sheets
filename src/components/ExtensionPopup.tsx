@@ -473,6 +473,7 @@ const response = await chrome.runtime.sendMessage({
     spreadsheetId,
     sheetName: selectedTab,
     profile: currentProfile,
+    columnMapping,
 });
 
 if (!response?.ok) {
