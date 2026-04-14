@@ -19,6 +19,7 @@ import {
     Search,
     Check,
     RefreshCw,
+    SlidersHorizontal,
 } from "lucide-react";
 
 type ConnectionStatus = "disconnected" | "connected";
@@ -83,9 +84,29 @@ export default function ExtensionPopup() {
         setToastType(type);
     }
 
+    const [showColumnMapping, setShowColumnMapping] = useState(false);
+
+const [columnMapping, setColumnMapping] = useState({
+    name: "B",
+    company: "C",
+    title: "D",
+    location: "E",
+    profileUrl: "F",
+});
+
     const isConnected = connectionStatus === "connected";
 
-    const version = chrome.runtime.getManifest().version;
+const version = chrome.runtime.getManifest().version;
+
+const columnOptions = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+
+const mappingFields = [
+  { key: "name", label: "Name" },
+  { key: "company", label: "Company" },
+  { key: "title", label: "Title" },
+  { key: "location", label: "Location" },
+  { key: "profileUrl", label: "Profile URL" },
+] as const;
 
     const filteredSpreadsheets = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
@@ -274,6 +295,7 @@ export default function ExtensionPopup() {
     if (appState === "error") {
         setAppState("connected");
     }
+
     return;
 }
 
@@ -464,8 +486,85 @@ export default function ExtensionPopup() {
 }
 
 return (
-    <div className="w-[380px] bg-background text-foreground">
-    {appState === "success" ? (
+  <div className="w-[380px] bg-background text-foreground">
+    {showColumnMapping ? (
+  <div className="px-4 py-4 space-y-4">
+    <div className="flex items-center justify-between">
+      <div>
+        <h2 className="text-sm font-semibold text-[#434343]">
+  Column Mapping
+</h2>
+<p className="text-[11px] text-[#434343]">
+  Choose which column receives each LinkedIn field
+</p>
+      </div>
+
+      <Button
+  variant="ghost"
+  size="sm"
+  className="h-7 px-2 text-[11px] text-[#434343]"
+  onClick={() => setShowColumnMapping(false)}
+>
+  Back
+</Button>
+    </div>
+
+    <div className="space-y-2">
+      {mappingFields.map((field) => (
+        <div
+          key={field.key}
+          className="flex items-center justify-between gap-3 rounded-md border border-border bg-card px-3 py-2"
+        >
+          <span className="text-xs text-[#434343]">{field.label}</span>
+
+          <select
+            value={columnMapping[field.key]}
+            onChange={(e) =>
+              setColumnMapping((prev) => ({
+                ...prev,
+                [field.key]: e.target.value,
+              }))
+            }
+            className="h-8 min-w-[72px] rounded-md border border-input bg-background px-2 text-xs text-[#434343] outline-none"
+          >
+            {columnOptions.map((col) => (
+              <option key={col} value={col}>
+                {col}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
+    </div>
+
+    <div className="flex justify-between gap-2">
+      <Button
+  variant="outline"
+  size="sm"
+  className="h-8 text-xs text-[#434343]"
+        onClick={() =>
+          setColumnMapping({
+            name: "B",
+            company: "C",
+            title: "D",
+            location: "E",
+            profileUrl: "F",
+          })
+        }
+      >
+        Reset to Default
+      </Button>
+
+      <Button
+        size="sm"
+        className="h-8 text-xs"
+        onClick={() => setShowColumnMapping(false)}
+      >
+        Done
+      </Button>
+    </div>
+  </div>
+) : appState === "success" ? (
       <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
       <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
       <CheckCircle2 className="w-6 h-6 text-success" />
@@ -569,25 +668,37 @@ return (
           <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
 
 {/* HEADER */}
-          <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Destination
-          </span>
+          <div className="flex items-center justify-between gap-2">
+  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
+    Destination
+  </span>
 
-          <Button
-          variant="outline"
-          size="sm"
-          className="h-6 text-[10px] px-2"
-          onClick={() =>
-          window.open(
-            "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
-            "_blank"
-            )
+  <div className="flex items-center gap-2">
+    <Button
+      variant="outline"
+      size="sm"
+      className="h-6 text-[10px] px-2"
+      onClick={() =>
+        window.open(
+          "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
+          "_blank"
+        )
       }
-      >
+    >
       Google Sheet Template
-      </Button>
-      </div>
+    </Button>
+
+    <Button
+  variant="outline"
+  size="sm"
+  className="h-6 text-[10px] px-2"
+  onClick={() => setShowColumnMapping(true)}
+>
+  <SlidersHorizontal className="w-3 h-3 mr-1" />
+  Config Columns
+</Button>
+  </div>
+</div>
 
 {/* CONTENT */}
       <div className="space-y-1.5">
@@ -746,17 +857,17 @@ return (
     </div>
 
 {/* SUMMARY */}
-    {spreadsheetName && selectedTab && (
-      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
-      <Check className="w-3 h-3 text-primary shrink-0" />
-      <span className="text-[10px] text-foreground truncate">
+{spreadsheetName && selectedTab && (
+  <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+    <Check className="w-3 h-3 text-primary shrink-0" />
+    <span className="text-[10px] text-foreground truncate">
       {spreadsheetName} → {selectedTab}
-      </span>
-      </div>
-      )}
-    </div>
-    </section>
-    )}
+    </span>
+  </div>
+)}
+</div>
+</section>
+)}
 
 {isConnected && (
     <section className="space-y-2">
