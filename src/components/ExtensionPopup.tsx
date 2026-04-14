@@ -127,6 +127,12 @@ export default function ExtensionPopup() {
 
   const mappedColumns = Object.values(columnMapping);
   const hasDuplicateColumns = new Set(mappedColumns).size !== mappedColumns.length;
+  const hasCustomColumnMapping =
+  columnMapping.name !== defaultColumnMapping.name ||
+  columnMapping.company !== defaultColumnMapping.company ||
+  columnMapping.title !== defaultColumnMapping.title ||
+  columnMapping.location !== defaultColumnMapping.location ||
+  columnMapping.profileUrl !== defaultColumnMapping.profileUrl;
   const canPaste =
   isConnected &&
   !!profile &&
@@ -899,13 +905,24 @@ return (
 
 {/* SUMMARY */}
     {spreadsheetName && selectedTab && (
-      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+  <div className="space-y-1">
+    <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
       <Check className="w-3 h-3 text-primary shrink-0" />
       <span className="text-[10px] text-foreground truncate">
-      {spreadsheetName} → {selectedTab}
+        {spreadsheetName} → {selectedTab}
       </span>
+    </div>
+
+    {hasCustomColumnMapping && (
+      <div className="flex justify-end">
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
+          <span>Custom Column Mapping active</span>
+        </div>
       </div>
-      )}
+    )}
+  </div>
+)}
     </div>
     </section>
     )}
