@@ -79,9 +79,9 @@ export default function ExtensionPopup() {
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastType, setToastType] = useState<"success" | "error" | "warning">("warning");
     function showToast(message: string, type: "success" | "error" | "warning") {
-    setToastMessage(message);
-    setToastType(type);
-}
+        setToastMessage(message);
+        setToastType(type);
+    }
 
     const isConnected = connectionStatus === "connected";
 
@@ -92,24 +92,21 @@ export default function ExtensionPopup() {
         if (!q) return allSpreadsheets;
         return allSpreadsheets.filter((sheet) =>
             sheet.name.toLowerCase().includes(q)
-        );
+            );
     }, [allSpreadsheets, searchQuery]);
 
     const canPaste =
-        isConnected &&
-        !!profile &&
-        !!spreadsheetId &&
-        !!selectedTab &&
-        !isRefreshingProfile &&
-        appState !== "saving";
+    isConnected &&
+    !!profile &&
+    !!spreadsheetId &&
+    !!selectedTab &&
+    !isRefreshingProfile &&
+    appState !== "saving";
 
     const pasteButtonLabel = useMemo(() => {
-    if (appState === "saving") return "Pasting...";
-    if (!profile) return "Load a LinkedIn Profile First";
-    if (!spreadsheetId) return "Choose a Spreadsheet";
-    if (!selectedTab) return "Choose a Tab";
-    return "Paste Current Profile";
-}, [appState, profile, spreadsheetId, selectedTab]);
+      if (appState === "saving") return "Pasting...";
+      return "Paste Current Profile";
+  }, [appState]);
 
     function showError(message: string) {
         setFeedbackMessage(message);
@@ -142,7 +139,7 @@ export default function ExtensionPopup() {
         const onChanged = (
             changes: Record < string, chrome.storage.StorageChange > ,
             areaName: string
-        ) => {
+            ) => {
             if (areaName !== "local") return;
 
             if (
@@ -151,14 +148,14 @@ export default function ExtensionPopup() {
                 changes.spreadsheetName ||
                 changes.spreadsheetUrl ||
                 changes.sheetName
-            ) {
+                ) {
                 void hydrate();
-            }
-        };
+        }
+    };
 
-        chrome.storage.onChanged.addListener(onChanged);
-        return () => chrome.storage.onChanged.removeListener(onChanged);
-    }, []);
+    chrome.storage.onChanged.addListener(onChanged);
+    return () => chrome.storage.onChanged.removeListener(onChanged);
+}, []);
 
     async function hydrate() {
         const data = (await chrome.storage.local.get([
@@ -219,7 +216,7 @@ export default function ExtensionPopup() {
             setAppState("error");
             showError(
                 error instanceof Error ? error.message : "Google authentication failed."
-            );
+                );
         } finally {
             setIsConnecting(false);
         }
@@ -257,7 +254,7 @@ export default function ExtensionPopup() {
             setAppState("error");
             showError(
                 error instanceof Error ? error.message : "Could not disconnect Google account."
-            );
+                );
         } finally {
             setIsDisconnecting(false);
         }
@@ -290,7 +287,7 @@ export default function ExtensionPopup() {
             setAppState("error");
             showError(
                 error instanceof Error ? error.message : "No LinkedIn profile detected."
-            );
+                );
         } finally {
             setIsRefreshingProfile(false);
         }
@@ -310,7 +307,7 @@ export default function ExtensionPopup() {
             }
 
             const spreadsheets = Array.isArray(response.spreadsheets) ?
-                response.spreadsheets : [];
+            response.spreadsheets : [];
 
             setAllSpreadsheets(spreadsheets);
             setSearchQuery("");
@@ -319,7 +316,7 @@ export default function ExtensionPopup() {
             setAppState("error");
             showError(
                 error instanceof Error ? error.message : "Could not load spreadsheets."
-            );
+                );
         } finally {
             setIsLoadingSpreadsheets(false);
         }
@@ -339,15 +336,15 @@ export default function ExtensionPopup() {
             }
 
             const tabs = Array.isArray(response.tabs) ? response.tabs : [];
-setAvailableTabs(tabs);
+            setAvailableTabs(tabs);
 
 // 🧠 intento de auto-selección inteligente
-const stored = await chrome.storage.local.get(["sheetName"]);
-const storedTab = stored.sheetName;
+            const stored = await chrome.storage.local.get(["sheetName"]);
+            const storedTab = stored.sheetName;
 
-if (storedTab && tabs.includes(storedTab)) {
-    setSelectedTab(storedTab);
-}
+            if (storedTab && tabs.includes(storedTab)) {
+                setSelectedTab(storedTab);
+            }
         } catch (error) {
             setAvailableTabs([]);
             setAppState("error");
@@ -395,215 +392,220 @@ if (storedTab && tabs.includes(storedTab)) {
     }
 
     async function handlePasteProfile() {
-        try {
-            setAppState("saving");
-            clearFeedback();
-            setToastMessage(null);
+    try {
+        setAppState("saving");
+        clearFeedback();
+        setToastMessage(null);
 
-            if (!spreadsheetId) {
-                throw new Error("Choose a spreadsheet first.");
-            }
+        if (!profile) {
+    showToast("Please load a LinkedIn profile first.", "warning");
+    return;  // Aquí el flujo de la función se detiene y muestra el mensaje en lugar de la alerta.
+}
 
-            if (!selectedTab) {
-                throw new Error("Choose a destination tab first.");
-            }
+        if (!spreadsheetId) {
+            throw new Error("Choose a spreadsheet first.");
+        }
 
-            let currentProfile = profile;
+        if (!selectedTab) {
+            throw new Error("Choose a destination tab first.");
+        }
 
-            if (!currentProfile) {
-                const response = await chrome.runtime.sendMessage({
-                    type: "GET_ACTIVE_PROFILE",
-                });
+        let currentProfile = profile;
 
-                if (!response?.ok || !response.profile) {
-                    throw new Error(response?.error || "Could not load LinkedIn profile.");
-                }
-
-                currentProfile = response.profile as LinkedinProfile;
-                setProfile(currentProfile);
-            }
-
+        if (!currentProfile) {
             const response = await chrome.runtime.sendMessage({
-                type: "APPEND_PROFILE",
-                spreadsheetId,
-                sheetName: selectedTab,
-                profile: currentProfile,
+                type: "GET_ACTIVE_PROFILE",
             });
 
-            if (!response?.ok) {
-                throw new Error(response?.error || "Could not write to Google Sheets.");
+            if (!response?.ok || !response.profile) {
+                throw new Error(response?.error || "Could not load LinkedIn profile.");
             }
 
-            if (response.result?.duplicate) {
-                setAppState("connected");
+            currentProfile = response.profile as LinkedinProfile;
+            setProfile(currentProfile);
+        }
 
-                setToastMessage(
+        const response = await chrome.runtime.sendMessage({
+            type: "APPEND_PROFILE",
+            spreadsheetId,
+            sheetName: selectedTab,
+            profile: currentProfile,
+        });
+
+        if (!response?.ok) {
+            throw new Error(response?.error || "Could not write to Google Sheets.");
+        }
+
+        if (response.result?.duplicate) {
+            setAppState("connected");
+
+            setToastMessage(
                 `This LinkedIn profile already exists in row ${response.result?.row ?? "?"}.`
-                );
-                setToastType("warning");
+            );
+            setToastType("warning");
 
             return;
-            }
-
-            setAppState("success");
-
-            setTimeout(() => {
-                setAppState("connected");
-            }, 2200);
-        } catch (error) {
-            setAppState("error");
-            showError(
-                error instanceof Error ? error.message : "Could not paste profile."
-            );
         }
+
+        setAppState("success");
+
+        setTimeout(() => {
+            setAppState("connected");
+        }, 2200);
+    } catch (error) {
+        setAppState("error");
+        showError(
+            error instanceof Error ? error.message : "Could not paste profile."
+        );
     }
+}
 
-    return (
-        <div className="w-[380px] bg-background text-foreground">
-{appState === "success" ? (
-  <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
-  <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
-  <CheckCircle2 className="w-6 h-6 text-success" />
-  </div>
-  <div className="space-y-1">
-  <h2 className="text-sm font-semibold text-foreground">
-  Profile Pasted
-  </h2>
-  <p className="text-xs text-muted-foreground">
-  <b>{profile?.name || "This profile"}</b> was pasted into
-  <br />
-  <b>
-  {spreadsheetName
-  ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
-  : "your spreadsheet"}
-  </b>
-  .
-  </p>
-  </div>
-  </div>
-  ) : (
-  <>
-  <div className="px-4 pt-4 pb-3 border-b border-border">
-  <div className="flex items-center gap-2">
-  <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
-  <img
-  src="/logo.png"
-  alt="LinkedIn to Sheets logo"
-  className="w-full h-full object-contain"
-  />
-  </div>
-  <div>
-  <h1 className="text-sm font-semibold text-foreground leading-tight">
-  LinkedIn to Sheets
-  </h1>
-  <p className="text-[11px] text-muted-foreground leading-tight">
-  Paste LinkedIn profile information into Google Sheets
-  </p>
-  </div>
-  </div>
-  </div>
+return (
+    <div className="w-[380px] bg-background text-foreground">
+    {appState === "success" ? (
+      <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
+      <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
+      <CheckCircle2 className="w-6 h-6 text-success" />
+      </div>
+      <div className="space-y-1">
+      <h2 className="text-sm font-semibold text-foreground">
+      Profile Pasted
+      </h2>
+      <p className="text-xs text-muted-foreground">
+      <b>{profile?.name || "This profile"}</b> was pasted into
+      <br />
+      <b>
+      {spreadsheetName
+      ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
+      : "your spreadsheet"}
+      </b>
+      .
+      </p>
+      </div>
+      </div>
+      ) : (
+      <>
+      <div className="px-4 pt-4 pb-3 border-b border-border">
+      <div className="flex items-center gap-2">
+      <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
+      <img
+      src="/logo.png"
+      alt="LinkedIn to Sheets logo"
+      className="w-full h-full object-contain"
+      />
+      </div>
+      <div>
+      <h1 className="text-sm font-semibold text-foreground leading-tight">
+      LinkedIn to Sheets
+      </h1>
+      <p className="text-[11px] text-muted-foreground leading-tight">
+      Paste LinkedIn profile information into Google Sheets
+      </p>
+      </div>
+      </div>
+      </div>
 
-  <div className="px-4 py-3 space-y-3">
-  <section className="space-y-2">
-  <div className="flex items-center justify-between">
-  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-  Google Account
-  </span>
-
-  {isConnected ? (
-    <button
-    type="button"
-    onClick={() => void handleDisconnect()}
-    onMouseEnter={() => setIsDisconnectHover(true)}
-    onMouseLeave={() => setIsDisconnectHover(false)}
-    disabled={isDisconnecting}
-    className="transition-colors"
-    >
-    <Badge
-    variant="default"
-    className={
-      isDisconnectHover
-      ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-      : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-    }
-    >
-    <CircleDot className="w-2.5 h-2.5 mr-1" />
-    {isDisconnecting
-    ? "Disconnecting..."
-    : isDisconnectHover
-    ? "Disconnect Google Account"
-    : "Connected"}
-    </Badge>
-    </button>
-    ) : (
-    <Badge
-    variant="outline"
-    className="text-muted-foreground text-[10px] px-2 py-0 h-5"
-    >
-    <CircleDot className="w-2.5 h-2.5 mr-1" />
-    Not connected
-    </Badge>
-    )}
-    </div>
-
-    {!isConnected && (
-      <Button
-      onClick={handleConnect}
-      className="w-full h-8 text-xs"
-      disabled={isConnecting}
-      >
-      {isConnecting && (
-        <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-        )}
-      {isConnecting ? "Connecting..." : "Connect Google Account"}
-      </Button>
-      )}
-    </section>
-
-    {isConnected && (
-      <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
-
-{/* HEADER */}
+      <div className="px-4 py-3 space-y-3">
+      <section className="space-y-2">
       <div className="flex items-center justify-between">
       <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-      Destination
+      Google Account
       </span>
 
-      <Button
+      {isConnected ? (
+        <button
+        type="button"
+        onClick={() => void handleDisconnect()}
+        onMouseEnter={() => setIsDisconnectHover(true)}
+        onMouseLeave={() => setIsDisconnectHover(false)}
+        disabled={isDisconnecting}
+        className="transition-colors"
+        >
+        <Badge
+        variant="default"
+        className={
+          isDisconnectHover
+          ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+          : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+      }
+      >
+      <CircleDot className="w-2.5 h-2.5 mr-1" />
+      {isDisconnecting
+      ? "Disconnecting..."
+      : isDisconnectHover
+      ? "Disconnect Google Account"
+      : "Connected"}
+      </Badge>
+      </button>
+      ) : (
+      <Badge
       variant="outline"
-      size="sm"
-      className="h-6 text-[10px] px-2"
-      onClick={() =>
-      window.open(
-        "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
-        "_blank"
-        )
-    }
-    >
-    Google Sheet Template
-    </Button>
-    </div>
+      className="text-muted-foreground text-[10px] px-2 py-0 h-5"
+      >
+      <CircleDot className="w-2.5 h-2.5 mr-1" />
+      Not connected
+      </Badge>
+      )}
+      </div>
+
+      {!isConnected && (
+          <Button
+          onClick={handleConnect}
+          className="w-full h-8 text-xs"
+          disabled={isConnecting}
+          >
+          {isConnecting && (
+            <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+            )}
+          {isConnecting ? "Connecting..." : "Connect Google Account"}
+          </Button>
+          )}
+      </section>
+
+      {isConnected && (
+          <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
+
+{/* HEADER */}
+          <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          Destination
+          </span>
+
+          <Button
+          variant="outline"
+          size="sm"
+          className="h-6 text-[10px] px-2"
+          onClick={() =>
+          window.open(
+            "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
+            "_blank"
+            )
+      }
+      >
+      Google Sheet Template
+      </Button>
+      </div>
 
 {/* CONTENT */}
-    <div className="space-y-1.5">
+      <div className="space-y-1.5">
 
 {/* SPREADSHEET */}
-    <div className="relative">
-    <Label className="text-[11px] text-muted-foreground">
-    Spreadsheet
-    </Label>
+      <div className="relative">
+      <Label className="text-[11px] text-muted-foreground">
+      Spreadsheet
+      </Label>
 
-    <button
-    type="button"
-    onClick={async () => {
-      const nextOpen = !sheetPickerOpen;
-      setSheetPickerOpen(nextOpen);
-      setTabPickerOpen(false);
-      setSearchQuery("");
+      <button
+      type="button"
+      onClick={async () => {
+          const nextOpen = !sheetPickerOpen;
+          setSheetPickerOpen(nextOpen);
+          setTabPickerOpen(false);
+          setSearchQuery("");
 
-      if (nextOpen) {
-        await loadSpreadsheets(true);
-      }
+          if (nextOpen) {
+            await loadSpreadsheets(true);
+        }
     }}
     className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
     >
@@ -620,9 +622,9 @@ if (storedTab && tabs.includes(storedTab)) {
       <ChevronDown
       className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform ${
         sheetPickerOpen ? "rotate-180" : ""
-      }`}
-      />
-      )}
+    }`}
+    />
+    )}
       </button>
 
       {sheetPickerOpen && (
@@ -658,22 +660,22 @@ if (storedTab && tabs.includes(storedTab)) {
             onClick={() => void handleSelectSpreadsheet(sheet)}
             className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
               spreadsheetId === sheet.id ? "bg-accent/30" : ""
-            }`}
-            >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
-            <div className="flex-1 min-w-0">
-            <div className="text-xs text-foreground truncate">
-            {sheet.name}
-            </div>
-            <div className="text-[10px] text-muted-foreground truncate">
-            {sheet.url}
-            </div>
-            </div>
-            {spreadsheetId === sheet.id && (
+          }`}
+          >
+          <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
+          <div className="flex-1 min-w-0">
+          <div className="text-xs text-foreground truncate">
+          {sheet.name}
+          </div>
+          <div className="text-[10px] text-muted-foreground truncate">
+          {sheet.url}
+          </div>
+          </div>
+          {spreadsheetId === sheet.id && (
               <Check className="w-3 h-3 text-primary shrink-0" />
               )}
-            </button>
-            ))
+          </button>
+          ))
           )}
           </div>
           </div>
@@ -692,218 +694,218 @@ if (storedTab && tabs.includes(storedTab)) {
         if (availableTabs.length) {
           setTabPickerOpen(!tabPickerOpen);
           setSheetPickerOpen(false);
-        }
-      }}
-      disabled={!spreadsheetId || isLoadingTabs}
-      className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
-        spreadsheetId
-        ? "bg-card text-foreground hover:bg-accent/50"
-        : "bg-muted/30 text-muted-foreground cursor-not-allowed"
+      }
+  }}
+  disabled={!spreadsheetId || isLoadingTabs}
+  className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
+    spreadsheetId
+    ? "bg-card text-foreground hover:bg-accent/50"
+    : "bg-muted/30 text-muted-foreground cursor-not-allowed"
+}`}
+>
+<span className="flex items-center gap-1.5 truncate">
+<Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+<span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
+{isLoadingTabs
+? "Loading tabs..."
+: selectedTab || "Choose a tab…"}
+</span>
+</span>
+
+{isLoadingTabs ? (
+    <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+    ) : (
+    <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+    )}
+    {tabPickerOpen && availableTabs.length > 0 && (
+      <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
+      <div className="max-h-[140px] overflow-y-auto">
+      {availableTabs.map((tab) => (
+        <button
+        key={tab}
+        type="button"
+        onClick={() => void handleSelectTab(tab)}
+        className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+          selectedTab === tab ? "bg-accent/30" : ""
       }`}
       >
-      <span className="flex items-center gap-1.5 truncate">
       <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-      <span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
-      {isLoadingTabs
-      ? "Loading tabs..."
-      : selectedTab || "Choose a tab…"}
-      </span>
-      </span>
-
-      {isLoadingTabs ? (
-        <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-        ) : (
-        <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
-        )}
-        {tabPickerOpen && availableTabs.length > 0 && (
-          <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-          <div className="max-h-[140px] overflow-y-auto">
-          {availableTabs.map((tab) => (
-            <button
-            key={tab}
-            type="button"
-            onClick={() => void handleSelectTab(tab)}
-            className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-              selectedTab === tab ? "bg-accent/30" : ""
-            }`}
-            >
-            <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-            <span className="text-xs text-foreground">{tab}</span>
-            {selectedTab === tab && (
-              <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
-              )}
-            </button>
-            ))}
-          </div>
-          </div>
+      <span className="text-xs text-foreground">{tab}</span>
+      {selectedTab === tab && (
+          <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
           )}
-        </button>
-        </div>
+      </button>
+      ))}
+      </div>
+      </div>
+      )}
+    </button>
+    </div>
 
 {/* SUMMARY */}
-        {spreadsheetName && selectedTab && (
-          <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
-          <Check className="w-3 h-3 text-primary shrink-0" />
-          <span className="text-[10px] text-foreground truncate">
-          {spreadsheetName} → {selectedTab}
-          </span>
-          </div>
-          )}
+    {spreadsheetName && selectedTab && (
+      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+      <Check className="w-3 h-3 text-primary shrink-0" />
+      <span className="text-[10px] text-foreground truncate">
+      {spreadsheetName} → {selectedTab}
+      </span>
+      </div>
+      )}
+    </div>
+    </section>
+    )}
+
+{isConnected && (
+    <section className="space-y-2">
+    <div className="flex items-center justify-between">
+    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+    Current Profile
+    </span>
+
+    <Button
+    variant="ghost"
+    size="sm"
+    className="h-7 px-2 text-[11px]"
+    onClick={() => void loadCurrentProfile(true)}
+    disabled={isRefreshingProfile}
+    >
+    {isRefreshingProfile ? (
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+        <>
+        <RefreshCw className="w-3.5 h-3.5 mr-1" />
+        Refresh
+        </>
+        )}
+        </Button>
+        </div>
+
+        <div className="rounded-lg border border-border bg-card p-3 space-y-1.5">
+        {profile ? (
+          [
+            { icon: User, label: profile.name },
+            { icon: Building2, label: profile.company },
+            { icon: Briefcase, label: profile.title },
+            { icon: MapPin, label: profile.location },
+            { icon: ExternalLink, label: profile.profileUrl },
+        ].map(({ icon: Icon, label }) => (
+            <div
+            key={`${Icon.displayName ?? "icon"}-${label}`}
+            className="flex items-center gap-2"
+            >
+            <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
+            <span className="text-xs text-foreground truncate">
+            {label || "—"}
+            </span>
+            </div>
+            ))
+        ) : (
+        <div className="text-xs text-muted-foreground">
+        Open a LinkedIn profile and click Refresh.
+        </div>
+        )}
         </div>
         </section>
         )}
 
 {isConnected && (
-<section className="space-y-2">
-<div className="flex items-center justify-between">
-<span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-Current Profile
-</span>
-
-<Button
-variant="ghost"
-size="sm"
-className="h-7 px-2 text-[11px]"
-onClick={() => void loadCurrentProfile(true)}
-disabled={isRefreshingProfile}
->
-{isRefreshingProfile ? (
-<Loader2 className="w-3.5 h-3.5 animate-spin" />
-) : (
-<>
-<RefreshCw className="w-3.5 h-3.5 mr-1" />
-Refresh
-</>
-)}
-</Button>
-</div>
-
-<div className="rounded-lg border border-border bg-card p-3 space-y-1.5">
-{profile ? (
-  [
-    { icon: User, label: profile.name },
-    { icon: Building2, label: profile.company },
-    { icon: Briefcase, label: profile.title },
-    { icon: MapPin, label: profile.location },
-    { icon: ExternalLink, label: profile.profileUrl },
-  ].map(({ icon: Icon, label }) => (
-    <div
-    key={`${Icon.displayName ?? "icon"}-${label}`}
-    className="flex items-center gap-2"
+    <Button
+    onClick={handlePasteProfile}
+    disabled={!canPaste}
+    className="w-full h-9 text-xs font-medium"
     >
-    <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
-    <span className="text-xs text-foreground truncate">
-    {label || "—"}
-    </span>
-    </div>
-    ))
-  ) : (
-  <div className="text-xs text-muted-foreground">
-  Open a LinkedIn profile and click Refresh.
-  </div>
-  )}
-  </div>
-  </section>
-  )}
-
-{isConnected && (
-<Button
-onClick={handlePasteProfile}
-disabled={!canPaste}
-className="w-full h-9 text-xs font-medium"
->
-{appState === "saving" && (
-<Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-)}
-{pasteButtonLabel}
-</Button>
-)}
+    {appState === "saving" && (
+        <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+        )}
+    {pasteButtonLabel}
+    </Button>
+    )}
 
 <div>
 {feedbackMessage && (
-<div
-className={
-feedbackTone === "error"
-? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
-: feedbackTone === "warning"
-? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
-: "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
-}
->
-{feedbackTone === "error" ? (
-<AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
-) : feedbackTone === "warning" ? (
-<AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-) : (
-<CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
-)}
-<span
-className={
-  feedbackTone === "error"
-  ? "text-[11px] text-destructive font-medium"
-  : feedbackTone === "warning"
-  ? "text-[11px] text-amber-700 font-medium"
-  : "text-[11px] text-success font-medium"
-}
->
-{feedbackMessage}
-</span>
-</div>
-)}
+    <div
+    className={
+        feedbackTone === "error"
+        ? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
+        : feedbackTone === "warning"
+        ? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
+        : "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
+    }
+    >
+    {feedbackTone === "error" ? (
+        <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
+        ) : feedbackTone === "warning" ? (
+        <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+        ) : (
+        <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+        )}
+        <span
+        className={
+          feedbackTone === "error"
+          ? "text-[11px] text-destructive font-medium"
+          : feedbackTone === "warning"
+          ? "text-[11px] text-amber-700 font-medium"
+          : "text-[11px] text-success font-medium"
+      }
+      >
+      {feedbackMessage}
+      </span>
+      </div>
+      )}
 </div>
 
 <div className="text-xs text-muted-foreground flex justify-between items-center">
-  <div className="space-x-2">
-    <a
-      href="https://forms.gle/xmCiUB8Tzs3ocM616"
-      target="_blank"
-      className="hover:text-primary transition-colors"
-    >
-      Send feedback
-    </a>
+<div className="space-x-2">
+<a
+href="https://forms.gle/xmCiUB8Tzs3ocM616"
+target="_blank"
+className="hover:text-primary transition-colors"
+>
+Send feedback
+</a>
 
-    <span>·</span>
+<span>·</span>
 
-    <a
-      href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
-      target="_blank"
-      className="hover:text-primary transition-colors"
-    >
-      Changelog
-    </a>
-  </div>
+<a
+href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
+target="_blank"
+className="hover:text-primary transition-colors"
+>
+Changelog
+</a>
+</div>
 
-  <div className="flex items-center gap-2">
-    <a
-      href="https://www.linkedin.com/in/josuelunagamboa/"
-      target="_blank"
-      className="hover:text-primary transition-colors"
-    >
-      Developed by Josué
-    </a>
+<div className="flex items-center gap-2">
+<a
+href="https://www.linkedin.com/in/josuelunagamboa/"
+target="_blank"
+className="hover:text-primary transition-colors"
+>
+Developed by Josué
+</a>
 
-    <span className="opacity-70">v{version}</span>
-  </div>
+<span className="opacity-70">v{version}</span>
+</div>
 </div>
 
 {appState === "empty" && !isConnected && !feedbackMessage && (
-<div className="flex items-center gap-2 p-2 rounded-md bg-warning/10 border border-warning/20">
-<AlertCircle className="w-3.5 h-3.5 text-warning shrink-0" />
-<span className="text-[11px] text-warning font-medium">
-Please connect your Google account
-</span>
-</div>
-)}
+    <div className="flex items-center gap-2 p-2 rounded-md bg-warning/10 border border-warning/20">
+    <AlertCircle className="w-3.5 h-3.5 text-warning shrink-0" />
+    <span className="text-[11px] text-warning font-medium">
+    Please connect your Google account
+    </span>
+    </div>
+    )}
 </div>
 </>
 )}
 {toastMessage && (
   <Toast
-    message={toastMessage}
-    type={toastType}
-    onClose={() => setToastMessage(null)}
+  message={toastMessage}
+  type={toastType}
+  onClose={() => setToastMessage(null)}
   />
-)}
+  )}
 </div>
-    );
+);
 }
