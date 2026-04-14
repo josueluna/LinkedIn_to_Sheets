@@ -125,6 +125,8 @@ export default function ExtensionPopup() {
         );
 }, [allSpreadsheets, searchQuery]);
 
+  const mappedColumns = Object.values(columnMapping);
+  const hasDuplicateColumns = new Set(mappedColumns).size !== mappedColumns.length;
   const canPaste =
   isConnected &&
   !!profile &&
@@ -133,6 +135,11 @@ export default function ExtensionPopup() {
   !isRefreshingProfile &&
   appState !== "saving";
   async function handleSaveColumnMapping() {
+    if (hasDuplicateColumns) {
+        showToast("Each field must use a different column.", "warning");
+        return;
+    }
+
     await chrome.storage.local.set({
         columnMapping,
     });
@@ -538,34 +545,45 @@ return (
           return (
             <div
             key={field.key}
-            className="w-full flex items-center justify-between gap-3 rounded-md border border-input bg-card px-3 py-2.5"
-            >
-            <div className="flex items-center gap-2 min-w-0">
-            <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-            <span className="text-xs text-[#434343]">{field.label}</span>
-            </div>
+            className={`w-full flex items-center justify-between gap-3 rounded-md px-3 py-2.5 ${
+              mappedColumns.filter((col) => col === columnMapping[field.key]).length > 1
+              ? "border border-amber-500/40 bg-amber-500/5"
+              : "border border-input bg-card"
+          }`}
+          >
+          <div className="flex items-center gap-2 min-w-0">
+          <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          <span className="text-xs text-[#434343]">{field.label}</span>
+          </div>
 
-            <select
-            value={columnMapping[field.key]}
-            onChange={(e) =>
-            setColumnMapping((prev) => ({
-                ...prev,
-                [field.key]: e.target.value,
-            }))
-        }
-        className="h-8 min-w-[72px] rounded-md border border-input bg-background px-2 text-xs text-[#434343] outline-none"
-        >
-        {columnOptions.map((col) => (
+          <select
+          value={columnMapping[field.key]}
+          onChange={(e) =>
+          setColumnMapping((prev) => ({
+            ...prev,
+            [field.key]: e.target.value,
+        }))
+      }
+      className="h-8 min-w-[72px] rounded-md border border-input bg-background px-2 text-xs text-[#434343] outline-none"
+      >
+      {columnOptions.map((col) => (
           <option key={col} value={col}>
           {col}
           </option>
           ))}
-        </select>
-        </div>
-        );
+      </select>
+      </div>
+      );
       })}
       </div>
-
+      {hasDuplicateColumns && (
+          <div className="flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2">
+          <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+          <span className="text-[11px] text-amber-700 font-medium">
+          Each field must use a different column.
+          </span>
+          </div>
+          )}
       <div className="flex justify-between gap-2 pt-1">
       <Button
       variant="outline"
@@ -580,6 +598,7 @@ return (
       size="sm"
       className="h-8 text-xs"
       onClick={() => void handleSaveColumnMapping()}
+      disabled={hasDuplicateColumns}
       >
       Done
       </Button>
