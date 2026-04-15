@@ -1,0 +1,331 @@
+diff --git a/src/components/SpreadsheetSelector.tsx b/src/components/SpreadsheetSelector.tsx
+deleted file mode 100755
+index 384ab2331753d36dd5c09661c66b30cfda68d37d..0000000000000000000000000000000000000000
+--- a/src/components/SpreadsheetSelector.tsx
++++ /dev/null
+@@ -1,111 +0,0 @@
+-import { useEffect, useState } from "react";
+-import { fetchSpreadsheets, fetchSheets, Spreadsheet } from "../lib/google";
+-import { saveSelection } from "../lib/storage";
+-
+-interface Props {
+-  onDone: () => void;
+-}
+-
+-export default function SpreadsheetSelector({ onDone }: Props) {
+-  const [spreadsheets, setSpreadsheets] = useState<Spreadsheet[]>([]);
+-  const [filtered, setFiltered] = useState<Spreadsheet[]>([]);
+-  const [search, setSearch] = useState("");
+-  const [selectedFile, setSelectedFile] = useState<Spreadsheet | null>(null);
+-  const [sheets, setSheets] = useState<string[]>([]);
+-  const [loading, setLoading] = useState(false);
+-
+-  useEffect(() => {
+-    loadSpreadsheets();
+-  }, []);
+-
+-  async function loadSpreadsheets() {
+-    setLoading(true);
+-    const files = await fetchSpreadsheets();
+-    setSpreadsheets(files);
+-    setFiltered(files);
+-    setLoading(false);
+-  }
+-
+-  function handleSearch(value: string) {
+-    setSearch(value);
+-    const f = spreadsheets.filter((s) =>
+-      s.name.toLowerCase().includes(value.toLowerCase())
+-    );
+-    setFiltered(f);
+-  }
+-
+-  async function handleSelectFile(file: Spreadsheet) {
+-    setSelectedFile(file);
+-    const sheetNames = await fetchSheets(file.id);
+-    setSheets(sheetNames);
+-  }
+-
+-  async function handleSelectSheet(sheetName: string) {
+-    if (!selectedFile) return;
+-
+-    await saveSelection({
+-      id: selectedFile.id,
+-      name: selectedFile.name,
+-      sheetName,
+-    });
+-
+-    onDone();
+-  }
+-
+-  if (loading) {
+-    return <div style={{ padding: 16 }}>Cargando spreadsheets...</div>;
+-  }
+-
+-  if (!selectedFile) {
+-    return (
+-      <div style={{ padding: 16 }}>
+-        <h3>Selecciona un spreadsheet</h3>
+-
+-        <input
+-          type="text"
+-          placeholder="Buscar..."
+-          value={search}
+-          onChange={(e) => handleSearch(e.target.value)}
+-          style={{ width: "100%", marginBottom: 10 }}
+-        />
+-
+-        <div style={{ maxHeight: 200, overflowY: "auto" }}>
+-          {filtered.map((file) => (
+-            <div
+-              key={file.id}
+-              onClick={() => handleSelectFile(file)}
+-              style={{
+-                padding: 8,
+-                cursor: "pointer",
+-                borderBottom: "1px solid #eee",
+-              }}
+-            >
+-              {file.name}
+-            </div>
+-          ))}
+-        </div>
+-      </div>
+-    );
+-  }
+-
+-  return (
+-    <div style={{ padding: 16 }}>
+-      <h3>{selectedFile.name}</h3>
+-      <p>Selecciona una hoja</p>
+-
+-      {sheets.map((sheet) => (
+-        <div
+-          key={sheet}
+-          onClick={() => handleSelectSheet(sheet)}
+-          style={{
+-            padding: 8,
+-            cursor: "pointer",
+-            borderBottom: "1px solid #eee",
+-          }}
+-        >
+-          {sheet}
+-        </div>
+-      ))}
+-    </div>
+-  );
+-}
+\ No newline at end of file
+diff --git a/src/content.ts b/src/content.ts
+index 20414eae3b8259cf6b8e97781a1eac9555daada0..84219e40d23e1385c2c9143c2d3f61b4efe7d8e7 100755
+--- a/src/content.ts
++++ b/src/content.ts
+@@ -74,65 +74,50 @@ function looksLikeLocation(value: string): boolean {
+     lower.includes("perú") ||
+     lower.includes("peru") ||
+     lower.includes("colombia") ||
+     lower.includes("chile")
+   );
+ }
+ 
+ function looksLikeDateOrDuration(value: string): boolean {
+   const lower = value.toLowerCase();
+ 
+   return (
+     lower.includes("present") ||
+     lower.includes("actualidad") ||
+     lower.includes("yrs") ||
+     lower.includes("yr") ||
+     lower.includes("mos") ||
+     lower.includes("mo") ||
+     lower.includes("años") ||
+     lower.includes("año") ||
+     lower.includes("meses") ||
+     lower.includes("mes") ||
+     /\b(19|20)\d{2}\b/.test(lower)
+   );
+ }
+ 
+-function looksLikeWorkType(value: string): boolean {
+-  const lower = value.toLowerCase();
+-
+-  return (
+-    lower.includes("full-time") ||
+-    lower.includes("part-time") ||
+-    lower.includes("contract") ||
+-    lower.includes("internship") ||
+-    lower.includes("temporary") ||
+-    lower.includes("tiempo completo") ||
+-    lower.includes("medio tiempo") ||
+-    lower.includes("jornada completa")
+-  );
+-}
+-
+ function getNameElement(): Element | null {
+   return (
+     document.querySelector('section[componentkey*="topcard"] h2') ||
+     document.querySelector('section[componentkey*="topcard"] h1') ||
+     document.querySelector("main h1") ||
+     document.querySelector("main h2") ||
+     document.querySelector("h1") ||
+     document.querySelector("h2")
+   );
+ }
+ 
+ function getTopCardRoot(nameEl: Element | null): Element | null {
+   if (!nameEl) {
+     return (
+       document.querySelector('section[componentkey*="topcard"]') ||
+       document.querySelector(".pv-top-card") ||
+       document.querySelector("main section:first-of-type") ||
+       document.querySelector("main")
+     );
+   }
+ 
+   return (
+     nameEl.closest('section[componentkey*="topcard"]') ||
+     nameEl.closest("section") ||
+     nameEl.parentElement
+@@ -267,26 +252,26 @@ function extractProfile():
+       error: "Could not extract the profile name from the page.",
+     };
+   }
+ 
+   const location = getLocation(topCard, name);
+   const experienceSection = findExperienceSection();
+   const currentExperience = getCurrentExperience(experienceSection);
+ 
+   return {
+     ok: true,
+     profile: {
+       name,
+       company: currentExperience.company,
+       title: currentExperience.title,
+       location,
+       profileUrl,
+     },
+   };
+ }
+ 
+ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+   if (message?.type === "EXTRACT_PROFILE") {
+     sendResponse(extractProfile());
+   }
+   return true;
+-});
+\ No newline at end of file
++});
+diff --git a/src/lib/google.ts b/src/lib/google.ts
+deleted file mode 100755
+index 9e121675261fc00e3d61c014a19ac3a2e1407f29..0000000000000000000000000000000000000000
+--- a/src/lib/google.ts
++++ /dev/null
+@@ -1,49 +0,0 @@
+-const BASE_DRIVE_URL = "https://www.googleapis.com/drive/v3/files";
+-const BASE_SHEETS_URL = "https://sheets.googleapis.com/v4/spreadsheets";
+-
+-export async function getAccessToken(): Promise<string> {
+-  return new Promise((resolve, reject) => {
+-    chrome.identity.getAuthToken({ interactive: true }, (token) => {
+-      if (chrome.runtime.lastError || !token) {
+-        reject(chrome.runtime.lastError);
+-      } else {
+-        resolve(token);
+-      }
+-    });
+-  });
+-}
+-
+-export interface Spreadsheet {
+-  id: string;
+-  name: string;
+-}
+-
+-export async function fetchSpreadsheets(): Promise<Spreadsheet[]> {
+-  const token = await getAccessToken();
+-
+-  const res = await fetch(
+-    `${BASE_DRIVE_URL}?q=mimeType='application/vnd.google-apps.spreadsheet'&fields=files(id,name)&pageSize=50`,
+-    {
+-      headers: {
+-        Authorization: `Bearer ${token}`,
+-      },
+-    }
+-  );
+-
+-  const data = await res.json();
+-  return data.files || [];
+-}
+-
+-export async function fetchSheets(spreadsheetId: string): Promise<string[]> {
+-  const token = await getAccessToken();
+-
+-  const res = await fetch(`${BASE_SHEETS_URL}/${spreadsheetId}`, {
+-    headers: {
+-      Authorization: `Bearer ${token}`,
+-    },
+-  });
+-
+-  const data = await res.json();
+-
+-  return data.sheets.map((s: any) => s.properties.title);
+-}
+\ No newline at end of file
+diff --git a/src/lib/storage.ts b/src/lib/storage.ts
+deleted file mode 100755
+index 1cbace1ea21e25cbda986c694cd416740f648c80..0000000000000000000000000000000000000000
+--- a/src/lib/storage.ts
++++ /dev/null
+@@ -1,33 +0,0 @@
+-export interface Selection {
+-  selectedSpreadsheetId: string;
+-  selectedSpreadsheetName: string;
+-  selectedSheetName: string;
+-}
+-
+-export async function saveSelection(selection: {
+-  id: string;
+-  name: string;
+-  sheetName: string;
+-}) {
+-  return chrome.storage.local.set({
+-    selectedSpreadsheetId: selection.id,
+-    selectedSpreadsheetName: selection.name,
+-    selectedSheetName: selection.sheetName,
+-  });
+-}
+-
+-export async function getSelection(): Promise<Partial<Selection>> {
+-  return chrome.storage.local.get([
+-    "selectedSpreadsheetId",
+-    "selectedSpreadsheetName",
+-    "selectedSheetName",
+-  ]);
+-}
+-
+-export async function clearSelection() {
+-  return chrome.storage.local.remove([
+-    "selectedSpreadsheetId",
+-    "selectedSpreadsheetName",
+-    "selectedSheetName",
+-  ]);
+-}
+\ No newline at end of file
+diff --git a/src/main.tsx b/src/main.tsx
+index 667e80dabc680156b7fd8cb738bae13b0661e153..9b67590a0691533907c66b9af18228a5e4310fd3 100755
+--- a/src/main.tsx
++++ b/src/main.tsx
+@@ -1,11 +1,10 @@
+-//
+ import React from "react";
+ import ReactDOM from "react-dom/client";
+ import App from "./App";
+ import "./index.css";
+ 
+ ReactDOM.createRoot(document.getElementById("root")!).render(
+   <React.StrictMode>
+     <App />
+   </React.StrictMode>
+-);
+\ No newline at end of file
++);
