@@ -96,21 +96,6 @@ function looksLikeDateOrDuration(value: string): boolean {
   );
 }
 
-function looksLikeWorkType(value: string): boolean {
-  const lower = value.toLowerCase();
-
-  return (
-    lower.includes("full-time") ||
-    lower.includes("part-time") ||
-    lower.includes("contract") ||
-    lower.includes("internship") ||
-    lower.includes("temporary") ||
-    lower.includes("tiempo completo") ||
-    lower.includes("medio tiempo") ||
-    lower.includes("jornada completa")
-  );
-}
-
 function getNameElement(): Element | null {
   return (
     document.querySelector('section[componentkey*="topcard"] h2') ||

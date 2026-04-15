@@ -221,10 +221,6 @@ function columnLetterToIndex(letter: string): number {
   return letter.toUpperCase().charCodeAt(0) - 65;
 }
 
-function columnLetterToRange(letter: string, row: number): string {
-  return `${letter.toUpperCase()}${row}`;
-}
-
 function getMaxColumnIndex(mapping: ColumnMapping): number {
   return Math.max(
     columnLetterToIndex(mapping.name),

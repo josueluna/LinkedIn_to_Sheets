@@ -38,7 +38,6 @@ type SpreadsheetItem = {
     id: string;
     name: string;
     url: string;
-    modifiedTime ? : string;
 };
 
 type StoredConfig = {
@@ -223,11 +222,6 @@ const pasteButtonLabel = useMemo(() => {
 function showError(message: string) {
     setFeedbackMessage(message);
     setFeedbackTone("error");
-}
-
-function showWarning(message: string) {
-    setFeedbackMessage(message);
-    setFeedbackTone("warning");
 }
 
 function clearFeedback() {
