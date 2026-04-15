@@ -1,6 +1,6 @@
 # LinkedIn to Sheets
 
-![Version](https://img.shields.io/badge/version-v0.1.i-blue)
+![Version](https://img.shields.io/badge/version-v0.1.8-blue)
 ![Status](https://img.shields.io/badge/status-beta-orange)
 ![Platform](https://img.shields.io/badge/platform-chrome-lightgrey)
 
