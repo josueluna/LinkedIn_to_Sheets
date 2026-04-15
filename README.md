@@ -1,8 +1,8 @@
 # LinkedIn to Sheets
 
-![Version](https://img.shields.io/badge/version-v0.1.8-informational)
+![Version](https://img.shields.io/badge/version-v0.1.8-critical)
 ![Status](https://img.shields.io/badge/status-beta-orange)
-![Platform](https://img.shields.io/badge/platform-chrome-lightgrey)
+![Platform](https://img.shields.io/badge/platform-chrome-success)
 
 Save LinkedIn profiles directly into Google Sheets in seconds.
 
