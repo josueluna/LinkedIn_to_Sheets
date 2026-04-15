@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
 - Prevented invalid duplicate-column mappings
 
 ### 🎨 UI Improvements
+- Kept popup height stable across connected and disconnected states
+- Improved disconnected state layout by anchoring footer content and centering the connect action more cleanly
 - Added column mapping settings view
 - Refined column mapping layout and controls
 - Added custom mapping status indicator in the destination section
