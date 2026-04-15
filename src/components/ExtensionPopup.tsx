@@ -48,13 +48,65 @@ type StoredConfig = {
     spreadsheetUrl?: string;
     sheetName?: string;
     columnMapping?: {
-        name: string;
-        company: string;
-        title: string;
-        location: string;
-        profileUrl: string;
+        name: { enabled: boolean; column: string };
+        company: { enabled: boolean; column: string };
+        title: { enabled: boolean; column: string };
+        location: { enabled: boolean; column: string };
+        profileUrl: { enabled: boolean; column: string };
     };
 };
+
+function normalizeColumnMapping(raw: any) {
+    if (!raw) {
+        return {
+            name: { enabled: true, column: "B" },
+            company: { enabled: true, column: "C" },
+            title: { enabled: true, column: "D" },
+            location: { enabled: true, column: "E" },
+            profileUrl: { enabled: true, column: "F" },
+        };
+    }
+
+    const isLegacy =
+        typeof raw.name === "string" ||
+        typeof raw.company === "string" ||
+        typeof raw.title === "string" ||
+        typeof raw.location === "string" ||
+        typeof raw.profileUrl === "string";
+
+    if (isLegacy) {
+        return {
+            name: { enabled: true, column: raw.name ?? "B" },
+            company: { enabled: true, column: raw.company ?? "C" },
+            title: { enabled: true, column: raw.title ?? "D" },
+            location: { enabled: true, column: raw.location ?? "E" },
+            profileUrl: { enabled: true, column: raw.profileUrl ?? "F" },
+        };
+    }
+
+    return {
+        name: {
+            enabled: raw.name?.enabled ?? true,
+            column: raw.name?.column ?? "B",
+        },
+        company: {
+            enabled: raw.company?.enabled ?? true,
+            column: raw.company?.column ?? "C",
+        },
+        title: {
+            enabled: raw.title?.enabled ?? true,
+            column: raw.title?.column ?? "D",
+        },
+        location: {
+            enabled: raw.location?.enabled ?? true,
+            column: raw.location?.column ?? "E",
+        },
+        profileUrl: {
+            enabled: raw.profileUrl?.enabled ?? true,
+            column: raw.profileUrl?.column ?? "F",
+        },
+    };
+}
 
 export default function ExtensionPopup() {
     const [connectionStatus, setConnectionStatus] =
@@ -73,8 +125,8 @@ export default function ExtensionPopup() {
     const [allSpreadsheets, setAllSpreadsheets] = useState < SpreadsheetItem[] > ([]);
     const [availableTabs, setAvailableTabs] = useState < string[] > ([]);
     const [availableHeaders, setAvailableHeaders] = useState<
-  { column: string; header: string }[]
->([]);
+    { column: string; header: string }[]
+    >([]);
 
     const [sheetPickerOpen, setSheetPickerOpen] = useState(false);
     const [tabPickerOpen, setTabPickerOpen] = useState(false);
@@ -97,11 +149,11 @@ export default function ExtensionPopup() {
     const [showColumnMapping, setShowColumnMapping] = useState(false);
 
     const defaultColumnMapping = {
-        name: "B",
-        company: "C",
-        title: "D",
-        location: "E",
-        profileUrl: "F",
+        name: { enabled: true, column: "B" },
+        company: { enabled: true, column: "C" },
+        title: { enabled: true, column: "D" },
+        location: { enabled: true, column: "E" },
+        profileUrl: { enabled: true, column: "F" },
     };
 
     const [columnMapping, setColumnMapping] = useState(defaultColumnMapping);
@@ -128,14 +180,22 @@ export default function ExtensionPopup() {
         );
 }, [allSpreadsheets, searchQuery]);
 
-  const mappedColumns = Object.values(columnMapping);
+  const mappedColumns = Object.values(columnMapping)
+  .filter((field) => field.enabled)
+  .map((field) => field.column);
+
   const hasDuplicateColumns = new Set(mappedColumns).size !== mappedColumns.length;
   const hasCustomColumnMapping =
-  columnMapping.name !== defaultColumnMapping.name ||
-  columnMapping.company !== defaultColumnMapping.company ||
-  columnMapping.title !== defaultColumnMapping.title ||
-  columnMapping.location !== defaultColumnMapping.location ||
-  columnMapping.profileUrl !== defaultColumnMapping.profileUrl;
+  columnMapping.name.enabled !== defaultColumnMapping.name.enabled ||
+  columnMapping.name.column !== defaultColumnMapping.name.column ||
+  columnMapping.company.enabled !== defaultColumnMapping.company.enabled ||
+  columnMapping.company.column !== defaultColumnMapping.company.column ||
+  columnMapping.title.enabled !== defaultColumnMapping.title.enabled ||
+  columnMapping.title.column !== defaultColumnMapping.title.column ||
+  columnMapping.location.enabled !== defaultColumnMapping.location.enabled ||
+  columnMapping.location.column !== defaultColumnMapping.location.column ||
+  columnMapping.profileUrl.enabled !== defaultColumnMapping.profileUrl.enabled ||
+  columnMapping.profileUrl.column !== defaultColumnMapping.profileUrl.column;
   const canPaste =
   isConnected &&
   !!profile &&
@@ -228,7 +288,7 @@ async function hydrate() {
     setSpreadsheetUrl(data.spreadsheetUrl ?? "");
     setSelectedTab(data.sheetName ?? "");
     setSearchQuery("");
-    setColumnMapping(data.columnMapping ?? defaultColumnMapping);
+    setColumnMapping(normalizeColumnMapping(data.columnMapping));
 
     if (connected) {
         await Promise.all([loadCurrentProfile(false), loadSpreadsheets(true)]);
@@ -239,16 +299,16 @@ async function hydrate() {
     }
 
     if (data.spreadsheetId) {
-    await loadTabs(data.spreadsheetId);
-} else {
-    setAvailableTabs([]);
-}
+        await loadTabs(data.spreadsheetId);
+    } else {
+        setAvailableTabs([]);
+    }
 
-if (data.spreadsheetId && data.sheetName) {
-    await loadHeaders(data.spreadsheetId, data.sheetName);
-} else {
-    setAvailableHeaders([]);
-}
+    if (data.spreadsheetId && data.sheetName) {
+        await loadHeaders(data.spreadsheetId, data.sheetName);
+    } else {
+        setAvailableHeaders([]);
+    }
 }
 
 async function loadHeaders(spreadsheetId: string, sheetName: string) {
@@ -554,95 +614,113 @@ setTimeout(() => {
 return (
   <div className="w-[380px] bg-background text-foreground">
   {showColumnMapping ? (
-  <div className="px-4 py-4 space-y-4">
-    <div className="flex items-center justify-between">
+      <div className="px-4 py-4 space-y-4">
+      <div className="flex items-center justify-between">
       <div>
-        <div className="flex items-center gap-1.5">
-          <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
-          <h2 className="text-sm font-semibold text-[#434343]">
-            Column Mapping
-          </h2>
-        </div>
-        <p className="text-[11px] text-[#434343]">
-          Choose which column receives each LinkedIn field
-        </p>
+      <div className="flex items-center gap-1.5">
+      <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
+      <h2 className="text-sm font-semibold text-[#434343]">
+      Column Mapping
+      </h2>
+      </div>
+      <p className="text-[11px] text-[#434343]">
+      Choose which column receives each LinkedIn field
+      </p>
       </div>
 
       <Button
-        size="sm"
-        className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
-        onClick={() => setShowColumnMapping(false)}
+      size="sm"
+      className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
+      onClick={() => setShowColumnMapping(false)}
       >
-        ← Back
+      ← Back
       </Button>
-    </div>
+      </div>
 
-    <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
+      <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
       <div className="rounded-lg border border-input bg-card overflow-hidden">
-        {mappingFields.map((field) => {
+      {mappingFields.map((field) => {
           const Icon = field.icon;
           const isDuplicate =
-            mappedColumns.filter((col) => col === columnMapping[field.key]).length > 1;
+  columnMapping[field.key].enabled &&
+  mappedColumns.filter((col) => col === columnMapping[field.key].column).length > 1;
 
           return (
             <div
-              key={field.key}
-              className={`flex items-center justify-between gap-3 px-3 py-3 ${
-  isDuplicate ? "bg-amber-500/5" : ""
-}`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                <span className="text-xs text-[#434343]">{field.label}</span>
-              </div>
+            key={field.key}
+            className={`flex items-center justify-between gap-3 px-3 py-3 ${
+              isDuplicate ? "bg-amber-500/5" : ""
+          }`}
+          >
+          <div className="flex items-center gap-2 min-w-0">
+  <input
+    type="checkbox"
+    checked={columnMapping[field.key].enabled}
+    onChange={(e) =>
+      setColumnMapping((prev) => ({
+        ...prev,
+        [field.key]: {
+          ...prev[field.key],
+          enabled: e.target.checked,
+        },
+      }))
+    }
+    className="h-3.5 w-3.5 accent-primary"
+  />
+  <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+  <span className="text-xs text-[#434343]">{field.label}</span>
+</div>
 
-              <select
-                value={columnMapping[field.key]}
-                onChange={(e) =>
-                  setColumnMapping((prev) => ({
-                    ...prev,
-                    [field.key]: e.target.value,
-                  }))
-                }
-                className={`h-8 w-[180px] rounded-md border bg-background pl-2 pr-7 text-xs text-[#434343] outline-none truncate ${
-                  isDuplicate ? "border-amber-500/40" : "border-input"
-                }`}
-              >
-                {(availableHeaders.length
-                  ? availableHeaders
-                  : columnOptions.map((col) => ({ column: col, header: "" }))
-                ).map((item) => (
-                  <option key={item.column} value={item.column}>
-                    {item.header ? `${item.column} : ${item.header}` : item.column}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <select
+          value={columnMapping[field.key].column}
+          onChange={(e) =>
+          setColumnMapping((prev) => ({
+            ...prev,
+            [field.key]: {
+              ...prev[field.key],
+              column: e.target.value,
+          },
+      }))
+      }
+      className={`h-8 w-[180px] rounded-md border bg-background pl-2 pr-7 text-xs text-[#434343] outline-none truncate ${
+          isDuplicate ? "border-amber-500/40" : "border-input"
+      }`}
+      >
+      {(availableHeaders.length
+          ? availableHeaders
+          : columnOptions.map((col) => ({ column: col, header: "" }))
+          ).map((item) => (
+              <option key={item.column} value={item.column}>
+              {item.header ? `${item.column} : ${item.header}` : item.column}
+              </option>
+              ))}
+          </select>
+          </div>
           );
-        })}
+      })}
       </div>
 
       <div className="flex justify-between gap-2 pt-1">
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 text-xs text-[#434343]"
-          onClick={() => setColumnMapping(defaultColumnMapping)}
-        >
-          Reset to Default
-        </Button>
+      <Button
+      variant="outline"
+      size="sm"
+      className="h-8 text-xs text-[#434343]"
+      onClick={() => setColumnMapping(defaultColumnMapping)}
+      >
+      Reset to Default
+      </Button>
 
-        <Button
-          size="sm"
-          className="h-8 text-xs"
-          onClick={() => void handleSaveColumnMapping()}
-          disabled={hasDuplicateColumns}
-        >
-          Done
-        </Button>
+      <Button
+      size="sm"
+      className="h-8 text-xs"
+      onClick={() => void handleSaveColumnMapping()}
+      disabled={hasDuplicateColumns}
+      >
+      Done
+      </Button>
       </div>
-    </div>
-  </div>
+      </div>
+      </div>
 
       ) : appState === "success" ? (
       <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
@@ -938,24 +1016,24 @@ return (
 
 {/* SUMMARY */}
     {spreadsheetName && selectedTab && (
-  <div className="space-y-1">
-    <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+      <div className="space-y-1">
+      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
       <Check className="w-3 h-3 text-primary shrink-0" />
       <span className="text-[10px] text-foreground truncate">
-        {spreadsheetName} → {selectedTab}
+      {spreadsheetName} → {selectedTab}
       </span>
-    </div>
+      </div>
 
-    {hasCustomColumnMapping && (
-      <div className="flex justify-end">
-        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+      {hasCustomColumnMapping && (
+          <div className="flex justify-end">
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
           <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
           <span>Custom Column Mapping active</span>
-        </div>
+          </div>
+          </div>
+          )}
       </div>
-    )}
-  </div>
-)}
+      )}
     </div>
     </section>
     )}
