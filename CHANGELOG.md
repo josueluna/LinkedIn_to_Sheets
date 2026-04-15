@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v0.1.8
+### ✨ Features
+- Added field toggles to column mapping
+- Allowed users to enable or disable Name, Company, Title, and Location fields
+- Kept Profile URL required for duplicate detection while allowing custom column selection
+
+### 🔄 Changes
+- Added backward compatibility for legacy column mapping configurations
+
+### 🎨 UI Improvements
+- Kept popup height stable across connected and disconnected states
+- Improved disconnected-state layout with a more balanced connect flow
+---
+
 ## v0.1.7
 ### ✨ Features
 - Added custom column mapping for LinkedIn fields
