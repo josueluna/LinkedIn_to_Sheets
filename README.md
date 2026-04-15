@@ -12,40 +12,43 @@ Built for recruiters and sourcing professionals who want a faster, cleaner way t
 
 ## 🚀 Key Features
 
-- One-click LinkedIn profile extraction
-- Direct save into Google Sheets
-- Spreadsheet and tab selection
-- Custom column mapping
-- Sheet header preview inside column mapping
-- Duplicate detection by LinkedIn profile URL
-- Clean and simple workflow
+- One-click LinkedIn profile extraction  
+- Direct save into Google Sheets  
+- Spreadsheet and tab selection  
+- Custom column mapping  
+- Field toggles for optional data capture  
+- Duplicate detection (by profile URL)  
+- Clean and simple workflow  
 - Secure Google OAuth integration
 
 ---
 
 ## ⚡ How it works
 
-1. Open any LinkedIn profile
-2. Click the extension
-3. Connect your Google account
-4. Select your Google Sheet and tab
-5. Optionally adjust **Column Mapping**
+1. Open any LinkedIn profile  
+2. Click the extension  
+3. Connect your Google account  
+4. Select your Google Sheet and tab  
+5. Optionally configure which fields to capture and where to place them  
 6. Click **"Paste Current Profile"**
 
-Done. The profile is instantly saved into your selected spreadsheet.
+Done. The profile is instantly saved.
 
 ---
 
 ## 📊 Data captured
 
-The extension extracts publicly available data:
+The extension extracts publicly available data from LinkedIn profiles:
 
-- Name
-- Current company
-- Current position
-- Location
-- Profile URL
+- Name  
+- Current company  
+- Current position  
+- Location  
+- Profile URL  
 
+Name, Company, Title, and Location can be enabled or disabled in the column mapping settings.
+
+Profile URL is always required because it is used for duplicate detection.
 ---
 
 ## 🧭 Column Mapping
@@ -78,13 +81,13 @@ Use the ready-to-use Google Sheets template:
 
 👉 https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy
 
+The template is recommended, but column placement can be customized inside the extension.
+
 Recommended structure:
 
 | A | B    | C       | D     | E        | F   |
-|---|------|---------|-------|----------|-----|
+|---|------|--------|------|----------|-----|
 | # | Name | Company | Title | Location | URL |
-
-You can also use your own spreadsheet structure by configuring the column mapping.
 
 ---
 
