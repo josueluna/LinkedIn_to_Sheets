@@ -6,21 +6,68 @@ type LinkedinProfile = {
   profileUrl: string;
 };
 
-const defaultColumnMapping: ColumnMapping = {
-  name: "B",
-  company: "C",
-  title: "D",
-  location: "E",
-  profileUrl: "F",
+type ColumnMapping = {
+  name: { enabled: boolean; column: string };
+  company: { enabled: boolean; column: string };
+  title: { enabled: boolean; column: string };
+  location: { enabled: boolean; column: string };
+  profileUrl: { enabled: boolean; column: string };
 };
 
-type ColumnMapping = {
-  name: string;
-  company: string;
-  title: string;
-  location: string;
-  profileUrl: string;
+const defaultColumnMapping: ColumnMapping = {
+  name: { enabled: true, column: "B" },
+  company: { enabled: true, column: "C" },
+  title: { enabled: true, column: "D" },
+  location: { enabled: true, column: "E" },
+  profileUrl: { enabled: true, column: "F" },
 };
+
+function normalizeColumnMapping(raw: any): ColumnMapping {
+  if (!raw) {
+    return defaultColumnMapping;
+  }
+
+  const isLegacy =
+    typeof raw.name === "string" ||
+    typeof raw.company === "string" ||
+    typeof raw.title === "string" ||
+    typeof raw.location === "string" ||
+    typeof raw.profileUrl === "string";
+
+  if (isLegacy) {
+    return {
+      name: { enabled: true, column: raw.name ?? "B" },
+      company: { enabled: true, column: raw.company ?? "C" },
+      title: { enabled: true, column: raw.title ?? "D" },
+      location: { enabled: true, column: raw.location ?? "E" },
+      profileUrl: { enabled: true, column: raw.profileUrl ?? "F" },
+    };
+  }
+
+  return {
+    name: {
+      enabled: raw.name?.enabled ?? true,
+      column: raw.name?.column ?? "B",
+    },
+    company: {
+      enabled: raw.company?.enabled ?? true,
+      column: raw.company?.column ?? "C",
+    },
+    title: {
+      enabled: raw.title?.enabled ?? true,
+      column: raw.title?.column ?? "D",
+    },
+    location: {
+      enabled: raw.location?.enabled ?? true,
+      column: raw.location?.column ?? "E",
+    },
+    profileUrl: {
+      enabled: true,
+      column: raw.profileUrl?.column ?? "F",
+    },
+  };
+}
+
 // --------------------
 // TAB / LINKEDIN
 // --------------------
@@ -226,13 +273,15 @@ function columnLetterToRange(letter: string, row: number): string {
 }
 
 function getMaxColumnIndex(mapping: ColumnMapping): number {
-  return Math.max(
-    columnLetterToIndex(mapping.name),
-    columnLetterToIndex(mapping.company),
-    columnLetterToIndex(mapping.title),
-    columnLetterToIndex(mapping.location),
-    columnLetterToIndex(mapping.profileUrl)
-    );
+  const enabledColumns = Object.values(mapping)
+    .filter((field) => field.enabled)
+    .map((field) => columnLetterToIndex(field.column));
+
+  if (enabledColumns.length === 0) {
+    return columnLetterToIndex(defaultColumnMapping.profileUrl.column);
+  }
+
+  return Math.max(...enabledColumns);
 }
 
 async function appendProfileToSheet(
@@ -240,41 +289,41 @@ async function appendProfileToSheet(
   sheetName: string,
   profile: LinkedinProfile,
   columnMapping: ColumnMapping = defaultColumnMapping
-  ) {
+) {
+  const normalizedMapping = normalizeColumnMapping(columnMapping);
   const token = await getGoogleAuthTokenSafe();
 
- // 🔍 1. Buscar duplicados en la columna configurada para Profile URL
-  const profileUrlColumn = columnMapping.profileUrl.toUpperCase();
-const duplicateCheckColumns = Array.from(
-  new Set([profileUrlColumn, "F"])
-);
+  // 🔍 1. Buscar duplicados en la columna configurada para Profile URL
+  const duplicateCheckColumns = normalizedMapping.profileUrl.enabled
+    ? Array.from(new Set([normalizedMapping.profileUrl.column.toUpperCase(), "F"]))
+    : ["F"];
 
-for (const column of duplicateCheckColumns) {
-  const checkRange = `${sheetName}!${column}2:${column}`;
+  for (const column of duplicateCheckColumns) {
+    const checkRange = `${sheetName}!${column}2:${column}`;
 
-  const checkRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(checkRange)}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+    const checkRes = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(checkRange)}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-  const checkData = await checkRes.json();
-  const existingRows = Array.isArray(checkData.values) ? checkData.values : [];
+    const checkData = await checkRes.json();
+    const existingRows = Array.isArray(checkData.values) ? checkData.values : [];
 
-  for (let i = 0; i < existingRows.length; i++) {
-    const value = existingRows[i]?.[0];
-    if (value === profile.profileUrl) {
-      return {
-        duplicate: true,
-        row: i + 2,
-      };
+    for (let i = 0; i < existingRows.length; i++) {
+      const value = existingRows[i]?.[0];
+      if (value === profile.profileUrl) {
+        return {
+          duplicate: true,
+          row: i + 2,
+        };
+      }
     }
   }
-}
 
   // 🔢 2. Encontrar siguiente fila disponible usando la columna más a la derecha del mapping
-  const maxColumnLetter = String.fromCharCode(65 + getMaxColumnIndex(columnMapping));
+  const maxColumnLetter = String.fromCharCode(65 + getMaxColumnIndex(normalizedMapping));
   const readRange = `${sheetName}!A2:${maxColumnLetter}`;
 
   const readRes = await fetch(
@@ -290,14 +339,28 @@ for (const column of duplicateCheckColumns) {
   const nextRow = rows.length + 2;
 
 // ✍️ 3. Escribir en las columnas configuradas
-  const maxColumnIndex = getMaxColumnIndex(columnMapping);
+  const maxColumnIndex = getMaxColumnIndex(normalizedMapping);
   const rowValues = new Array(maxColumnIndex + 1).fill("");
 
-  rowValues[columnLetterToIndex(columnMapping.name)] = profile.name;
-  rowValues[columnLetterToIndex(columnMapping.company)] = profile.company;
-  rowValues[columnLetterToIndex(columnMapping.title)] = profile.title;
-  rowValues[columnLetterToIndex(columnMapping.location)] = profile.location;
-  rowValues[columnLetterToIndex(columnMapping.profileUrl)] = profile.profileUrl;
+    if (normalizedMapping.name.enabled) {
+      rowValues[columnLetterToIndex(normalizedMapping.name.column)] = profile.name;
+    }
+
+    if (normalizedMapping.company.enabled) {
+      rowValues[columnLetterToIndex(normalizedMapping.company.column)] = profile.company;
+    }
+
+    if (normalizedMapping.title.enabled) {
+      rowValues[columnLetterToIndex(normalizedMapping.title.column)] = profile.title;
+    }
+
+    if (normalizedMapping.location.enabled) {
+      rowValues[columnLetterToIndex(normalizedMapping.location.column)] = profile.location;
+    }
+
+    if (normalizedMapping.profileUrl.enabled) {
+      rowValues[columnLetterToIndex(normalizedMapping.profileUrl.column)] = profile.profileUrl;
+}
 
   const writeRange = `${sheetName}!A${nextRow}:${String.fromCharCode(65 + maxColumnIndex)}${nextRow}`;
 

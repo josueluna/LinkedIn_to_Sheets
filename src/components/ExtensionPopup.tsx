@@ -102,7 +102,7 @@ function normalizeColumnMapping(raw: any) {
             column: raw.location?.column ?? "E",
         },
         profileUrl: {
-            enabled: raw.profileUrl?.enabled ?? true,
+            enabled: true,
             column: raw.profileUrl?.column ?? "F",
         },
     };
@@ -654,38 +654,47 @@ return (
           >
           <div className="flex items-center gap-2 min-w-0">
   <input
-    type="checkbox"
-    checked={columnMapping[field.key].enabled}
-    onChange={(e) =>
-      setColumnMapping((prev) => ({
-        ...prev,
-        [field.key]: {
-          ...prev[field.key],
-          enabled: e.target.checked,
-        },
-      }))
-    }
-    className="h-3.5 w-3.5 accent-primary"
-  />
+  type="checkbox"
+  checked={columnMapping[field.key].enabled}
+  disabled={field.key === "profileUrl"}
+  onChange={(e) =>
+    setColumnMapping((prev) => ({
+      ...prev,
+      [field.key]: {
+        ...prev[field.key],
+        enabled: e.target.checked,
+      },
+    }))
+  }
+  className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
+/>
   <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
   <span className="text-xs text-[#434343]">{field.label}</span>
+  {field.key === "profileUrl" && (
+  <span className="text-[10px] text-muted-foreground">Required</span>
+)}
 </div>
 
           <select
-          value={columnMapping[field.key].column}
-          onChange={(e) =>
-          setColumnMapping((prev) => ({
-            ...prev,
-            [field.key]: {
-              ...prev[field.key],
-              column: e.target.value,
-          },
-      }))
-      }
-      className={`h-8 w-[180px] rounded-md border bg-background pl-2 pr-7 text-xs text-[#434343] outline-none truncate ${
-          isDuplicate ? "border-amber-500/40" : "border-input"
-      }`}
-      >
+  value={columnMapping[field.key].column}
+  onChange={(e) =>
+    setColumnMapping((prev) => ({
+      ...prev,
+      [field.key]: {
+        ...prev[field.key],
+        column: e.target.value,
+      },
+    }))
+  }
+  disabled={!columnMapping[field.key].enabled}
+  className={`h-8 w-[160px] rounded-md border pl-2 pr-7 text-xs outline-none truncate ${
+    !columnMapping[field.key].enabled
+      ? "border-input bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+      : isDuplicate
+      ? "border-amber-500/40 bg-background text-[#434343]"
+      : "border-input bg-background text-[#434343]"
+  }`}
+>
       {(availableHeaders.length
           ? availableHeaders
           : columnOptions.map((col) => ({ column: col, header: "" }))
