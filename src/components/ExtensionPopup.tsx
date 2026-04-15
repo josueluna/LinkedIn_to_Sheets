@@ -56,6 +56,14 @@ type StoredConfig = {
     };
 };
 
+type ColumnMapping = {
+    name: { enabled: boolean; column: string };
+    company: { enabled: boolean; column: string };
+    title: { enabled: boolean; column: string };
+    location: { enabled: boolean; column: string };
+    profileUrl: { enabled: boolean; column: string };
+};
+
 function normalizeColumnMapping(raw: any) {
     if (!raw) {
         return {
@@ -108,14 +116,285 @@ function normalizeColumnMapping(raw: any) {
     };
 }
 
+function useAutoClearingFeedback() {
+    const [feedbackMessage, setFeedbackMessage] = useState("");
+    const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>("");
+
+    function showError(message: string) {
+        setFeedbackMessage(message);
+        setFeedbackTone("error");
+    }
+
+    function clearFeedback() {
+        setFeedbackMessage("");
+        setFeedbackTone("");
+    }
+
+    useEffect(() => {
+        if (!feedbackMessage) return;
+
+        const timeout = window.setTimeout(() => {
+            clearFeedback();
+        }, 3000);
+
+        return () => window.clearTimeout(timeout);
+    }, [feedbackMessage]);
+
+    return {
+        feedbackMessage,
+        feedbackTone,
+        showError,
+        clearFeedback,
+    };
+}
+
+function usePopupToast() {
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<"success" | "error" | "warning">("warning");
+
+    function showToast(message: string, type: "success" | "error" | "warning") {
+        setToastMessage(message);
+        setToastType(type);
+    }
+
+    return {
+        toastMessage,
+        toastType,
+        setToastMessage,
+        setToastType,
+        showToast,
+    };
+}
+
+function FeedbackBanner({
+    feedbackMessage,
+    feedbackTone,
+}: {
+    feedbackMessage: string;
+    feedbackTone: FeedbackTone;
+}) {
+    if (!feedbackMessage) return null;
+
+    return (
+        <div
+            className={
+                feedbackTone === "error"
+                    ? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
+                    : feedbackTone === "warning"
+                        ? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
+                        : "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
+            }
+        >
+            {feedbackTone === "error" ? (
+                <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
+            ) : feedbackTone === "warning" ? (
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            ) : (
+                <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+            )}
+            <span
+                className={
+                    feedbackTone === "error"
+                        ? "text-[11px] text-destructive font-medium"
+                        : feedbackTone === "warning"
+                            ? "text-[11px] text-amber-700 font-medium"
+                            : "text-[11px] text-success font-medium"
+                }
+            >
+                {feedbackMessage}
+            </span>
+        </div>
+    );
+}
+
+function SuccessState({
+    profileName,
+    spreadsheetName,
+    selectedTab,
+}: {
+    profileName?: string;
+    spreadsheetName: string;
+    selectedTab: string;
+}) {
+    return (
+        <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-success" />
+            </div>
+            <div className="space-y-1">
+                <h2 className="text-sm font-semibold text-foreground">
+                    Profile Pasted
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                    <b>{profileName || "This profile"}</b> was pasted into
+                    <br />
+                    <b>
+                        {spreadsheetName
+                            ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
+                            : "your spreadsheet"}
+                    </b>
+                    .
+                </p>
+            </div>
+        </div>
+    );
+}
+
+function ColumnMappingPanel({
+    mappingFields,
+    columnMapping,
+    mappedColumns,
+    availableHeaders,
+    columnOptions,
+    hasDuplicateColumns,
+    setColumnMapping,
+    onBack,
+    onReset,
+    onSave,
+}: {
+    mappingFields: readonly { key: keyof ColumnMapping; label: string; icon: any }[];
+    columnMapping: ColumnMapping;
+    mappedColumns: string[];
+    availableHeaders: { column: string; header: string }[];
+    columnOptions: string[];
+    hasDuplicateColumns: boolean;
+    setColumnMapping: React.Dispatch<React.SetStateAction<ColumnMapping>>;
+    onBack: () => void;
+    onReset: () => void;
+    onSave: () => void;
+}) {
+    return (
+        <div className="px-4 py-4 space-y-4">
+            <div className="flex items-center justify-between">
+                <div>
+                    <div className="flex items-center gap-1.5">
+                        <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
+                        <h2 className="text-sm font-semibold text-[#434343]">
+                            Column Mapping
+                        </h2>
+                    </div>
+                    <p className="text-[11px] text-[#434343]">
+                        Choose which column receives each LinkedIn field
+                    </p>
+                </div>
+
+                <Button
+                    size="sm"
+                    className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
+                    onClick={onBack}
+                >
+                    ← Back
+                </Button>
+            </div>
+
+            <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
+                <div className="rounded-lg border border-input bg-card overflow-hidden">
+                    {mappingFields.map((field) => {
+                        const Icon = field.icon;
+                        const isDuplicate =
+                            columnMapping[field.key].enabled &&
+                            mappedColumns.filter((col) => col === columnMapping[field.key].column).length > 1;
+
+                        return (
+                            <div
+                                key={field.key}
+                                className={`flex items-center justify-between gap-3 px-3 py-3 ${
+                                    isDuplicate ? "bg-amber-500/5" : ""
+                                }`}
+                            >
+                                <div className="flex items-center gap-2 min-w-0">
+                                    <input
+                                        type="checkbox"
+                                        checked={columnMapping[field.key].enabled}
+                                        disabled={field.key === "profileUrl"}
+                                        onChange={(e) =>
+                                            setColumnMapping((prev) => ({
+                                                ...prev,
+                                                [field.key]: {
+                                                    ...prev[field.key],
+                                                    enabled: e.target.checked,
+                                                },
+                                            }))
+                                        }
+                                        className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
+                                    />
+                                    <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                    <span className="text-xs text-[#434343]">{field.label}</span>
+                                    {field.key === "profileUrl" && (
+                                        <span className="text-[10px] text-muted-foreground">Required</span>
+                                    )}
+                                </div>
+
+                                <select
+                                    value={columnMapping[field.key].column}
+                                    onChange={(e) =>
+                                        setColumnMapping((prev) => ({
+                                            ...prev,
+                                            [field.key]: {
+                                                ...prev[field.key],
+                                                column: e.target.value,
+                                            },
+                                        }))
+                                    }
+                                    disabled={!columnMapping[field.key].enabled}
+                                    className={`h-8 w-[160px] rounded-md border pl-2 pr-7 text-xs outline-none truncate ${
+                                        !columnMapping[field.key].enabled
+                                            ? "border-input bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                                            : isDuplicate
+                                                ? "border-amber-500/40 bg-background text-[#434343]"
+                                                : "border-input bg-background text-[#434343]"
+                                    }`}
+                                >
+                                    {(availableHeaders.length
+                                        ? availableHeaders
+                                        : columnOptions.map((col) => ({ column: col, header: "" }))
+                                    ).map((item) => (
+                                        <option key={item.column} value={item.column}>
+                                            {item.header ? `${item.column} : ${item.header}` : item.column}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                <div className="flex justify-between gap-2 pt-1">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs text-[#434343]"
+                        onClick={onReset}
+                    >
+                        Reset to Default
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        className="h-8 text-xs"
+                        onClick={onSave}
+                        disabled={hasDuplicateColumns}
+                    >
+                        Done
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function ExtensionPopup() {
     const [connectionStatus, setConnectionStatus] =
     useState < ConnectionStatus > ("disconnected");
     const [appState, setAppState] = useState < AppState > ("empty");
 
     const [profile, setProfile] = useState < LinkedinProfile | null > (null);
-    const [feedbackMessage, setFeedbackMessage] = useState("");
-    const [feedbackTone, setFeedbackTone] = useState < FeedbackTone > ("");
+    const {
+        feedbackMessage,
+        feedbackTone,
+        showError,
+        clearFeedback,
+    } = useAutoClearingFeedback();
 
     const [spreadsheetId, setSpreadsheetId] = useState("");
     const [spreadsheetName, setSpreadsheetName] = useState("");
@@ -139,16 +418,17 @@ export default function ExtensionPopup() {
     const [isDisconnectHover, setIsDisconnectHover] = useState(false);
     const [isDisconnecting, setIsDisconnecting] = useState(false);
 
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastType, setToastType] = useState<"success" | "error" | "warning">("warning");
-    function showToast(message: string, type: "success" | "error" | "warning") {
-        setToastMessage(message);
-        setToastType(type);
-    }
+    const {
+        toastMessage,
+        toastType,
+        setToastMessage,
+        setToastType,
+        showToast,
+    } = usePopupToast();
 
     const [showColumnMapping, setShowColumnMapping] = useState(false);
 
-    const defaultColumnMapping = {
+    const defaultColumnMapping: ColumnMapping = {
         name: { enabled: true, column: "B" },
         company: { enabled: true, column: "C" },
         title: { enabled: true, column: "D" },
@@ -156,7 +436,7 @@ export default function ExtensionPopup() {
         profileUrl: { enabled: true, column: "F" },
     };
 
-    const [columnMapping, setColumnMapping] = useState(defaultColumnMapping);
+    const [columnMapping, setColumnMapping] = useState<ColumnMapping>(defaultColumnMapping);
 
     const isConnected = connectionStatus === "connected";
 
@@ -220,31 +500,6 @@ const pasteButtonLabel = useMemo(() => {
     if (appState === "saving") return "Pasting...";
     return "Paste Current Profile";
 }, [appState]);
-function showError(message: string) {
-    setFeedbackMessage(message);
-    setFeedbackTone("error");
-}
-
-function showWarning(message: string) {
-    setFeedbackMessage(message);
-    setFeedbackTone("warning");
-}
-
-function clearFeedback() {
-    setFeedbackMessage("");
-    setFeedbackTone("");
-}
-
-useEffect(() => {
-    if (!feedbackMessage) return;
-
-    const timeout = window.setTimeout(() => {
-        clearFeedback();
-    }, 3000);
-
-    return () => window.clearTimeout(timeout);
-}, [feedbackMessage]);
-
 useEffect(() => {
     void hydrate();
 
@@ -614,144 +869,25 @@ setTimeout(() => {
 return (
   <div className="w-[380px] h-[582px] bg-background text-foreground overflow-hidden">
       {showColumnMapping ? (
-          <div className="px-4 py-4 space-y-4">
-              <div className="flex items-center justify-between">
-                  <div>
-                      <div className="flex items-center gap-1.5">
-                          <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
-                          <h2 className="text-sm font-semibold text-[#434343]">
-                              Column Mapping
-                          </h2>
-                      </div>
-                      <p className="text-[11px] text-[#434343]">
-                          Choose which column receives each LinkedIn field
-                      </p>
-                  </div>
-
-                  <Button
-                      size="sm"
-                      className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
-                      onClick={() => setShowColumnMapping(false)}
-                  >
-                      ← Back
-                  </Button>
-              </div>
-
-              <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
-                  <div className="rounded-lg border border-input bg-card overflow-hidden">
-                      {mappingFields.map((field) => {
-                          const Icon = field.icon;
-                          const isDuplicate =
-                          columnMapping[field.key].enabled &&
-                          mappedColumns.filter((col) => col === columnMapping[field.key].column).length > 1;
-
-                          return (
-                            <div
-                                key={field.key}
-                                className={`flex items-center justify-between gap-3 px-3 py-3 ${
-                                  isDuplicate ? "bg-amber-500/5" : ""
-                              }`}
-                          >
-                              <div className="flex items-center gap-2 min-w-0">
-                                  <input
-                                      type="checkbox"
-                                      checked={columnMapping[field.key].enabled}
-                                      disabled={field.key === "profileUrl"}
-                                      onChange={(e) =>
-                                      setColumnMapping((prev) => ({
-                                          ...prev,
-                                          [field.key]: {
-                                            ...prev[field.key],
-                                            enabled: e.target.checked,
-                                        },
-                                    }))
-                                  }
-                                  className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
-                              />
-                              <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                              <span className="text-xs text-[#434343]">{field.label}</span>
-                              {field.key === "profileUrl" && (
-                                  <span className="text-[10px] text-muted-foreground">Required</span>
-                                  )}
-                          </div>
-
-                          <select
-                              value={columnMapping[field.key].column}
-                              onChange={(e) =>
-                              setColumnMapping((prev) => ({
-                                  ...prev,
-                                  [field.key]: {
-                                    ...prev[field.key],
-                                    column: e.target.value,
-                                },
-                            }))
-                          }
-                          disabled={!columnMapping[field.key].enabled}
-                          className={`h-8 w-[160px] rounded-md border pl-2 pr-7 text-xs outline-none truncate ${
-                            !columnMapping[field.key].enabled
-                            ? "border-input bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-                            : isDuplicate
-                            ? "border-amber-500/40 bg-background text-[#434343]"
-                            : "border-input bg-background text-[#434343]"
-                        }`}
-                    >
-                      {(availableHeaders.length
-                          ? availableHeaders
-                          : columnOptions.map((col) => ({ column: col, header: "" }))
-                          ).map((item) => (
-                              <option key={item.column} value={item.column}>
-                                  {item.header ? `${item.column} : ${item.header}` : item.column}
-                              </option>
-                              ))}
-                      </select>
-                  </div>
-                  );
-                      })}
-                  </div>
-
-                  <div className="flex justify-between gap-2 pt-1">
-                      <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 text-xs text-[#434343]"
-                          onClick={() => setColumnMapping(defaultColumnMapping)}
-                      >
-                          Reset to Default
-                      </Button>
-
-                      <Button
-                          size="sm"
-                          className="h-8 text-xs"
-                          onClick={() => void handleSaveColumnMapping()}
-                          disabled={hasDuplicateColumns}
-                      >
-                          Done
-                      </Button>
-                  </div>
-              </div>
-          </div>
+          <ColumnMappingPanel
+              mappingFields={mappingFields}
+              columnMapping={columnMapping}
+              mappedColumns={mappedColumns}
+              availableHeaders={availableHeaders}
+              columnOptions={columnOptions}
+              hasDuplicateColumns={hasDuplicateColumns}
+              setColumnMapping={setColumnMapping}
+              onBack={() => setShowColumnMapping(false)}
+              onReset={() => setColumnMapping(defaultColumnMapping)}
+              onSave={() => void handleSaveColumnMapping()}
+          />
 
           ) : appState === "success" ? (
-          <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-success" />
-              </div>
-              <div className="space-y-1">
-                  <h2 className="text-sm font-semibold text-foreground">
-                      Profile Pasted
-                  </h2>
-                  <p className="text-xs text-muted-foreground">
-                      <b>{profile?.name || "This profile"}</b> was pasted into
-                      <br />
-                      <b>
-                          {spreadsheetName
-                          ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
-                          : "your spreadsheet"}
-                      </b>
-                      .
-                  </p>
-              </div>
-          </div>
+          <SuccessState
+              profileName={profile?.name}
+              spreadsheetName={spreadsheetName}
+              selectedTab={selectedTab}
+          />
           ) : (
           <>
           <div className="px-4 pt-4 pb-3 border-b border-border">
@@ -1117,36 +1253,7 @@ return (
     )}
 
 <div>
-    {feedbackMessage && (
-        <div
-            className={
-                feedbackTone === "error"
-                ? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
-                : feedbackTone === "warning"
-                ? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
-                : "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
-            }
-        >
-            {feedbackTone === "error" ? (
-                <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
-                ) : feedbackTone === "warning" ? (
-                <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                ) : (
-                <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
-                )}
-                <span
-                    className={
-                      feedbackTone === "error"
-                      ? "text-[11px] text-destructive font-medium"
-                      : feedbackTone === "warning"
-                      ? "text-[11px] text-amber-700 font-medium"
-                      : "text-[11px] text-success font-medium"
-                  }
-              >
-                  {feedbackMessage}
-              </span>
-          </div>
-          )}
+    <FeedbackBanner feedbackMessage={feedbackMessage} feedbackTone={feedbackTone} />
 </div>
 </div>
 
