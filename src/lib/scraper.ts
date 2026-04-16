@@ -235,7 +235,7 @@ export function extractProfileFromDocument(doc: Document) {
       company: currentExperience.company,
       title: currentExperience.title,
       location,
-      profileUrl: doc.location.href.split("?")[0],
+      profileUrl: "",
     },
   };
 }
