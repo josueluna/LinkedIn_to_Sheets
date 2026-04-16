@@ -96,24 +96,27 @@ function looksLikeDateOrDuration(value: string): boolean {
   );
 }
 
-function getNameElement(): Element | null {
+function getNameElement(doc: Document = document): Element | null {
   return (
-    document.querySelector('section[componentkey*="topcard"] h2') ||
-    document.querySelector('section[componentkey*="topcard"] h1') ||
-    document.querySelector("main h1") ||
-    document.querySelector("main h2") ||
-    document.querySelector("h1") ||
-    document.querySelector("h2")
+    doc.querySelector('section[componentkey*="topcard"] h2') ||
+    doc.querySelector('section[componentkey*="topcard"] h1') ||
+    doc.querySelector("main h1") ||
+    doc.querySelector("main h2") ||
+    doc.querySelector("h1") ||
+    doc.querySelector("h2")
   );
 }
 
-function getTopCardRoot(nameEl: Element | null): Element | null {
+function getTopCardRoot(
+  nameEl: Element | null,
+  doc: Document = document
+): Element | null {
   if (!nameEl) {
     return (
-      document.querySelector('section[componentkey*="topcard"]') ||
-      document.querySelector(".pv-top-card") ||
-      document.querySelector("main section:first-of-type") ||
-      document.querySelector("main")
+      doc.querySelector('section[componentkey*="topcard"]') ||
+      doc.querySelector(".pv-top-card") ||
+      doc.querySelector("main section:first-of-type") ||
+      doc.querySelector("main")
     );
   }
 
@@ -124,12 +127,15 @@ function getTopCardRoot(nameEl: Element | null): Element | null {
   );
 }
 
-function getName(topCard: Element | null): string {
+function getName(
+  topCard: Element | null,
+  doc: Document = document
+): string {
   if (!topCard) {
     return (
-      cleanText(document.querySelector("h1")?.textContent) ||
-      cleanText(document.querySelector("h2")?.textContent) ||
-      cleanText(document.title)
+      cleanText(doc.querySelector("h1")?.textContent) ||
+      cleanText(doc.querySelector("h2")?.textContent) ||
+      cleanText(doc.title)
         .replace(/\s*\|\s*LinkedIn.*$/i, "")
         .replace(/\s*-\s*LinkedIn.*$/i, "")
         .trim()
@@ -139,19 +145,23 @@ function getName(topCard: Element | null): string {
   return firstNonEmpty([
     cleanText(topCard.querySelector("h2")?.textContent),
     cleanText(topCard.querySelector("h1")?.textContent),
-    cleanText(document.querySelector("h1")?.textContent),
-    cleanText(document.querySelector("h2")?.textContent),
-    cleanText(document.title)
+    cleanText(doc.querySelector("h1")?.textContent),
+    cleanText(doc.querySelector("h2")?.textContent),
+    cleanText(doc.title)
       .replace(/\s*\|\s*LinkedIn.*$/i, "")
       .replace(/\s*-\s*LinkedIn.*$/i, "")
       .trim(),
   ]);
 }
 
-function getLocation(topCard: Element | null, name: string): string {
+function getLocation(
+  topCard: Element | null,
+  name: string,
+  doc: Document = document
+): string {
   if (!topCard) return "";
 
-  const pTexts = queryAllTexts("p", topCard)
+  const pTexts = queryAllTexts("p", topCard, doc)
     .map((text) => cleanText(text.split("·")[0]))
     .filter((text) => !isNoise(text))
     .filter((text) => text !== name);
@@ -169,14 +179,14 @@ function getLocation(topCard: Element | null, name: string): string {
   return "";
 }
 
-function findExperienceSection(): Element | null {
-  const sections = Array.from(document.querySelectorAll("section"));
+function findExperienceSection(doc: Document = document): Element | null {
+  const sections = Array.from(doc.querySelectorAll("section"));
 
   for (const section of sections) {
     const headingTexts = queryAllTexts(
       "h2, span[aria-hidden='true'], div[role='heading']",
-      section
-    ).map((text) => text.toLowerCase());
+      section,
+      doc).map((text) => text.toLowerCase());
 
     if (
       headingTexts.includes("experience") ||
@@ -189,25 +199,31 @@ function findExperienceSection(): Element | null {
   return null;
 }
 
-function getUsefulExperienceAnchors(section: Element | null): string[][] {
+function getUsefulExperienceAnchors(
+  section: Element | null,
+  doc: Document = document
+): string[][] {
   if (!section) return [];
 
   const anchors = Array.from(section.querySelectorAll("a"));
 
   return anchors
     .map((anchor) =>
-      queryAllTexts("p", anchor)
+      queryAllTexts("p", anchor, doc)
         .map((text) => cleanText(text))
         .filter((text) => !isNoise(text))
     )
     .filter((pTexts) => pTexts.length >= 2);
 }
 
-function getCurrentExperience(section: Element | null): {
+function getCurrentExperience(
+  section: Element | null,
+  doc: Document = document
+): {
   title: string;
   company: string;
 } {
-  const anchors = getUsefulExperienceAnchors(section);
+  const anchors = getUsefulExperienceAnchors(section, doc);
 
   if (!anchors.length) {
     return { title: "", company: "" };
@@ -215,9 +231,6 @@ function getCurrentExperience(section: Element | null): {
 
   const first = anchors[0];
 
-  // Caso simple:
-  // p[0] = puesto
-  // p[1] = empresa · modalidad
   if (!looksLikeDateOrDuration(first[1])) {
     return {
       title: cleanText(first[0]),
@@ -225,10 +238,6 @@ function getCurrentExperience(section: Element | null): {
     };
   }
 
-  // Caso anidado:
-  // first[0] = empresa
-  // first[1] = duración empresa
-  // second[0] = puesto actual
   const second = anchors[1] ?? [];
 
   return {
@@ -237,21 +246,25 @@ function getCurrentExperience(section: Element | null): {
   };
 }
 
+import { extractProfileFromDocument } from "./lib/scraper";
+
 function extractProfile():
   | { ok: true; profile: LinkedinProfile }
   | { ok: false; error: string } {
-  const profileUrl = window.location.href.split("?")[0];
+  const result = extractProfileFromDocument(document);
 
-  const nameEl = getNameElement();
-  const topCard = getTopCardRoot(nameEl);
-  const name = getName(topCard);
-
-  if (!name) {
-    return {
-      ok: false,
-      error: "Could not extract the profile name from the page.",
-    };
+  if (!result.ok) {
+    return result;
   }
+
+  return {
+    ok: true,
+    profile: {
+      ...result.profile,
+      profileUrl: window.location.href.split("?")[0],
+    },
+  };
+}
 
   const location = getLocation(topCard, name);
   const experienceSection = findExperienceSection();
