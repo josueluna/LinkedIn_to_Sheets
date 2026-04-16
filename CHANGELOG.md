@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
 - Improved mapping behavior so saved settings continue working after the new mapping structure upgrade
 
 ### 🎨 UI Improvements
+- Updated Current Profile preview to show only the fields currently 
+enabled in column mapping
 - Kept popup height stable across connected and disconnected states
 - Improved disconnected-state layout with a more balanced connect flow
 - Improved column mapping UI with required-state handling for Profile URL
