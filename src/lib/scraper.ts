@@ -227,6 +227,13 @@ export function extractProfileFromDocument(doc: Document) {
   const location = getLocation(topCard, name, doc);
   const experienceSection = findExperienceSection(doc);
   const currentExperience = getCurrentExperience(experienceSection, doc);
+  const canonical = doc
+  .querySelector('link[rel="canonical"]')
+  ?.getAttribute("href");
+
+const profileUrl =
+  canonical?.trim() ||
+  (doc.location?.href ? doc.location.href.split("?")[0] : "");
 
   return {
     ok: true,
@@ -235,7 +242,7 @@ export function extractProfileFromDocument(doc: Document) {
       company: currentExperience.company,
       title: currentExperience.title,
       location,
-      profileUrl: "",
+      profileUrl,
     },
   };
 }
