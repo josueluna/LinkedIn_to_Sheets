@@ -1,4 +1,5 @@
 import { ColumnMapping, defaultColumnMapping, normalizeColumnMapping } from "./lib/mappings";
+import { normalizeProfileUrl } from "./lib/sheets";
 type LinkedinProfile = {
   name: string;
   company: string;
@@ -334,6 +335,7 @@ async function appendProfileToSheet(
   columnMapping: ColumnMapping = defaultColumnMapping
 ) {
   const normalizedMapping = normalizeColumnMapping(columnMapping);
+  const normalizedProfileUrl = normalizeProfileUrl(profile.profileUrl);
   const token = await getGoogleAuthTokenSafe();
 
   // 🔍 1. Buscar duplicados en la columna configurada para Profile URL
@@ -355,8 +357,8 @@ async function appendProfileToSheet(
     const existingRows = Array.isArray(checkData.values) ? checkData.values : [];
 
     for (let i = 0; i < existingRows.length; i++) {
-      const value = existingRows[i]?.[0];
-      if (value === profile.profileUrl) {
+      const value = normalizeProfileUrl(existingRows[i]?.[0] ?? "");
+      if (normalizedProfileUrl && value === normalizedProfileUrl) {
         return {
           duplicate: true,
           row: i + 2,
@@ -402,7 +404,8 @@ async function appendProfileToSheet(
     }
 
     if (normalizedMapping.profileUrl.enabled) {
-      rowValues[columnLetterToIndex(normalizedMapping.profileUrl.column)] = profile.profileUrl;
+      rowValues[columnLetterToIndex(normalizedMapping.profileUrl.column)] =
+        normalizedProfileUrl;
 }
 
   const writeRange = `${sheetName}!A${nextRow}:${String.fromCharCode(65 + maxColumnIndex)}${nextRow}`;

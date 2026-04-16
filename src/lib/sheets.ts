@@ -8,9 +8,15 @@ export function isDuplicateProfile(
   existingRows: string[][],
   profileUrl: string
 ): { duplicate: boolean; row?: number } {
+  const normalizedProfileUrl = normalizeProfileUrl(profileUrl);
+
+  if (!normalizedProfileUrl) {
+    return { duplicate: false };
+  }
+
   for (let i = 0; i < existingRows.length; i++) {
-    const value = existingRows[i]?.[0];
-    if (value === profileUrl) {
+    const value = normalizeProfileUrl(existingRows[i]?.[0] ?? "");
+    if (value && value === normalizedProfileUrl) {
       return {
         duplicate: true,
         row: i + 2, // empieza en fila 2
@@ -19,6 +25,21 @@ export function isDuplicateProfile(
   }
 
   return { duplicate: false };
+}
+
+export function normalizeProfileUrl(url: string): string {
+  const cleaned = (url ?? "").trim();
+  if (!cleaned) return "";
+
+  try {
+    const parsed = new URL(cleaned);
+    const normalizedPath = parsed.pathname
+      .replace(/\/+$/, "")
+      .toLowerCase();
+    return `${parsed.origin.toLowerCase()}${normalizedPath}`;
+  } catch {
+    return cleaned.replace(/\/+$/, "").toLowerCase();
+  }
 }
 
 // --------------------
