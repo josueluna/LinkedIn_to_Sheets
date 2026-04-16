@@ -1,12 +1,13 @@
 # LinkedIn to Sheets
 
-![Version](https://img.shields.io/badge/version-v0.1.8-success)
-![Status](https://img.shields.io/badge/status-beta-informational)
-![Platform](https://img.shields.io/badge/platform-chrome-blueviolet)
+![Version](https://img.shields.io/badge/version-v0.1.8-blue)
+![Status](https://img.shields.io/badge/status-beta-orange)
+![Platform](https://img.shields.io/badge/platform-chrome-lightgrey)
 
 Save LinkedIn profiles directly into Google Sheets in seconds.
 
-Built for recruiters and sourcing professionals who want a faster, cleaner way to capture and organize candidate data — without manual copy-paste.
+Built for recruiters and sourcing professionals who want a faster, cleaner 
+way to capture and organize candidate data — without copy-paste.
 
 ---
 
@@ -19,7 +20,7 @@ Built for recruiters and sourcing professionals who want a faster, cleaner way t
 - Field toggles for optional data capture  
 - Duplicate detection (by profile URL)  
 - Clean and simple workflow  
-- Secure Google OAuth integration
+- Secure Google OAuth integration  
 
 ---
 
@@ -46,32 +47,10 @@ The extension extracts publicly available data from LinkedIn profiles:
 - Location  
 - Profile URL  
 
-Name, Company, Title, and Location can be enabled or disabled in the column mapping settings.
+Name, Company, Title, and Location can be enabled or disabled in the 
+column mapping settings.
 
 Profile URL is always required because it is used for duplicate detection.
----
-
-## 🧭 Column Mapping
-
-LinkedIn to Sheets lets you choose which spreadsheet column receives each field.
-
-You can map:
-
-- Name
-- Company
-- Title
-- Location
-- Profile URL
-
-The extension also previews sheet headers from your selected tab, so mapping is easier and more accurate.
-
-Example:
-
-- `B : Name`
-- `C : Current Company`
-- `D : Current Position`
-
-Duplicate columns are prevented to avoid invalid mappings.
 
 ---
 
@@ -79,9 +58,11 @@ Duplicate columns are prevented to avoid invalid mappings.
 
 Use the ready-to-use Google Sheets template:
 
-👉 https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy
+👉 
+https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy
 
-The template is recommended, but column placement can be customized inside the extension.
+The template is recommended, but column placement can be customized inside 
+the extension.
 
 Recommended structure:
 
@@ -95,9 +76,9 @@ Recommended structure:
 
 This extension uses:
 
-- LinkedIn → to read profile data
-- Google Sheets API → to write data
-- Google Drive API → to list spreadsheets
+- LinkedIn → to read profile data  
+- Google Sheets API → to write data  
+- Google Drive API → to list spreadsheets  
 
 No data is stored externally.
 
@@ -106,16 +87,17 @@ No data is stored externally.
 ## 🧩 Troubleshooting
 
 **Unexpected error**  
-→ Try reconnecting your Google account
+→ Try reconnecting your Google account  
 
 **Can't select spreadsheet**  
-→ Make sure Google permissions were granted
-
-**Can't find the right tab or headers**  
-→ Re-select the spreadsheet/tab and reopen Column Mapping
+→ Make sure permissions were granted  
 
 **Duplicate profiles**  
-→ The extension checks existing profile URLs before inserting
+→ The extension checks existing profile URLs before inserting  
+
+**Mapping issues after an update**  
+→ Reopen the popup and review your column mapping settings. Legacy 
+mappings are automatically normalized.
 
 👉 [Contact Support](https://forms.gle/xmCiUB8Tzs3ocM616)
 
@@ -123,19 +105,21 @@ No data is stored externally.
 
 ## 📚 Documentation
 
-- User Guide: https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html
-- Privacy Policy: https://josueluna.github.io/LinkedIn_to_Sheets/docs/privacy.html
-- Changelog: https://josueluna.github.io/LinkedIn_to_Sheets/docs/changelog.html
+- User Guide: 
+https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html  
+- Privacy Policy: 
+https://josueluna.github.io/LinkedIn_to_Sheets/docs/privacy.html  
+- Changelog: 
+https://josueluna.github.io/LinkedIn_to_Sheets/docs/changelog.html  
 
 ---
 
 ## 🛠 Tech Stack
 
-- React + Vite
-- Chrome Extensions (Manifest V3)
-- Google OAuth
-- Google Sheets API
-- Google Drive API
+- React + Vite  
+- Chrome Extensions (Manifest V3)  
+- Google OAuth  
+- Google Sheets API  
 
 ---
 
