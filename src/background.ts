@@ -26,28 +26,99 @@ async function getActiveTab() {
 
 function isLinkedInProfileUrl(url?: string): boolean {
   if (!url) return false;
-  return /^https:\/\/www\.linkedin\.com\/in\/.+/i.test(url);
+  try {
+    const parsed = new URL(url);
+    const isLinkedInHost =
+      parsed.hostname === "www.linkedin.com" || parsed.hostname === "linkedin.com";
+    const normalizedPath = parsed.pathname.toLowerCase();
+    return isLinkedInHost && /^\/in\/[^/]+\/?$/.test(normalizedPath);
+  } catch {
+    return false;
+  }
+}
+
+function isBenignContentScriptInjectionError(message: string): boolean {
+  return (
+    message.includes("Cannot access contents of url") ||
+    message.includes("The extensions gallery cannot be scripted") ||
+    message.includes("Cannot create item with duplicate id")
+  );
 }
 
 async function ensureContentScript(tabId: number) {
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ["assets/content.js"],
-  });
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ["assets/content.js"],
+    });
+    console.log("[background] Content script ensured via executeScript", { tabId });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    if (!isBenignContentScriptInjectionError(message)) {
+      throw error;
+    }
+
+    // Content script may already be present via manifest injection.
+    console.log("[background] executeScript skipped/ignored", { tabId, error: message });
+  }
+}
+
+async function sendExtractProfileMessageWithRetry(tabId: number) {
+  const attempts = 3;
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await chrome.tabs.sendMessage(tabId, {
+        type: "EXTRACT_PROFILE",
+      });
+
+      console.log("[background] EXTRACT_PROFILE response", {
+        tabId,
+        attempt,
+        ok: response?.ok,
+      });
+
+      return response;
+    } catch (error) {
+      lastError = error;
+      console.log("[background] EXTRACT_PROFILE sendMessage failed", {
+        tabId,
+        attempt,
+        error: error instanceof Error ? error.message : String(error),
+      });
+
+      if (attempt < attempts) {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        await ensureContentScript(tabId);
+      }
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Could not contact LinkedIn content script.");
 }
 
 async function getProfileFromActiveTab(): Promise<LinkedinProfile> {
   const tab = await getActiveTab();
+  console.log("[background] getProfileFromActiveTab", {
+    tabId: tab.id,
+    url: tab.url,
+  });
 
   if (!isLinkedInProfileUrl(tab.url)) {
+    console.log("[background] Active tab is not a LinkedIn profile URL", {
+      tabId: tab.id,
+      url: tab.url,
+    });
     return null as unknown as LinkedinProfile;
   }
 
   await ensureContentScript(tab.id!);
 
-  const response = await chrome.tabs.sendMessage(tab.id!, {
-    type: "EXTRACT_PROFILE",
-  });
+  const response = await sendExtractProfileMessageWithRetry(tab.id!);
 
   if (!response?.ok || !response.profile) {
     throw new Error(response?.error || "Could not extract LinkedIn profile.");
@@ -338,7 +409,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   (async () => {
     switch (message?.type) {
     case "GET_ACTIVE_PROFILE": {
+      console.log("[background] Handling GET_ACTIVE_PROFILE");
       const profile = await getProfileFromActiveTab();
+      console.log("[background] Returning GET_ACTIVE_PROFILE response", {
+        hasProfile: Boolean(profile),
+      });
       sendResponse({ ok: true, profile });
       break;
     }
