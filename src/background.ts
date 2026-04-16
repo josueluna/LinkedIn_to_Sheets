@@ -6,6 +6,9 @@ type LinkedinProfile = {
   location: string;
   profileUrl: string;
 };
+type ExtractProfileSuccessResponse = { ok: true; profile: LinkedinProfile };
+type ExtractProfileErrorResponse = { ok: false; error: string };
+type ExtractProfileResponse = ExtractProfileSuccessResponse | ExtractProfileErrorResponse;
 
 // --------------------
 // TAB / LINKEDIN
@@ -101,6 +104,35 @@ async function sendExtractProfileMessageWithRetry(tabId: number) {
     : new Error("Could not contact LinkedIn content script.");
 }
 
+function normalizeExtractProfileResponse(raw: unknown): ExtractProfileResponse {
+  const direct = raw as Partial<ExtractProfileResponse> | undefined;
+  if (direct?.ok === true && direct.profile) {
+    return { ok: true, profile: direct.profile };
+  }
+
+  if (direct?.ok === false) {
+    return {
+      ok: false,
+      error: direct.error || "Could not extract LinkedIn profile.",
+    };
+  }
+
+  // Defensive fallback for accidental nested envelopes.
+  const nested = (raw as any)?.data as Partial<ExtractProfileResponse> | undefined;
+  if (nested?.ok === true && nested.profile) {
+    return { ok: true, profile: nested.profile };
+  }
+
+  if (nested?.ok === false) {
+    return {
+      ok: false,
+      error: nested.error || "Could not extract LinkedIn profile.",
+    };
+  }
+
+  return { ok: false, error: "Could not extract LinkedIn profile." };
+}
+
 async function getProfileFromActiveTab(): Promise<LinkedinProfile> {
   const tab = await getActiveTab();
   console.log("[background] getProfileFromActiveTab", {
@@ -118,7 +150,8 @@ async function getProfileFromActiveTab(): Promise<LinkedinProfile> {
 
   await ensureContentScript(tab.id!);
 
-  const response = await sendExtractProfileMessageWithRetry(tab.id!);
+  const rawResponse = await sendExtractProfileMessageWithRetry(tab.id!);
+  const response = normalizeExtractProfileResponse(rawResponse);
 
   if (!response?.ok || !response.profile) {
     throw new Error(response?.error || "Could not extract LinkedIn profile.");
