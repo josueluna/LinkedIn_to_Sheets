@@ -1,5 +1,9 @@
 import { ColumnMapping, defaultColumnMapping, normalizeColumnMapping } from "./lib/mappings";
-import { normalizeProfileUrl } from "./lib/sheets";
+import {
+  getProfileUrlDuplicateColumns,
+  isDuplicateProfile,
+  normalizeProfileUrl,
+} from "./lib/sheets";
 type LinkedinProfile = {
   name: string;
   company: string;
@@ -338,10 +342,8 @@ async function appendProfileToSheet(
   const normalizedProfileUrl = normalizeProfileUrl(profile.profileUrl);
   const token = await getGoogleAuthTokenSafe();
 
-  // 🔍 1. Buscar duplicados en la columna configurada para Profile URL
-  const duplicateCheckColumns = normalizedMapping.profileUrl.enabled
-    ? Array.from(new Set([normalizedMapping.profileUrl.column.toUpperCase(), "F"]))
-    : ["F"];
+  // 🔍 1. Buscar duplicados en columna mapeada + fallback F
+  const duplicateCheckColumns = getProfileUrlDuplicateColumns(normalizedMapping);
 
   for (const column of duplicateCheckColumns) {
     const checkRange = `${sheetName}!${column}2:${column}`;
@@ -356,14 +358,9 @@ async function appendProfileToSheet(
     const checkData = await checkRes.json();
     const existingRows = Array.isArray(checkData.values) ? checkData.values : [];
 
-    for (let i = 0; i < existingRows.length; i++) {
-      const value = normalizeProfileUrl(existingRows[i]?.[0] ?? "");
-      if (normalizedProfileUrl && value === normalizedProfileUrl) {
-        return {
-          duplicate: true,
-          row: i + 2,
-        };
-      }
+    const duplicateResult = isDuplicateProfile(existingRows, normalizedProfileUrl);
+    if (duplicateResult.duplicate) {
+      return duplicateResult;
     }
   }
 

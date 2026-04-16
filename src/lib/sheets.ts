@@ -6,7 +6,8 @@ import { ColumnMapping } from "./mappings";
 
 export function isDuplicateProfile(
   existingRows: string[][],
-  profileUrl: string
+  profileUrl: string,
+  profileUrlColumnIndexes: number[] = [0]
 ): { duplicate: boolean; row?: number } {
   const normalizedProfileUrl = normalizeProfileUrl(profileUrl);
 
@@ -14,17 +15,26 @@ export function isDuplicateProfile(
     return { duplicate: false };
   }
 
+  const uniqueColumnIndexes = Array.from(new Set(profileUrlColumnIndexes));
+
   for (let i = 0; i < existingRows.length; i++) {
-    const value = normalizeProfileUrl(existingRows[i]?.[0] ?? "");
-    if (value && value === normalizedProfileUrl) {
-      return {
-        duplicate: true,
-        row: i + 2, // empieza en fila 2
-      };
+    for (const columnIndex of uniqueColumnIndexes) {
+      const value = normalizeProfileUrl(existingRows[i]?.[columnIndex] ?? "");
+      if (value && value === normalizedProfileUrl) {
+        return {
+          duplicate: true,
+          row: i + 2, // empieza en fila 2
+        };
+      }
     }
   }
 
   return { duplicate: false };
+}
+
+export function getProfileUrlDuplicateColumns(mapping: ColumnMapping): string[] {
+  const mappedProfileUrlColumn = mapping.profileUrl.column.toUpperCase();
+  return Array.from(new Set([mappedProfileUrlColumn, "F"]));
 }
 
 export function normalizeProfileUrl(url: string): string {
