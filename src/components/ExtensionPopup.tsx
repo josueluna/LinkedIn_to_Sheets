@@ -662,6 +662,7 @@ async function loadCurrentProfile(showLoadedMessage = true) {
         const response = await chrome.runtime.sendMessage({
             type: "GET_ACTIVE_PROFILE",
         });
+        console.log("[popup] GET_ACTIVE_PROFILE response", response);
 
         if (!response?.ok || !response.profile) {
             setProfile(null);
@@ -673,6 +674,7 @@ async function loadCurrentProfile(showLoadedMessage = true) {
         }
 
         setProfile(response.profile as LinkedinProfile);
+        console.log("[popup] Active profile loaded", response.profile);
 
         if (appState === "error") {
             setAppState("connected");
@@ -821,6 +823,7 @@ if (!currentProfile) {
     const response = await chrome.runtime.sendMessage({
         type: "GET_ACTIVE_PROFILE",
     });
+    console.log("[popup] GET_ACTIVE_PROFILE response (paste fallback)", response);
 
     if (!response?.ok || !response.profile) {
         throw new Error(response?.error || "Could not load LinkedIn profile.");
