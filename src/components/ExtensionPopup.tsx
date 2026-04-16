@@ -179,32 +179,32 @@ function FeedbackBanner({
         <div
             className={
                 feedbackTone === "error"
-                    ? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
-                    : feedbackTone === "warning"
-                        ? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
-                        : "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
+                ? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
+                : feedbackTone === "warning"
+                ? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
+                : "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
             }
         >
             {feedbackTone === "error" ? (
                 <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
-            ) : feedbackTone === "warning" ? (
+                ) : feedbackTone === "warning" ? (
                 <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            ) : (
+                ) : (
                 <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
-            )}
-            <span
-                className={
-                    feedbackTone === "error"
+                )}
+                <span
+                    className={
+                        feedbackTone === "error"
                         ? "text-[11px] text-destructive font-medium"
                         : feedbackTone === "warning"
-                            ? "text-[11px] text-amber-700 font-medium"
-                            : "text-[11px] text-success font-medium"
-                }
-            >
-                {feedbackMessage}
-            </span>
-        </div>
-    );
+                        ? "text-[11px] text-amber-700 font-medium"
+                        : "text-[11px] text-success font-medium"
+                    }
+                >
+                    {feedbackMessage}
+                </span>
+            </div>
+            );
 }
 
 function SuccessState({
@@ -230,14 +230,14 @@ function SuccessState({
                     <br />
                     <b>
                         {spreadsheetName
-                            ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
-                            : "your spreadsheet"}
+                        ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
+                        : "your spreadsheet"}
                     </b>
                     .
                 </p>
             </div>
         </div>
-    );
+        );
 }
 
 function ColumnMappingPanel({
@@ -292,8 +292,8 @@ function ColumnMappingPanel({
                     {mappingFields.map((field) => {
                         const Icon = field.icon;
                         const isDuplicate =
-                            columnMapping[field.key].enabled &&
-                            mappedColumns.filter((col) => col === columnMapping[field.key].column).length > 1;
+                        columnMapping[field.key].enabled &&
+                        mappedColumns.filter((col) => col === columnMapping[field.key].column).length > 1;
 
                         return (
                             <div
@@ -308,53 +308,53 @@ function ColumnMappingPanel({
                                         checked={columnMapping[field.key].enabled}
                                         disabled={field.key === "profileUrl"}
                                         onChange={(e) =>
-                                            setColumnMapping((prev) => ({
-                                                ...prev,
-                                                [field.key]: {
-                                                    ...prev[field.key],
-                                                    enabled: e.target.checked,
-                                                },
-                                            }))
-                                        }
-                                        className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
-                                    />
-                                    <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                    <span className="text-xs text-[#434343]">{field.label}</span>
-                                    {field.key === "profileUrl" && (
-                                        <span className="text-[10px] text-muted-foreground">Required</span>
-                                    )}
-                                </div>
-
-                                <select
-                                    value={columnMapping[field.key].column}
-                                    onChange={(e) =>
                                         setColumnMapping((prev) => ({
                                             ...prev,
                                             [field.key]: {
                                                 ...prev[field.key],
-                                                column: e.target.value,
+                                                enabled: e.target.checked,
                                             },
                                         }))
                                     }
-                                    disabled={!columnMapping[field.key].enabled}
-                                    className={`h-8 w-[160px] rounded-md border pl-2 pr-7 text-xs outline-none truncate ${
-                                        !columnMapping[field.key].enabled
-                                            ? "border-input bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-                                            : isDuplicate
-                                                ? "border-amber-500/40 bg-background text-[#434343]"
-                                                : "border-input bg-background text-[#434343]"
-                                    }`}
-                                >
-                                    {(availableHeaders.length
-                                        ? availableHeaders
-                                        : columnOptions.map((col) => ({ column: col, header: "" }))
-                                    ).map((item) => (
-                                        <option key={item.column} value={item.column}>
-                                            {item.header ? `${item.column} : ${item.header}` : item.column}
-                                        </option>
-                                    ))}
-                                </select>
+                                    className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
+                                />
+                                <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                <span className="text-xs text-[#434343]">{field.label}</span>
+                                {field.key === "profileUrl" && (
+                                    <span className="text-[10px] text-muted-foreground">Required</span>
+                                    )}
                             </div>
+
+                            <select
+                                value={columnMapping[field.key].column}
+                                onChange={(e) =>
+                                setColumnMapping((prev) => ({
+                                    ...prev,
+                                    [field.key]: {
+                                        ...prev[field.key],
+                                        column: e.target.value,
+                                    },
+                                }))
+                            }
+                            disabled={!columnMapping[field.key].enabled}
+                            className={`h-8 w-[160px] rounded-md border pl-2 pr-7 text-xs outline-none truncate ${
+                                !columnMapping[field.key].enabled
+                                ? "border-input bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                                : isDuplicate
+                                ? "border-amber-500/40 bg-background text-[#434343]"
+                                : "border-input bg-background text-[#434343]"
+                            }`}
+                        >
+                            {(availableHeaders.length
+                                ? availableHeaders
+                                : columnOptions.map((col) => ({ column: col, header: "" }))
+                                ).map((item) => (
+                                    <option key={item.column} value={item.column}>
+                                        {item.header ? `${item.column} : ${item.header}` : item.column}
+                                    </option>
+                                    ))}
+                            </select>
+                        </div>
                         );
                     })}
                 </div>
@@ -380,7 +380,7 @@ function ColumnMappingPanel({
                 </div>
             </div>
         </div>
-    );
+        );
 }
 
 export default function ExtensionPopup() {
@@ -883,311 +883,311 @@ return (
               onBack={() => setShowColumnMapping(false)}
               onReset={() => setColumnMapping(defaultColumnMapping)}
               onSave={() => void handleSaveColumnMapping()}
-          />
+              />
 
-          ) : appState === "success" ? (
-          <SuccessState
-              profileName={profile?.name}
-              spreadsheetName={spreadsheetName}
-              selectedTab={selectedTab}
-          />
-          ) : (
-          <>
-          <div className="px-4 pt-4 pb-3 border-b border-border">
-              <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
-                      <img
-                          src="/logo.png"
-                          alt="LinkedIn to Sheets logo"
-                          className="w-full h-full object-contain"
-                      />
-                  </div>
-                  <div>
-                      <h1 className="text-sm font-semibold text-foreground leading-tight">
-                          LinkedIn to Sheets
-                      </h1>
-                      <p className="text-[11px] text-muted-foreground leading-tight">
-                          Paste LinkedIn profile information into Google Sheets
-                      </p>
-                  </div>
-              </div>
-          </div>
-
-          <div className="px-4 py-3 h-[calc(100%-69px)] flex flex-col">
-            <div className="space-y-3">
-              <section className="space-y-2">
-                  <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                          Google Account
-                      </span>
-
-                      {isConnected ? (
-                        <button
-                            type="button"
-                            onClick={() => void handleDisconnect()}
-                            onMouseEnter={() => setIsDisconnectHover(true)}
-                            onMouseLeave={() => setIsDisconnectHover(false)}
-                            disabled={isDisconnecting}
-                            className="transition-colors"
-                        >
-                            <Badge
-                                variant="default"
-                                className={
-                                  isDisconnectHover
-                                  ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-                                  : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-                              }
-                          >
-                              <CircleDot className="w-2.5 h-2.5 mr-1" />
-                              {isDisconnecting
-                              ? "Disconnecting..."
-                              : isDisconnectHover
-                              ? "Disconnect Google Account"
-                              : "Connected"}
-                          </Badge>
-                      </button>
-                      ) : (
-                      <Badge
-                          variant="outline"
-                          className="text-muted-foreground text-[10px] px-2 py-0 h-5"
-                      >
-                          <CircleDot className="w-2.5 h-2.5 mr-1" />
-                          Not connected
-                      </Badge>
-                      )}
-                  </div>
-
-                  {!isConnected && (
-                      <div className="pt-10">
-                        <Button
-                          onClick={handleConnect}
-                          className="w-full h-8 text-xs"
-                          disabled={isConnecting}
-                      >
-                          {isConnecting && (
-                            <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                            )}
-                          {isConnecting ? "Connecting..." : "Connect Google Account"}
-                      </Button>
-                  </div>
-                  )}
-              </section>
-
-              {isConnected && (
-                  <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
-
-{/* HEADER */}
-                      <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
-                              Destination
-                          </span>
-
-                          <div className="flex items-center gap-2">
-                              <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-6 text-[10px] px-2"
-                                  onClick={() =>
-                                  window.open(
-                                      "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
-                                      "_blank"
-                                      )
-                              }
-                          >
-                              Google Sheet Template
-                          </Button>
-
-                          <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 text-[10px] px-2"
-                              onClick={() => setShowColumnMapping(true)}
-                          >
-                              <SlidersHorizontal className="w-3 h-3 mr-1" />
-                              Config Columns
-                          </Button>
+              ) : appState === "success" ? (
+              <SuccessState
+                  profileName={profile?.name}
+                  spreadsheetName={spreadsheetName}
+                  selectedTab={selectedTab}
+                  />
+                  ) : (
+                  <>
+                  <div className="px-4 pt-4 pb-3 border-b border-border">
+                      <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                              <img
+                                  src="/logo.png"
+                                  alt="LinkedIn to Sheets logo"
+                                  className="w-full h-full object-contain"
+                              />
+                          </div>
+                          <div>
+                              <h1 className="text-sm font-semibold text-foreground leading-tight">
+                                  LinkedIn to Sheets
+                              </h1>
+                              <p className="text-[11px] text-muted-foreground leading-tight">
+                                  Paste LinkedIn profile information into Google Sheets
+                              </p>
+                          </div>
                       </div>
                   </div>
 
-{/* CONTENT */}
-                  <div className="space-y-1.5">
-
-{/* SPREADSHEET */}
-                      <div className="relative">
-                          <Label className="text-[11px] text-muted-foreground">
-                              Spreadsheet
-                          </Label>
-
-                          <button
-                              type="button"
-                              onClick={async () => {
-                                  const nextOpen = !sheetPickerOpen;
-                                  setSheetPickerOpen(nextOpen);
-                                  setTabPickerOpen(false);
-                                  setSearchQuery("");
-
-                                  if (nextOpen) {
-                                    await loadSpreadsheets(true);
-                                }
-                            }}
-                            className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
-                        >
-                            <span className="flex items-center gap-1.5 truncate">
-                                <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
-                                <span className={spreadsheetName ? "text-foreground" : "text-muted-foreground"}>
-                                    {spreadsheetName || "Choose a spreadsheet…"}
-                                </span>
-                            </span>
-
-                            {isLoadingSpreadsheets ? (
-                              <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-                              ) : (
-                              <ChevronDown
-                                  className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform ${
-                                    sheetPickerOpen ? "rotate-180" : ""
-                                }`}
-                                />
-                                )}
-                          </button>
-
-                          {sheetPickerOpen && (
-                            <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-                                <div className="p-1.5 border-b border-border">
-                                    <div className="relative">
-                                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
-                                        <input
-                                            type="text"
-                                            placeholder="Search spreadsheets…"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
-                                            autoFocus
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="max-h-[180px] overflow-y-auto">
-                                    {isLoadingSpreadsheets ? (
-                                      <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-                                          Loading spreadsheets...
-                                      </div>
-                                      ) : filteredSpreadsheets.length === 0 ? (
-                                      <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-                                          No spreadsheets found
-                                      </div>
-                                      ) : (
-                                      filteredSpreadsheets.map((sheet) => (
-                                        <button
-                                            key={sheet.id}
-                                            type="button"
-                                            onClick={() => void handleSelectSpreadsheet(sheet)}
-                                            className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-                                              spreadsheetId === sheet.id ? "bg-accent/30" : ""
-                                          }`}
-                                      >
-                                          <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
-                                          <div className="flex-1 min-w-0">
-                                              <div className="text-xs text-foreground truncate">
-                                                  {sheet.name}
-                                              </div>
-                                              <div className="text-[10px] text-muted-foreground truncate">
-                                                  {sheet.url}
-                                              </div>
-                                          </div>
-                                          {spreadsheetId === sheet.id && (
-                                              <Check className="w-3 h-3 text-primary shrink-0" />
-                                              )}
-                                      </button>
-                                      ))
-                                      )}
-                                  </div>
-                              </div>
-                              )}
-                      </div>
-
-{/* TAB */}
-                      <div className="relative">
-                          <Label className="text-[11px] text-muted-foreground">
-                              Tab
-                          </Label>
-
-                          <button
-                              type="button"
-                              onClick={() => {
-                                if (availableTabs.length) {
-                                  setTabPickerOpen(!tabPickerOpen);
-                                  setSheetPickerOpen(false);
-                              }
-                          }}
-                          disabled={!spreadsheetId || isLoadingTabs}
-                          className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
-                            spreadsheetId
-                            ? "bg-card text-foreground hover:bg-accent/50"
-                            : "bg-muted/30 text-muted-foreground cursor-not-allowed"
-                        }`}
-                    >
-                        <span className="flex items-center gap-1.5 truncate">
-                            <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-                            <span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
-                                {isLoadingTabs
-                                ? "Loading tabs..."
-                                : selectedTab || "Choose a tab…"}
-                            </span>
-                        </span>
-
-                        {isLoadingTabs ? (
-                            <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-                            ) : (
-                            <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
-                            )}
-                            {tabPickerOpen && availableTabs.length > 0 && (
-                              <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
-                                  <div className="max-h-[140px] overflow-y-auto">
-                                      {availableTabs.map((tab) => (
-                                        <button
-                                            key={tab}
-                                            type="button"
-                                            onClick={() => void handleSelectTab(tab)}
-                                            className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-                                              selectedTab === tab ? "bg-accent/30" : ""
-                                          }`}
-                                      >
-                                          <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-                                          <span className="text-xs text-foreground">{tab}</span>
-                                          {selectedTab === tab && (
-                                              <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
-                                              )}
-                                      </button>
-                                      ))}
-                                  </div>
-                              </div>
-                              )}
-                        </button>
-                    </div>
-
-{/* SUMMARY */}
-                    {spreadsheetName && selectedTab && (
-                      <div className="space-y-1">
-                          <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
-                              <Check className="w-3 h-3 text-primary shrink-0" />
-                              <span className="text-[10px] text-foreground truncate">
-                                  {spreadsheetName} → {selectedTab}
+                  <div className="px-4 py-3 h-[calc(100%-69px)] flex flex-col">
+                    <div className="space-y-3">
+                      <section className="space-y-2">
+                          <div className="flex items-center justify-between">
+                              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                  Google Account
                               </span>
+
+                              {isConnected ? (
+                                <button
+                                    type="button"
+                                    onClick={() => void handleDisconnect()}
+                                    onMouseEnter={() => setIsDisconnectHover(true)}
+                                    onMouseLeave={() => setIsDisconnectHover(false)}
+                                    disabled={isDisconnecting}
+                                    className="transition-colors"
+                                >
+                                    <Badge
+                                        variant="default"
+                                        className={
+                                          isDisconnectHover
+                                          ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+                                          : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+                                      }
+                                  >
+                                      <CircleDot className="w-2.5 h-2.5 mr-1" />
+                                      {isDisconnecting
+                                      ? "Disconnecting..."
+                                      : isDisconnectHover
+                                      ? "Disconnect Google Account"
+                                      : "Connected"}
+                                  </Badge>
+                              </button>
+                              ) : (
+                              <Badge
+                                  variant="outline"
+                                  className="text-muted-foreground text-[10px] px-2 py-0 h-5"
+                              >
+                                  <CircleDot className="w-2.5 h-2.5 mr-1" />
+                                  Not connected
+                              </Badge>
+                              )}
                           </div>
 
-                          {hasCustomColumnMapping && (
-                              <div className="flex justify-end">
-                                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
-                                      <span>Custom Column Mapping active</span>
-                                  </div>
+                          {!isConnected && (
+                              <div className="pt-10">
+                                <Button
+                                  onClick={handleConnect}
+                                  className="w-full h-8 text-xs"
+                                  disabled={isConnecting}
+                              >
+                                  {isConnecting && (
+                                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                                    )}
+                                  {isConnecting ? "Connecting..." : "Connect Google Account"}
+                              </Button>
+                          </div>
+                          )}
+                      </section>
+
+                      {isConnected && (
+                          <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
+
+{/* HEADER */}
+                              <div className="flex items-center justify-between gap-2">
+                                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
+                                      Destination
+                                  </span>
+
+                                  <div className="flex items-center gap-2">
+                                      <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="h-6 text-[10px] px-2"
+                                          onClick={() =>
+                                          window.open(
+                                              "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
+                                              "_blank"
+                                              )
+                                      }
+                                  >
+                                      Google Sheet Template
+                                  </Button>
+
+                                  <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-6 text-[10px] px-2"
+                                      onClick={() => setShowColumnMapping(true)}
+                                  >
+                                      <SlidersHorizontal className="w-3 h-3 mr-1" />
+                                      Config Columns
+                                  </Button>
                               </div>
-                              )}
-                      </div>
-                      )}
-                </div>
-            </section>
-            )}
+                          </div>
+
+{/* CONTENT */}
+                          <div className="space-y-1.5">
+
+{/* SPREADSHEET */}
+                              <div className="relative">
+                                  <Label className="text-[11px] text-muted-foreground">
+                                      Spreadsheet
+                                  </Label>
+
+                                  <button
+                                      type="button"
+                                      onClick={async () => {
+                                          const nextOpen = !sheetPickerOpen;
+                                          setSheetPickerOpen(nextOpen);
+                                          setTabPickerOpen(false);
+                                          setSearchQuery("");
+
+                                          if (nextOpen) {
+                                            await loadSpreadsheets(true);
+                                        }
+                                    }}
+                                    className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
+                                >
+                                    <span className="flex items-center gap-1.5 truncate">
+                                        <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
+                                        <span className={spreadsheetName ? "text-foreground" : "text-muted-foreground"}>
+                                            {spreadsheetName || "Choose a spreadsheet…"}
+                                        </span>
+                                    </span>
+
+                                    {isLoadingSpreadsheets ? (
+                                      <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+                                      ) : (
+                                      <ChevronDown
+                                          className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform ${
+                                            sheetPickerOpen ? "rotate-180" : ""
+                                        }`}
+                                        />
+                                        )}
+                                  </button>
+
+                                  {sheetPickerOpen && (
+                                    <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
+                                        <div className="p-1.5 border-b border-border">
+                                            <div className="relative">
+                                                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search spreadsheets…"
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
+                                                    autoFocus
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="max-h-[180px] overflow-y-auto">
+                                            {isLoadingSpreadsheets ? (
+                                              <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                                                  Loading spreadsheets...
+                                              </div>
+                                              ) : filteredSpreadsheets.length === 0 ? (
+                                              <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                                                  No spreadsheets found
+                                              </div>
+                                              ) : (
+                                              filteredSpreadsheets.map((sheet) => (
+                                                <button
+                                                    key={sheet.id}
+                                                    type="button"
+                                                    onClick={() => void handleSelectSpreadsheet(sheet)}
+                                                    className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+                                                      spreadsheetId === sheet.id ? "bg-accent/30" : ""
+                                                  }`}
+                                              >
+                                                  <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
+                                                  <div className="flex-1 min-w-0">
+                                                      <div className="text-xs text-foreground truncate">
+                                                          {sheet.name}
+                                                      </div>
+                                                      <div className="text-[10px] text-muted-foreground truncate">
+                                                          {sheet.url}
+                                                      </div>
+                                                  </div>
+                                                  {spreadsheetId === sheet.id && (
+                                                      <Check className="w-3 h-3 text-primary shrink-0" />
+                                                      )}
+                                              </button>
+                                              ))
+                                              )}
+                                          </div>
+                                      </div>
+                                      )}
+</div>
+
+{/* TAB */}
+<div className="relative">
+  <Label className="text-[11px] text-muted-foreground">
+      Tab
+  </Label>
+
+  <button
+      type="button"
+      onClick={() => {
+        if (availableTabs.length) {
+          setTabPickerOpen(!tabPickerOpen);
+          setSheetPickerOpen(false);
+      }
+  }}
+  disabled={!spreadsheetId || isLoadingTabs}
+  className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
+    spreadsheetId
+    ? "bg-card text-foreground hover:bg-accent/50"
+    : "bg-muted/30 text-muted-foreground cursor-not-allowed"
+}`}
+>
+    <span className="flex items-center gap-1.5 truncate">
+        <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+        <span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
+            {isLoadingTabs
+            ? "Loading tabs..."
+            : selectedTab || "Choose a tab…"}
+        </span>
+    </span>
+
+    {isLoadingTabs ? (
+        <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+        ) : (
+        <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+        )}
+        {tabPickerOpen && availableTabs.length > 0 && (
+          <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
+              <div className="max-h-[140px] overflow-y-auto">
+                  {availableTabs.map((tab) => (
+                    <button
+                        key={tab}
+                        type="button"
+                        onClick={() => void handleSelectTab(tab)}
+                        className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+                          selectedTab === tab ? "bg-accent/30" : ""
+                      }`}
+                  >
+                      <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <span className="text-xs text-foreground">{tab}</span>
+                      {selectedTab === tab && (
+                          <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
+                          )}
+                  </button>
+                  ))}
+              </div>
+          </div>
+          )}
+    </button>
+</div>
+
+{/* SUMMARY */}
+{spreadsheetName && selectedTab && (
+  <div className="space-y-1">
+      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+          <Check className="w-3 h-3 text-primary shrink-0" />
+          <span className="text-[10px] text-foreground truncate">
+              {spreadsheetName} → {selectedTab}
+          </span>
+      </div>
+
+      {hasCustomColumnMapping && (
+          <div className="flex justify-end">
+              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
+                  <span>Custom Column Mapping active</span>
+              </div>
+          </div>
+          )}
+  </div>
+  )}
+</div>
+</section>
+)}
 
 {isConnected && (
     <section className="space-y-2">
@@ -1216,31 +1216,40 @@ return (
 
             <div className="rounded-lg border border-border bg-card p-3 space-y-1.5">
                 {profile ? (
-                  [
-                    { icon: User, label: profile.name },
-                    { icon: Building2, label: profile.company },
-                    { icon: Briefcase, label: profile.title },
-                    { icon: MapPin, label: profile.location },
-                    { icon: ExternalLink, label: profile.profileUrl },
-                ].map(({ icon: Icon, label }) => (
-                    <div
-                        key={`${Icon.displayName ?? "icon"}-${label}`}
-                        className="flex items-center gap-2"
-                    >
-                        <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
-                        <span className="text-xs text-foreground truncate">
-                            {label || "—"}
+                  mappingFields
+                  .filter(({ key }) => columnMapping[key].enabled)
+                  .map(({ key, icon: Icon }) => {
+                      const value =
+                      key === "name"
+                      ? profile.name
+                      : key === "company"
+                      ? profile.company
+                      : key === "title"
+                      ? profile.title
+                      : key === "location"
+                      ? profile.location
+                      : profile.profileUrl;
+
+                      return (
+                        <div
+                          key={key}
+                          className="flex items-center gap-2"
+                      >
+                          <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
+                          <span className="text-xs text-foreground truncate">
+                            {value || "—"}
                         </span>
                     </div>
-                    ))
-                ) : (
-                <div className="text-xs text-muted-foreground">
+                    );
+                  })
+                  ) : (
+                  <div className="text-xs text-muted-foreground">
                     Open a LinkedIn profile and click Refresh.
                 </div>
                 )}
-            </div>
-        </section>
-        )}
+              </div>
+          </section>
+          )}
 
 {isConnected && (
     <Button
