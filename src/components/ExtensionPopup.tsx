@@ -258,7 +258,7 @@ function ColumnMappingPanel({
     availableHeaders: { column: string; header: string }[];
     columnOptions: string[];
     hasDuplicateColumns: boolean;
-    setColumnMapping: React.Dispatch<React.SetStateAction<ColumnMapping>>;
+    setColumnMapping: (value: React.SetStateAction<ColumnMapping>) => void;
     onBack: () => void;
     onReset: () => void;
     onSave: () => void;
@@ -437,6 +437,7 @@ export default function ExtensionPopup() {
     };
 
     const [columnMapping, setColumnMapping] = useState<ColumnMapping>(defaultColumnMapping);
+    const [draftColumnMapping, setDraftColumnMapping] = useState<ColumnMapping | null>(null);
 
     const isConnected = connectionStatus === "connected";
 
@@ -459,8 +460,9 @@ export default function ExtensionPopup() {
         sheet.name.toLowerCase().includes(q)
         );
 }, [allSpreadsheets, searchQuery]);
+  const activeColumnMapping = showColumnMapping && draftColumnMapping ? draftColumnMapping : columnMapping;
 
-  const mappedColumns = Object.values(columnMapping)
+  const mappedColumns = Object.values(activeColumnMapping)
   .filter((field) => field.enabled)
   .map((field) => field.column);
 
@@ -484,15 +486,43 @@ export default function ExtensionPopup() {
   !isRefreshingProfile &&
   appState !== "saving";
   async function handleSaveColumnMapping() {
+    if (!draftColumnMapping) {
+        setShowColumnMapping(false);
+        return;
+    }
+
     if (hasDuplicateColumns) {
         return;
     }
 
     await chrome.storage.local.set({
-        columnMapping,
+        columnMapping: draftColumnMapping,
     });
 
+    setColumnMapping(draftColumnMapping);
+    setDraftColumnMapping(null);
     showToast("Column mapping saved.", "success");
+    setShowColumnMapping(false);
+}
+
+async function handleResetColumnMapping() {
+    await chrome.storage.local.set({
+        columnMapping: defaultColumnMapping,
+    });
+
+    setColumnMapping(defaultColumnMapping);
+    setDraftColumnMapping(null);
+    setShowColumnMapping(false);
+    showToast("Column mapping reset to default.", "success");
+}
+
+async function handleResetColumnMapping() {
+    await chrome.storage.local.set({
+        columnMapping: defaultColumnMapping,
+    });
+
+    setColumnMapping(defaultColumnMapping);
+    showToast("Column mapping reset to default.", "success");
     setShowColumnMapping(false);
 }
 
@@ -874,14 +904,24 @@ return (
       {showColumnMapping ? (
           <ColumnMappingPanel
               mappingFields={mappingFields}
-              columnMapping={columnMapping}
+              columnMapping={activeColumnMapping}
               mappedColumns={mappedColumns}
               availableHeaders={availableHeaders}
               columnOptions={columnOptions}
               hasDuplicateColumns={hasDuplicateColumns}
-              setColumnMapping={setColumnMapping}
-              onBack={() => setShowColumnMapping(false)}
-              onReset={() => setColumnMapping(defaultColumnMapping)}
+              setColumnMapping={(nextMapping) => {
+                setDraftColumnMapping((prev) => {
+                    const baseMapping = prev ?? columnMapping;
+                    return typeof nextMapping === "function"
+                    ? (nextMapping as (prev: ColumnMapping) => ColumnMapping)(baseMapping)
+                    : nextMapping;
+                });
+              }}
+              onBack={() => {
+                setDraftColumnMapping(null);
+                setShowColumnMapping(false);
+              }}
+              onReset={() => void handleResetColumnMapping()}
               onSave={() => void handleSaveColumnMapping()}
               />
 
@@ -1001,7 +1041,10 @@ return (
                                       variant="outline"
                                       size="sm"
                                       className="h-6 text-[10px] px-2"
-                                      onClick={() => setShowColumnMapping(true)}
+                                      onClick={() => {
+                                        setDraftColumnMapping(JSON.parse(JSON.stringify(columnMapping)) as ColumnMapping);
+                                        setShowColumnMapping(true);
+                                      }}
                                   >
                                       <SlidersHorizontal className="w-3 h-3 mr-1" />
                                       Config Columns
