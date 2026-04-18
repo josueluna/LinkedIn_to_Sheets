@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 
 ---
+## v0.1.9
+
+### Improved
+- Added subtle popup screen transitions for the main view, column mapping panel, and success state.
+- Improved column mapping behavior so draft edits are only saved when clicking **Save changes**.
+- Reset to Default now restores the default mapping, saves it immediately, and closes the panel.
+
+### Fixed
+- Prevented column mapping changes from being unintentionally preserved when leaving the panel with **Back**.
+- Stabilized popup UI tests after the animated panel update.
+- Expanded scraper coverage with additional LinkedIn fixture variations and layout scenarios.
+
+### Testing
+- Added stronger popup UI coverage for connected/disconnected states, mapping validation, and required Profile URL behavior.
+- Added fixture-based scraper tests for alternate layouts, missing fields, reordered sections, and profile URL fallback cases.
 
 ## v0.1.8
 ### ✨ Features
