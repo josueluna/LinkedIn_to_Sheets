@@ -50,16 +50,16 @@ function createChromeMock({
 
   const sendMessage = vi.fn(async (payload: SendMessagePayload) => {
     switch (payload.type) {
-      case "GET_ACTIVE_PROFILE":
-        return { ok: true, profile };
-      case "LIST_SPREADSHEETS":
-        return { ok: true, spreadsheets: [] };
-      case "GET_SHEET_TABS":
-        return { ok: true, tabs: [] };
-      case "GET_SHEET_HEADERS":
-        return { ok: true, headers: [] };
-      default:
-        return { ok: true };
+    case "GET_ACTIVE_PROFILE":
+      return { ok: true, profile };
+    case "LIST_SPREADSHEETS":
+      return { ok: true, spreadsheets: [] };
+    case "GET_SHEET_TABS":
+      return { ok: true, tabs: [] };
+    case "GET_SHEET_HEADERS":
+      return { ok: true, headers: [] };
+    default:
+      return { ok: true };
     }
   });
 
@@ -108,6 +108,8 @@ describe("ExtensionPopup UI", () => {
 
   it("shows disconnected initial state", async () => {
     renderPopupWithStorage({ isConnected: false });
+
+    await screen.findByRole("button", { name: "Connect Google Account" });
 
     expect(screen.getAllByText("Google Account").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Connect Google Account").length).toBeGreaterThan(0);
@@ -175,7 +177,7 @@ describe("ExtensionPopup UI", () => {
       within(destinationSection).getByRole("button", {
         name: /config columns/i,
       })
-    );
+      );
 
     expect(await screen.findByText("Column Mapping")).toBeInTheDocument();
 
@@ -197,7 +199,7 @@ describe("ExtensionPopup UI", () => {
       within(destinationSection).getByRole("button", {
         name: /config columns/i,
       })
-    );
+      );
 
     expect(await screen.findByText("Column Mapping")).toBeInTheDocument();
 
