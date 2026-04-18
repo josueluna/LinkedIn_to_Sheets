@@ -133,7 +133,7 @@ describe("ExtensionPopup UI", () => {
 
     expect(screen.getByText("Destination")).toBeInTheDocument();
     expect(screen.getByText("Current Profile")).toBeInTheDocument();
-    });
+  });
 
   it("current profile preview respects enabled mapping fields", async () => {
     renderPopupWithStorage({
@@ -157,7 +157,7 @@ describe("ExtensionPopup UI", () => {
 
     const scoped = within(profileCard);
 
-    expect(scoped.getByText(defaultProfile.name)).toBeInTheDocument();
+    expect(await scoped.findByText(defaultProfile.name)).toBeInTheDocument();
     expect(scoped.getByText(defaultProfile.title)).toBeInTheDocument();
     expect(scoped.getByText(defaultProfile.profileUrl)).toBeInTheDocument();
 
@@ -165,7 +165,7 @@ describe("ExtensionPopup UI", () => {
     expect(scoped.queryByText(defaultProfile.location)).not.toBeInTheDocument();
   });
 
-  it("disables Done when active mapping columns are duplicated", async () => {
+  it("disables Save changes when active mapping columns are duplicated", async () => {
     renderPopupWithStorage({ isConnected: true });
 
     await screen.findByText("Destination");
