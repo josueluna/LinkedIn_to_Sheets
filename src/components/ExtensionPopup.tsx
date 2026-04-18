@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
     CheckCircle2,
-    AlertCircle,
     Loader2,
     User,
     Building2,
@@ -38,7 +37,7 @@ type SpreadsheetItem = {
     id: string;
     name: string;
     url: string;
-    modifiedTime ? : string;
+    modifiedTime? : string;
 };
 
 type StoredConfig = {
@@ -375,7 +374,7 @@ function ColumnMappingPanel({
                         onClick={onSave}
                         disabled={hasDuplicateColumns}
                     >
-                        Done
+                        Save changes
                     </Button>
                 </div>
             </div>
@@ -387,6 +386,7 @@ export default function ExtensionPopup() {
     const [connectionStatus, setConnectionStatus] =
     useState < ConnectionStatus > ("disconnected");
     const [appState, setAppState] = useState < AppState > ("empty");
+    const [isHydrating, setIsHydrating] = useState(true);
 
     const [profile, setProfile] = useState < LinkedinProfile | null > (null);
     const {
@@ -485,7 +485,19 @@ export default function ExtensionPopup() {
   !!selectedTab &&
   !isRefreshingProfile &&
   appState !== "saving";
-  async function handleSaveColumnMapping() {
+
+async function handleResetColumnMapping() {
+    await chrome.storage.local.set({
+        columnMapping: defaultColumnMapping,
+    });
+
+    setColumnMapping(defaultColumnMapping);
+    setDraftColumnMapping(null);
+    setShowColumnMapping(false);
+    showToast("Column mapping reset to default.", "success");
+}
+
+async function handleSaveColumnMapping() {
     if (!draftColumnMapping) {
         setShowColumnMapping(false);
         return;
@@ -502,16 +514,6 @@ export default function ExtensionPopup() {
     setColumnMapping(draftColumnMapping);
     setDraftColumnMapping(null);
     showToast("Column mapping saved.", "success");
-    setShowColumnMapping(false);
-}
-
-async function handleResetColumnMapping() {
-    await chrome.storage.local.set({
-        columnMapping: defaultColumnMapping,
-    });
-
-    setColumnMapping(defaultColumnMapping);
-    showToast("Column mapping reset to default.", "success");
     setShowColumnMapping(false);
 }
 
@@ -543,48 +545,6 @@ chrome.storage.onChanged.addListener(onChanged);
 return () => chrome.storage.onChanged.removeListener(onChanged);
 }, []);
 
-async function hydrate() {
-    const data = (await chrome.storage.local.get([
-        "isConnected",
-        "spreadsheetId",
-        "spreadsheetName",
-        "spreadsheetUrl",
-        "sheetName",
-        "columnMapping",
-    ])) as StoredConfig;
-
-    const connected = Boolean(data.isConnected);
-    setConnectionStatus(connected ? "connected" : "disconnected");
-    setAppState(connected ? "connected" : "empty");
-
-    setSpreadsheetId(data.spreadsheetId ?? "");
-    setSpreadsheetName(data.spreadsheetName ?? "");
-    setSpreadsheetUrl(data.spreadsheetUrl ?? "");
-    setSelectedTab(data.sheetName ?? "");
-    setSearchQuery("");
-    setColumnMapping(normalizeColumnMapping(data.columnMapping));
-
-    if (connected) {
-        await Promise.all([loadCurrentProfile(false), loadSpreadsheets(true)]);
-    } else {
-        setProfile(null);
-        setAllSpreadsheets([]);
-        setAvailableTabs([]);
-    }
-
-    if (data.spreadsheetId) {
-        await loadTabs(data.spreadsheetId);
-    } else {
-        setAvailableTabs([]);
-    }
-
-    if (data.spreadsheetId && data.sheetName) {
-        await loadHeaders(data.spreadsheetId, data.sheetName);
-    } else {
-        setAvailableHeaders([]);
-    }
-}
-
 async function loadHeaders(spreadsheetId: string, sheetName: string) {
     try {
         const response = await chrome.runtime.sendMessage({
@@ -601,6 +561,52 @@ async function loadHeaders(spreadsheetId: string, sheetName: string) {
         setAvailableHeaders(headers);
     } catch {
         setAvailableHeaders([]);
+    }
+}
+
+async function hydrate() {
+    try {
+        const data = (await chrome.storage.local.get([
+            "isConnected",
+            "spreadsheetId",
+            "spreadsheetName",
+            "spreadsheetUrl",
+            "sheetName",
+            "columnMapping",
+        ])) as StoredConfig;
+
+        const connected = Boolean(data.isConnected);
+        setConnectionStatus(connected ? "connected" : "disconnected");
+        setAppState(connected ? "connected" : "empty");
+
+        setSpreadsheetId(data.spreadsheetId ?? "");
+        setSpreadsheetName(data.spreadsheetName ?? "");
+        setSpreadsheetUrl(data.spreadsheetUrl ?? "");
+        setSelectedTab(data.sheetName ?? "");
+        setSearchQuery("");
+        setColumnMapping(normalizeColumnMapping(data.columnMapping));
+
+        if (connected) {
+            await Promise.all([loadCurrentProfile(false), loadSpreadsheets(true)]);
+        } else {
+            setProfile(null);
+            setAllSpreadsheets([]);
+            setAvailableTabs([]);
+        }
+
+        if (data.spreadsheetId) {
+            await loadTabs(data.spreadsheetId);
+        } else {
+            setAvailableTabs([]);
+        }
+
+        if (data.spreadsheetId && data.sheetName) {
+            await loadHeaders(data.spreadsheetId, data.sheetName);
+        } else {
+            setAvailableHeaders([]);
+        }
+    } finally {
+        setIsHydrating(false);
     }
 }
 
@@ -825,7 +831,7 @@ async function handlePasteProfile() {
 
         if (!profile) {
             showToast("Please load a LinkedIn profile first.", "warning");
-    return;  // Aquí el flujo de la función se detiene y muestra el mensaje en lugar de la alerta.
+    return;
 }
 
 if (!spreadsheetId) {
@@ -889,7 +895,7 @@ setTimeout(() => {
 }
 
 return (
-  <div className="w-[380px] h-[582px] bg-background text-foreground overflow-hidden">
+  <div className={`w-[380px] h-[582px] bg-background text-foreground overflow-hidden transition-opacity duration-150 ${isHydrating ? "opacity-0" : "opacity-100"}`}>
     <div className="relative h-full overflow-hidden">
       {/* ── Main Panel ── */}
       <div
@@ -901,6 +907,7 @@ return (
               : "translate-x-0 translate-y-0 pointer-events-auto"
         }`}
       >
+        {/* ── Shared header (always visible) ── */}
         <div className="px-4 pt-4 pb-3 border-b border-border">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
@@ -921,401 +928,426 @@ return (
           </div>
         </div>
 
-        <div className="px-4 py-3 h-[calc(100%-69px)] flex flex-col">
-          <div className="space-y-3">
-            <section className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Google Account
-                </span>
+        {/* ── Inner panels container ── */}
+        <div className="relative h-[calc(100%-69px)] overflow-hidden">
 
-                {isConnected ? (
-                  <button
-                    type="button"
-                    onClick={() => void handleDisconnect()}
-                    onMouseEnter={() => setIsDisconnectHover(true)}
-                    onMouseLeave={() => setIsDisconnectHover(false)}
-                    disabled={isDisconnecting}
-                    className="transition-colors"
-                  >
+          {/* ── Login panel — slides down when connecting, up when disconnecting ── */}
+          <div
+            className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out ${
+              isHydrating
+                ? "opacity-0 pointer-events-none"
+                : isConnected
+                  ? "-translate-y-full pointer-events-none"
+                  : "translate-y-0 pointer-events-auto"
+            }`}
+          >
+            <div className="px-4 py-3 h-full flex flex-col relative">
+              <div className="space-y-3 pb-10">
+                <section className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Google Account
+                    </span>
                     <Badge
-                      variant="default"
-                      className={
-                        isDisconnectHover
-                          ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-                          : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-                      }
+                      variant="outline"
+                      className="text-muted-foreground text-[10px] px-2 py-0 h-5"
                     >
                       <CircleDot className="w-2.5 h-2.5 mr-1" />
-                      {isDisconnecting
-                        ? "Disconnecting..."
-                        : isDisconnectHover
-                          ? "Disconnect Google Account"
-                          : "Connected"}
+                      Not connected
                     </Badge>
-                  </button>
-                ) : (
-                  <Badge
-                    variant="outline"
-                    className="text-muted-foreground text-[10px] px-2 py-0 h-5"
-                  >
-                    <CircleDot className="w-2.5 h-2.5 mr-1" />
-                    Not connected
-                  </Badge>
-                )}
+                  </div>
+
+                  <div className="pt-10">
+                    <Button
+                      onClick={handleConnect}
+                      className="w-full h-8 text-xs"
+                      disabled={isConnecting}
+                    >
+                      {isConnecting && (
+                        <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                      )}
+                      {isConnecting ? "Connecting..." : "Connect Google Account"}
+                    </Button>
+                  </div>
+                </section>
               </div>
 
-              {!isConnected && (
-                <div className="pt-10">
-                  <Button
-                    onClick={handleConnect}
-                    className="w-full h-8 text-xs"
-                    disabled={isConnecting}
+              {/* Shared footer */}
+              <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 text-xs text-muted-foreground flex justify-between items-center bg-background border-t border-border/40">
+                <div className="space-x-2">
+                  <a
+                    href="https://forms.gle/xmCiUB8Tzs3ocM616"
+                    target="_blank"
+                    className="hover:text-primary transition-colors"
                   >
-                    {isConnecting && (
-                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                    )}
-                    {isConnecting ? "Connecting..." : "Connect Google Account"}
-                  </Button>
+                    Send feedback
+                  </a>
+                  <span>·</span>
+                  <a
+                    href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
+                    target="_blank"
+                    className="hover:text-primary transition-colors"
+                  >
+                    Changelog
+                  </a>
                 </div>
-              )}
-            </section>
-
-            {isConnected && (
-              <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
-                    Destination
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 text-[10px] px-2"
-                      onClick={() =>
-                        window.open(
-                          "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
-                          "_blank"
-                        )
-                      }
-                    >
-                      Google Sheet Template
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 text-[10px] px-2"
-                      onClick={() => {
-                        setDraftColumnMapping(JSON.parse(JSON.stringify(columnMapping)) as ColumnMapping);
-                        setShowColumnMapping(true);
-                      }}
-                    >
-                      <SlidersHorizontal className="w-3 h-3 mr-1" />
-                      Config Columns
-                    </Button>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="https://www.linkedin.com/in/josuelunagamboa/"
+                    target="_blank"
+                    className="hover:text-primary transition-colors"
+                  >
+                    Developed by Josué
+                  </a>
+                  <span className="opacity-70">v{version}</span>
                 </div>
+              </div>
+            </div>
+          </div>
 
-                <div className="space-y-1.5">
-                  <div className="relative">
-                    <Label className="text-[11px] text-muted-foreground">
-                      Spreadsheet
-                    </Label>
-
+          {/* ── Connected panel — slides up from bottom when connecting, down when disconnecting ── */}
+          <div
+            className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out shadow-[0_-4px_16px_rgba(0,0,0,0.08)] ${
+              isHydrating
+                ? "opacity-0 pointer-events-none"
+                : isConnected
+                  ? "translate-y-0 pointer-events-auto"
+                  : "translate-y-full pointer-events-none"
+            }`}
+          >
+            <div className="px-4 py-3 h-full flex flex-col relative">
+              <div className="space-y-3 pb-10">
+                <section className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Google Account
+                    </span>
                     <button
                       type="button"
-                      onClick={async () => {
-                        const nextOpen = !sheetPickerOpen;
-                        setSheetPickerOpen(nextOpen);
-                        setTabPickerOpen(false);
-                        setSearchQuery("");
-
-                        if (nextOpen) {
-                          await loadSpreadsheets(true);
-                        }
-                      }}
-                      className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
+                      onClick={() => void handleDisconnect()}
+                      onMouseEnter={() => setIsDisconnectHover(true)}
+                      onMouseLeave={() => setIsDisconnectHover(false)}
+                      disabled={isDisconnecting}
+                      className="transition-colors"
                     >
-                      <span className="flex items-center gap-1.5 truncate">
-                        <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
-                        <span className={spreadsheetName ? "text-foreground" : "text-muted-foreground"}>
-                          {spreadsheetName || "Choose a spreadsheet…"}
-                        </span>
-                      </span>
-
-                      {isLoadingSpreadsheets ? (
-                        <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-                      ) : (
-                        <ChevronDown
-                          className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform duration-200 ${
-                            sheetPickerOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      )}
+                      <Badge
+                        variant="default"
+                        className={
+                          isDisconnectHover
+                            ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+                            : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+                        }
+                      >
+                        <CircleDot className="w-2.5 h-2.5 mr-1" />
+                        {isDisconnecting
+                          ? "Disconnecting..."
+                          : isDisconnectHover
+                            ? "Disconnect Google Account"
+                            : "Connected"}
+                      </Badge>
                     </button>
+                  </div>
+                </section>
 
-                    {sheetPickerOpen && (
-                      <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                        <div className="p-1.5 border-b border-border">
-                          <div className="relative">
-                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
-                            <input
-                              type="text"
-                              placeholder="Search spreadsheets…"
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
-                              autoFocus
-                            />
-                          </div>
-                        </div>
-
-                        <div className="max-h-[180px] overflow-y-auto">
-                          {isLoadingSpreadsheets ? (
-                            <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-                              Loading spreadsheets...
-                            </div>
-                          ) : filteredSpreadsheets.length === 0 ? (
-                            <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-                              No spreadsheets found
-                            </div>
-                          ) : (
-                            filteredSpreadsheets.map((sheet) => (
-                              <button
-                                key={sheet.id}
-                                type="button"
-                                onClick={() => void handleSelectSpreadsheet(sheet)}
-                                className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-                                  spreadsheetId === sheet.id ? "bg-accent/30" : ""
-                                }`}
-                              >
-                                <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-xs text-foreground truncate">
-                                    {sheet.name}
-                                  </div>
-                                  <div className="text-[10px] text-muted-foreground truncate">
-                                    {sheet.url}
-                                  </div>
-                                </div>
-                                {spreadsheetId === sheet.id && (
-                                  <Check className="w-3 h-3 text-primary shrink-0" />
-                                )}
-                              </button>
-                            ))
-                          )}
-                        </div>
-                      </div>
-                    )}
+                <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
+                      Destination
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-6 text-[10px] px-2"
+                        onClick={() =>
+                          window.open(
+                            "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
+                            "_blank"
+                          )
+                        }
+                      >
+                        Google Sheet Template
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-6 text-[10px] px-2"
+                        onClick={() => {
+                          setDraftColumnMapping(JSON.parse(JSON.stringify(columnMapping)) as ColumnMapping);
+                          setShowColumnMapping(true);
+                        }}
+                      >
+                        <SlidersHorizontal className="w-3 h-3 mr-1" />
+                        Config Columns
+                      </Button>
+                    </div>
                   </div>
 
-                  <div className="relative">
-                    <Label className="text-[11px] text-muted-foreground">
-                      Tab
-                    </Label>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (availableTabs.length) {
-                          setTabPickerOpen(!tabPickerOpen);
-                          setSheetPickerOpen(false);
-                        }
-                      }}
-                      disabled={!spreadsheetId || isLoadingTabs}
-                      className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
-                        spreadsheetId
-                          ? "bg-card text-foreground hover:bg-accent/50"
-                          : "bg-muted/30 text-muted-foreground cursor-not-allowed"
-                      }`}
-                    >
-                      <span className="flex items-center gap-1.5 truncate">
-                        <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-                        <span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
-                          {isLoadingTabs
-                            ? "Loading tabs..."
-                            : selectedTab || "Choose a tab…"}
+                  <div className="space-y-1.5">
+                    <div className="relative">
+                      <Label className="text-[11px] text-muted-foreground">
+                        Spreadsheet
+                      </Label>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const nextOpen = !sheetPickerOpen;
+                          setSheetPickerOpen(nextOpen);
+                          setTabPickerOpen(false);
+                          setSearchQuery("");
+                          if (nextOpen) {
+                            await loadSpreadsheets(true);
+                          }
+                        }}
+                        className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
+                      >
+                        <span className="flex items-center gap-1.5 truncate">
+                          <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
+                          <span className={spreadsheetName ? "text-foreground" : "text-muted-foreground"}>
+                            {spreadsheetName || "Choose a spreadsheet…"}
+                          </span>
                         </span>
-                      </span>
+                        {isLoadingSpreadsheets ? (
+                          <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+                        ) : (
+                          <ChevronDown
+                            className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform duration-200 ${
+                              sheetPickerOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        )}
+                      </button>
 
-                      {isLoadingTabs ? (
-                        <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-                      ) : (
-                        <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
-                      )}
-
-                      {tabPickerOpen && availableTabs.length > 0 && (
+                      {sheetPickerOpen && (
                         <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                          <div className="max-h-[140px] overflow-y-auto">
-                            {availableTabs.map((tab) => (
-                              <button
-                                key={tab}
-                                type="button"
-                                onClick={() => void handleSelectTab(tab)}
-                                className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-                                  selectedTab === tab ? "bg-accent/30" : ""
-                                }`}
-                              >
-                                <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-                                <span className="text-xs text-foreground">{tab}</span>
-                                {selectedTab === tab && (
-                                  <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
-                                )}
-                              </button>
-                            ))}
+                          <div className="p-1.5 border-b border-border">
+                            <div className="relative">
+                              <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                              <input
+                                type="text"
+                                placeholder="Search spreadsheets…"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
+                                autoFocus
+                              />
+                            </div>
+                          </div>
+                          <div className="max-h-[180px] overflow-y-auto">
+                            {isLoadingSpreadsheets ? (
+                              <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                                Loading spreadsheets...
+                              </div>
+                            ) : filteredSpreadsheets.length === 0 ? (
+                              <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                                No spreadsheets found
+                              </div>
+                            ) : (
+                              filteredSpreadsheets.map((sheet) => (
+                                <button
+                                  key={sheet.id}
+                                  type="button"
+                                  onClick={() => void handleSelectSpreadsheet(sheet)}
+                                  className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+                                    spreadsheetId === sheet.id ? "bg-accent/30" : ""
+                                  }`}
+                                >
+                                  <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-xs text-foreground truncate">{sheet.name}</div>
+                                    <div className="text-[10px] text-muted-foreground truncate">{sheet.url}</div>
+                                  </div>
+                                  {spreadsheetId === sheet.id && (
+                                    <Check className="w-3 h-3 text-primary shrink-0" />
+                                  )}
+                                </button>
+                              ))
+                            )}
                           </div>
                         </div>
                       )}
-                    </button>
-                  </div>
+                    </div>
 
-                  {spreadsheetName && selectedTab && (
-                    <div className="space-y-1 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
-                      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
-                        <Check className="w-3 h-3 text-primary shrink-0" />
-                        <span className="text-[10px] text-foreground truncate">
-                          {spreadsheetName} → {selectedTab}
+                    <div className="relative">
+                      <Label className="text-[11px] text-muted-foreground">Tab</Label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (availableTabs.length) {
+                            setTabPickerOpen(!tabPickerOpen);
+                            setSheetPickerOpen(false);
+                          }
+                        }}
+                        disabled={!spreadsheetId || isLoadingTabs}
+                        className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
+                          spreadsheetId
+                            ? "bg-card text-foreground hover:bg-accent/50"
+                            : "bg-muted/30 text-muted-foreground cursor-not-allowed"
+                        }`}
+                      >
+                        <span className="flex items-center gap-1.5 truncate">
+                          <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+                          <span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
+                            {isLoadingTabs ? "Loading tabs..." : selectedTab || "Choose a tab…"}
+                          </span>
                         </span>
-                      </div>
-
-                      {hasCustomColumnMapping && (
-                        <div className="flex justify-end">
-                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
-                            <span>Custom Column Mapping active</span>
+                        {isLoadingTabs ? (
+                          <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+                        )}
+                        {tabPickerOpen && availableTabs.length > 0 && (
+                          <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200">
+                            <div className="max-h-[140px] overflow-y-auto">
+                              {availableTabs.map((tab) => (
+                                <button
+                                  key={tab}
+                                  type="button"
+                                  onClick={() => void handleSelectTab(tab)}
+                                  className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+                                    selectedTab === tab ? "bg-accent/30" : ""
+                                  }`}
+                                >
+                                  <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+                                  <span className="text-xs text-foreground">{tab}</span>
+                                  {selectedTab === tab && (
+                                    <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
+                                  )}
+                                </button>
+                              ))}
+                            </div>
                           </div>
+                        )}
+                      </button>
+                    </div>
+
+                    {spreadsheetName && selectedTab && (
+                      <div className="space-y-1 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
+                        <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+                          <Check className="w-3 h-3 text-primary shrink-0" />
+                          <span className="text-[10px] text-foreground truncate">
+                            {spreadsheetName} → {selectedTab}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </section>
-            )}
-
-            {isConnected && (
-              <section className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Current Profile
-                  </span>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 px-2 text-[11px]"
-                    onClick={() => void loadCurrentProfile(true)}
-                    disabled={isRefreshingProfile}
-                  >
-                    {isRefreshingProfile ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <>
-                        <RefreshCw className="w-3.5 h-3.5 mr-1" />
-                        Refresh
-                      </>
-                    )}
-                  </Button>
-                </div>
-
-                <div className="rounded-lg border border-border bg-card p-3 space-y-1.5">
-                  {profile ? (
-                    mappingFields
-                      .filter(({ key }) => columnMapping[key].enabled)
-                      .map(({ key, icon: Icon }) => {
-                        const value =
-                          key === "name"
-                            ? profile.name
-                            : key === "company"
-                              ? profile.company
-                              : key === "title"
-                                ? profile.title
-                                : key === "location"
-                                  ? profile.location
-                                  : profile.profileUrl;
-
-                        return (
-                          <div
-                            key={key}
-                            className="flex items-center gap-2 animate-in fade-in-0 duration-150"
-                          >
-                            <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
-                            <span className="text-xs text-foreground truncate">
-                              {value || "—"}
-                            </span>
+                        {hasCustomColumnMapping && (
+                          <div className="flex justify-end">
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
+                              <span>Custom Column Mapping active</span>
+                            </div>
                           </div>
-                        );
-                      })
-                  ) : (
-                    <div className="text-xs text-muted-foreground">
-                      Open a LinkedIn profile and click Refresh.
-                    </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </section>
+
+                <section className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Current Profile
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-[11px]"
+                      onClick={() => void loadCurrentProfile(true)}
+                      disabled={isRefreshingProfile}
+                    >
+                      {isRefreshingProfile ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <>
+                          <RefreshCw className="w-3.5 h-3.5 mr-1" />
+                          Refresh
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <div className="rounded-lg border border-border bg-card p-3 space-y-1.5">
+                    {profile ? (
+                      mappingFields
+                        .filter(({ key }) => columnMapping[key].enabled)
+                        .map(({ key, icon: Icon }) => {
+                          const value =
+                            key === "name"
+                              ? profile.name
+                              : key === "company"
+                                ? profile.company
+                                : key === "title"
+                                  ? profile.title
+                                  : key === "location"
+                                    ? profile.location
+                                    : profile.profileUrl;
+                          return (
+                            <div
+                              key={key}
+                              className="flex items-center gap-2 animate-in fade-in-0 duration-150"
+                            >
+                              <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
+                              <span className="text-xs text-foreground truncate">
+                                {value || "—"}
+                              </span>
+                            </div>
+                          );
+                        })
+                    ) : (
+                      <div className="text-xs text-muted-foreground">
+                        Open a LinkedIn profile and click Refresh.
+                      </div>
+                    )}
+                  </div>
+                </section>
+
+                <Button
+                  onClick={handlePasteProfile}
+                  disabled={!canPaste}
+                  className="w-full h-9 text-xs font-medium"
+                >
+                  {appState === "saving" && (
+                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                   )}
+                  {pasteButtonLabel}
+                </Button>
+
+                <div>
+                  <FeedbackBanner feedbackMessage={feedbackMessage} feedbackTone={feedbackTone} />
                 </div>
-              </section>
-            )}
+              </div>
 
-            {isConnected && (
-              <Button
-                onClick={handlePasteProfile}
-                disabled={!canPaste}
-                className="w-full h-9 text-xs font-medium"
-              >
-                {appState === "saving" && (
-                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                )}
-                {pasteButtonLabel}
-              </Button>
-            )}
-
-            <div>
-              <FeedbackBanner feedbackMessage={feedbackMessage} feedbackTone={feedbackTone} />
+              {/* Shared footer */}
+              <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 text-xs text-muted-foreground flex justify-between items-center bg-background border-t border-border/40">
+                <div className="space-x-2">
+                  <a
+                    href="https://forms.gle/xmCiUB8Tzs3ocM616"
+                    target="_blank"
+                    className="hover:text-primary transition-colors"
+                  >
+                    Send feedback
+                  </a>
+                  <span>·</span>
+                  <a
+                    href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
+                    target="_blank"
+                    className="hover:text-primary transition-colors"
+                  >
+                    Changelog
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="https://www.linkedin.com/in/josuelunagamboa/"
+                    target="_blank"
+                    className="hover:text-primary transition-colors"
+                  >
+                    Developed by Josué
+                  </a>
+                  <span className="opacity-70">v{version}</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="mt-auto pt-3 text-xs text-muted-foreground flex justify-between items-center">
-            <div className="space-x-2">
-            <a  
-                href="https://forms.gle/xmCiUB8Tzs3ocM616"
-                target="_blank"
-                className="hover:text-primary transition-colors"
-              >
-                Send feedback
-              </a>
-
-              <span>·</span>
-
-              <a
-                href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
-                target="_blank"
-                className="hover:text-primary transition-colors"
-              >
-                Changelog
-              </a>
-            </div>
-
-            <div className="flex items-center gap-2">
-            <a  
-                href="https://www.linkedin.com/in/josuelunagamboa/"
-                target="_blank"
-                className="hover:text-primary transition-colors"
-              >
-                Developed by Josué
-              </a>
-
-              <span className="opacity-70">v{version}</span>
-            </div>
-          </div>
-
-          {appState === "empty" && !isConnected && !feedbackMessage && (
-            <div className="flex items-center gap-2 p-2 rounded-md bg-warning/10 border border-warning/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
-              <AlertCircle className="w-3.5 h-3.5 text-warning shrink-0" />
-              <span className="text-[11px] text-warning font-medium">
-                Please connect your Google account
-              </span>
-            </div>
-          )}
         </div>
       </div>
 
