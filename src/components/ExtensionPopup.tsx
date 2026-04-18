@@ -511,17 +511,6 @@ async function handleResetColumnMapping() {
     });
 
     setColumnMapping(defaultColumnMapping);
-    setDraftColumnMapping(null);
-    setShowColumnMapping(false);
-    showToast("Column mapping reset to default.", "success");
-}
-
-async function handleResetColumnMapping() {
-    await chrome.storage.local.set({
-        columnMapping: defaultColumnMapping,
-    });
-
-    setColumnMapping(defaultColumnMapping);
     showToast("Column mapping reset to default.", "success");
     setShowColumnMapping(false);
 }
