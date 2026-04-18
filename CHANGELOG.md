@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 ## v0.1.9
 
 ### Improved
+- Added subtle guided highlight states to the Spreadsheet and Tab selectors when a destination has not been selected yet.
+- Improved popup guidance so required destination steps are more visually noticeable.
 - Added subtle popup screen transitions for the main view, column mapping panel, and success state.
 - Improved column mapping behavior so draft edits are only saved when clicking **Save changes**.
 - Reset to Default now restores the default mapping, saves it immediately, and closes the panel.

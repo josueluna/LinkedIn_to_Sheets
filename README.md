@@ -14,6 +14,7 @@ way to capture and organize candidate data — without copy-paste.
 ## 🚀 Key Features
 
 - One-click LinkedIn profile extraction
+- Guided destination selection with subtle visual prompts
 - Direct save into Google Sheets
 - Spreadsheet and tab selection
 - Custom column mapping

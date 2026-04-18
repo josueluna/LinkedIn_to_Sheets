@@ -494,13 +494,16 @@ export default function ExtensionPopup() {
         sheet.name.toLowerCase().includes(q)
         );
 }, [allSpreadsheets, searchQuery]);
-  const activeColumnMapping = showColumnMapping && draftColumnMapping ? draftColumnMapping : columnMapping;
+
+  const activeColumnMapping =
+  showColumnMapping && draftColumnMapping ? draftColumnMapping : columnMapping;
 
   const mappedColumns = Object.values(activeColumnMapping)
   .filter((field) => field.enabled)
   .map((field) => field.column);
 
   const hasDuplicateColumns = new Set(mappedColumns).size !== mappedColumns.length;
+
   const hasCustomColumnMapping =
   columnMapping.name.enabled !== defaultColumnMapping.name.enabled ||
   columnMapping.name.column !== defaultColumnMapping.name.column ||
@@ -512,6 +515,7 @@ export default function ExtensionPopup() {
   columnMapping.location.column !== defaultColumnMapping.location.column ||
   columnMapping.profileUrl.enabled !== defaultColumnMapping.profileUrl.enabled ||
   columnMapping.profileUrl.column !== defaultColumnMapping.profileUrl.column;
+
   const canPaste =
   isConnected &&
   !!profile &&
@@ -519,6 +523,9 @@ export default function ExtensionPopup() {
   !!selectedTab &&
   !isRefreshingProfile &&
   appState !== "saving";
+
+  const shouldHighlightSpreadsheet = isConnected && !spreadsheetName;
+  const shouldHighlightTab = isConnected && !!spreadsheetId && !selectedTab;
 
   async function handleResetColumnMapping() {
     await chrome.storage.local.set({
@@ -1124,17 +1131,21 @@ return (
         Spreadsheet
     </Label>
     <button
-        type="button"
-        onClick={async () => {
-          const nextOpen = !sheetPickerOpen;
-          setSheetPickerOpen(nextOpen);
-          setTabPickerOpen(false);
-          setSearchQuery("");
-          if (nextOpen) {
-            await loadSpreadsheets(true);
-        }
-    }}
-    className="mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input bg-card px-2.5 text-xs text-foreground hover:bg-accent/50 transition-colors"
+      type="button"
+      onClick={async () => {
+        const nextOpen = !sheetPickerOpen;
+        setSheetPickerOpen(nextOpen);
+        setTabPickerOpen(false);
+        setSearchQuery("");
+        if (nextOpen) {
+          await loadSpreadsheets(true);
+      }
+  }}
+  className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md px-2.5 text-xs transition-colors ${
+    shouldHighlightSpreadsheet
+    ? "border border-amber-400/60 bg-amber-50/60 dark:bg-amber-500/10 text-foreground animate-pulse hover:bg-amber-50/70"
+    : "border border-input bg-card text-foreground hover:bg-accent/50"
+}`}
 >
     <span className="flex items-center gap-1.5 truncate">
       <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
@@ -1214,10 +1225,12 @@ return (
     }
 }}
 disabled={!spreadsheetId || isLoadingTabs}
-className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md border border-input px-2.5 text-xs transition-colors ${
-  spreadsheetId
-  ? "bg-card text-foreground hover:bg-accent/50"
-  : "bg-muted/30 text-muted-foreground cursor-not-allowed"
+className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md px-2.5 text-xs transition-colors ${
+  !spreadsheetId
+  ? "border border-input bg-muted/30 text-muted-foreground cursor-not-allowed"
+  : shouldHighlightTab
+  ? "border border-amber-400/60 bg-amber-50/60 dark:bg-amber-500/10 text-foreground animate-pulse hover:bg-amber-50/70"
+  : "border border-input bg-card text-foreground hover:bg-accent/50"
 }`}
 >
     <span className="flex items-center gap-1.5 truncate">
