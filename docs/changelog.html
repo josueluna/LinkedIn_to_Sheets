@@ -88,31 +88,28 @@
     /* ── Hero (orbs like landing) ── */
     .hero {
       position: relative; overflow: hidden;
-      padding: 5rem 1.5rem 3rem; text-align: center;
+      padding: 5rem 1.5rem 4rem; text-align: center;
     }
+    @media (min-width: 768px) { .hero { padding: 7rem 1.5rem 6rem; } }
     .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
     .orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
-    .orb-1 { top: -6rem; left: -4rem; width: 420px; height: 420px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.20), transparent 70%); }
-    .orb-2 { top: -4rem; right: -6%; width: 460px; height: 460px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.18), transparent 70%); }
+    .orb-1 { top: -8rem; left: -6rem; width: 480px; height: 480px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
+    .orb-2 { top: -5rem; right: -10%; width: 520px; height: 520px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.20), transparent 70%); }
     .hero-inner { max-width: 48rem; margin: 0 auto; }
 
-    .pill {
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .375rem .75rem; border-radius: 9999px;
-      font-size: .75rem; font-weight: 500; color: var(--muted-fg);
-    }
-    .pill .dot { width: .5rem; height: .5rem; border-radius: 9999px; background: var(--primary); box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 18%, transparent); }
-
-    .eyebrow { margin-top: 1.25rem; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; color: var(--primary); }
-    .page-title { margin-top: .75rem; font-size: 2.5rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+    .eyebrow { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; color: var(--primary); }
+    .beta-pill { display: none; }
+    .dot-wrap, .dot-ping, .dot { display: none; }
+    .page-title { margin-top: .75rem; font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; text-wrap: balance; }
     .page-title .gradient-text {
       background: var(--gradient-brand);
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
     }
-    @media (min-width: 768px) { .page-title { font-size: 3.25rem; } }
-    .page-sub { margin-top: 1rem; color: var(--muted-fg); font-size: 1.0625rem; max-width: 36rem; margin-left: auto; margin-right: auto; }
-    .page-actions { margin-top: 1.75rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
+    @media (min-width: 768px) { .page-title { font-size: 3.75rem; } }
+    .page-sub { margin-top: 1.5rem; color: var(--muted-fg); font-size: 1rem; max-width: 36rem; margin-left: auto; margin-right: auto; text-wrap: balance; }
+    @media (min-width: 768px) { .page-sub { font-size: 1.125rem; } }
+    .page-actions { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
 
     /* ── Content card ── */
     .content-wrap { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
@@ -211,6 +208,7 @@
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
   </div>
+  <div class="hero-inner reveal">
     <div class="eyebrow">What's new</div>
     <h1 class="page-title">
       <span class="gradient-text">Changelog</span>
