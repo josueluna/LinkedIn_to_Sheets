@@ -4,203 +4,245 @@
   <meta charset="UTF-8">
   <title>LinkedIn to Sheets — Changelog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Every update, fix and improvement to LinkedIn to Sheets — documented." />
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-:root {
-  --radius: 0.875rem;
-  --background: oklch(0.995 0.002 255);
-  --foreground: oklch(0.18 0.025 265);
-  --card: oklch(1 0 0);
-  --muted-fg: oklch(0.50 0.02 260);
-  --primary: oklch(0.66 0.19 145);
-  --primary-fg: oklch(0.99 0.005 145);
-  --primary-glow: oklch(0.74 0.19 145);
-  --linkedin: oklch(0.50 0.15 245);
-  --destructive: oklch(0.62 0.22 27);
-  --border: oklch(0.92 0.008 255);
-  --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
-  --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
-  --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
-  --glass-bg: color-mix(in oklab, white 65%, transparent);
-  --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
-  --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
-html, body { background: var(--background); color: var(--foreground); }
-body {
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
-}
-img { display: block; max-width: 100%; height: auto; }
-a { color: inherit; text-decoration: none; }
-ul { list-style: none; }
-button, a { cursor: pointer; }
+    :root {
+      --radius: 0.875rem;
+      --background: oklch(0.995 0.002 255);
+      --foreground: oklch(0.18 0.025 265);
+      --card: oklch(1 0 0);
+      --muted-fg: oklch(0.50 0.02 260);
+      --primary: oklch(0.66 0.19 145);
+      --primary-fg: oklch(0.99 0.005 145);
+      --primary-glow: oklch(0.74 0.19 145);
+      --linkedin: oklch(0.50 0.15 245);
+      --border: oklch(0.92 0.008 255);
+      --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
+      --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
+      --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
+      --glass-bg: color-mix(in oklab, white 65%, transparent);
+      --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
+      --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+      --gradient-brand: linear-gradient(135deg, oklch(0.50 0.15 245), oklch(0.66 0.19 145));
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+    html, body { background: var(--background); color: var(--foreground); }
+    body {
+      font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    button, a { cursor: pointer; }
 
-/* Glass */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: saturate(140%) blur(14px);
-  -webkit-backdrop-filter: saturate(140%) blur(14px);
-  border: 1px solid var(--glass-border);
-}
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      border: 1px solid var(--glass-border);
+    }
 
-/* Reveal */
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease-out, transform .7s ease-out; will-change: opacity, transform; }
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease-out, transform .7s ease-out; will-change: opacity, transform; }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
-/* Nav */
-.nav {
-  position: sticky; top: 0; z-index: 50;
-  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
-}
-.nav-inner { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1.5rem; max-width: 72rem; margin: 0 auto; }
-.brand { display: flex; align-items: center; gap: .625rem; font-weight: 600; letter-spacing: -0.01em; }
-.brand img { width: 2rem; height: 2rem; border-radius: .375rem; }
-.nav-links { display: none; gap: 2rem; font-size: .875rem; color: var(--muted-fg); }
-.nav-links a { transition: color .2s; }
-.nav-links a:hover { color: var(--foreground); }
-@media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
+    /* ── Nav (matches landing) ── */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1.5rem; max-width: 72rem; margin: 0 auto; }
+    .brand { display: flex; align-items: center; gap: .625rem; font-weight: 600; letter-spacing: -0.01em; }
+    .brand img { width: 2rem; height: 2rem; border-radius: .375rem; }
+    .nav-links { display: none; gap: 2rem; font-size: .875rem; color: var(--muted-fg); }
+    .nav-links a { transition: color .2s; }
+    .nav-links a:hover { color: var(--foreground); }
+    @media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
 
-.btn-primary {
-  display: inline-flex; align-items: center; gap: .5rem;
-  background: var(--primary); color: var(--primary-fg);
-  padding: .5rem 1rem; border-radius: .5rem; font-size: .875rem; font-weight: 500;
-  box-shadow: var(--shadow-glow); border: none;
-  transition: transform .25s, filter .25s, box-shadow .25s;
-}
-.btn-primary:hover { filter: brightness(1.1); box-shadow: 0 14px 36px -12px oklch(0.66 0.19 145 / 0.45); }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--primary); color: var(--primary-fg);
+      padding: .5rem 1rem; border-radius: .5rem; font-size: .875rem; font-weight: 500;
+      box-shadow: var(--shadow-glow); border: none;
+      transition: transform .25s, filter .25s, box-shadow .25s;
+    }
+    .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 14px 36px -12px oklch(0.66 0.19 145 / 0.45); transform: translateY(-1px); }
 
-.btn-glass {
-  display: inline-flex; align-items: center; gap: .5rem;
-  padding: .5rem 1rem; border-radius: .5rem; font-size: .875rem; font-weight: 500;
-  color: var(--foreground); transition: transform .25s;
-  background: var(--glass-bg);
-  backdrop-filter: saturate(140%) blur(14px);
-  -webkit-backdrop-filter: saturate(140%) blur(14px);
-  border: 1px solid var(--glass-border);
-}
-.btn-glass:hover { transform: translateY(-2px); }
+    .btn-glass {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .5rem 1rem; border-radius: .5rem; font-size: .875rem; font-weight: 500;
+      color: var(--foreground); transition: transform .25s, box-shadow .25s;
+      background: var(--glass-bg);
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      border: 1px solid var(--glass-border);
+    }
+    .btn-glass:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
 
-.icon { width: 1rem; height: 1rem; flex-shrink: 0; }
-.icon-sm { width: .875rem; height: .875rem; }
+    .icon { width: 1rem; height: 1rem; flex-shrink: 0; }
+    .icon-sm { width: .875rem; height: .875rem; flex-shrink: 0; }
 
-/* Page hero */
-.page-hero {
-  position: relative; overflow: hidden;
-  padding: 4rem 1.5rem 3rem; text-align: center;
-}
-.page-hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
-.orb-1 { top: -6rem; left: -4rem; width: 400px; height: 400px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.20), transparent 70%); }
-.orb-2 { top: -4rem; right: -6%; width: 440px; height: 440px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.18), transparent 70%); }
-.page-hero-inner { max-width: 48rem; margin: 0 auto; }
-.eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
-.page-title { margin-top: .5rem; font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
-@media (min-width: 768px) { .page-title { font-size: 3rem; } }
-.page-sub { margin-top: 1rem; color: var(--muted-fg); font-size: 1rem; }
-.page-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
+    /* ── Hero (orbs like landing) ── */
+    .hero {
+      position: relative; overflow: hidden;
+      padding: 5rem 1.5rem 3rem; text-align: center;
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+    .orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
+    .orb-1 { top: -6rem; left: -4rem; width: 420px; height: 420px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.20), transparent 70%); }
+    .orb-2 { top: -4rem; right: -6%; width: 460px; height: 460px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.18), transparent 70%); }
+    .hero-inner { max-width: 48rem; margin: 0 auto; }
 
-/* Content area */
-.content-wrap { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+    .pill {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .375rem .75rem; border-radius: 9999px;
+      font-size: .75rem; font-weight: 500; color: var(--muted-fg);
+    }
+    .pill .dot { width: .5rem; height: .5rem; border-radius: 9999px; background: var(--primary); box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 18%, transparent); }
 
-/* Markdown styles */
-#changelog-content { color: var(--foreground); }
-#changelog-content h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.015em; margin-top: 2.5rem; margin-bottom: .5rem; }
-#changelog-content h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; margin-top: 2rem; margin-bottom: .5rem; color: var(--foreground); }
-#changelog-content h3 { font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: .4rem; }
-#changelog-content p { font-size: .9375rem; line-height: 1.75; color: var(--muted-fg); margin-bottom: .875rem; }
-#changelog-content ul, #changelog-content ol {
-  padding-left: 1.25rem; color: var(--muted-fg);
-  margin: .5rem 0 1.25rem; list-style: disc;
-}
-#changelog-content li { margin-bottom: .375rem; line-height: 1.65; font-size: .9375rem; }
-#changelog-content code {
-  background: color-mix(in oklab, var(--primary) 8%, transparent);
-  color: var(--foreground);
-  padding: 2px 7px; border-radius: 6px; font-size: .8125rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-#changelog-content pre {
-  background: color-mix(in oklab, var(--foreground) 4%, transparent);
-  border: 1px solid var(--border);
-  border-radius: .5rem; padding: 1rem 1.25rem;
-  overflow-x: auto; margin-bottom: 1.25rem;
-}
-#changelog-content pre code { background: none; padding: 0; font-size: .8125rem; }
-#changelog-content a { color: var(--linkedin); font-weight: 500; }
-#changelog-content a:hover { text-decoration: underline; }
-#changelog-content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .eyebrow { margin-top: 1.25rem; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; color: var(--primary); }
+    .page-title { margin-top: .75rem; font-size: 2.5rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+    .page-title .gradient-text {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    @media (min-width: 768px) { .page-title { font-size: 3.25rem; } }
+    .page-sub { margin-top: 1rem; color: var(--muted-fg); font-size: 1.0625rem; max-width: 36rem; margin-left: auto; margin-right: auto; }
+    .page-actions { margin-top: 1.75rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
 
-.divider { border: none; border-top: 1px solid color-mix(in oklab, var(--border) 70%, transparent); margin: 3rem 0; }
+    /* ── Content card ── */
+    .content-wrap { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+    .content-card {
+      border-radius: 1.25rem;
+      background: var(--glass-strong-bg);
+      backdrop-filter: saturate(160%) blur(20px);
+      -webkit-backdrop-filter: saturate(160%) blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-elegant);
+      padding: 2.5rem 2rem;
+    }
+    @media (min-width: 768px) { .content-card { padding: 3rem 3rem; } }
 
-/* Footer */
-.footer {
-  border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
-  padding: 2rem 1.5rem; color: var(--muted-fg); font-size: .8125rem;
-}
-.footer-inner { max-width: 72rem; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-.footer-brand { display: flex; align-items: center; gap: .5rem; font-weight: 500; color: var(--foreground); }
-.footer-brand img { width: 1.25rem; height: 1.25rem; border-radius: .25rem; }
-.footer a.link { color: var(--foreground); transition: color .2s; }
-.footer a.link:hover { color: var(--primary); }
-.footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
-.footer .gh:hover { color: var(--foreground); }
+    /* Markdown */
+    #changelog-content { color: var(--foreground); }
+    #changelog-content h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.015em; margin-top: 2.5rem; margin-bottom: .5rem; }
+    #changelog-content h1:first-child { margin-top: 0; }
+    #changelog-content h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; margin-top: 2rem; margin-bottom: .5rem; }
+    #changelog-content h3 { font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: .4rem; }
+    #changelog-content p { font-size: .9375rem; line-height: 1.75; color: var(--muted-fg); margin-bottom: .875rem; }
+    #changelog-content ul, #changelog-content ol { padding-left: 1.25rem; color: var(--muted-fg); margin: .5rem 0 1.25rem; }
+    #changelog-content ul { list-style: disc; }
+    #changelog-content ol { list-style: decimal; }
+    #changelog-content li { margin-bottom: .375rem; line-height: 1.65; font-size: .9375rem; }
+    #changelog-content code {
+      background: color-mix(in oklab, var(--primary) 8%, transparent);
+      color: var(--foreground);
+      padding: 2px 7px; border-radius: 6px; font-size: .8125rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    #changelog-content pre {
+      background: color-mix(in oklab, var(--foreground) 4%, transparent);
+      border: 1px solid var(--border);
+      border-radius: .5rem; padding: 1rem 1.25rem;
+      overflow-x: auto; margin-bottom: 1.25rem;
+    }
+    #changelog-content pre code { background: none; padding: 0; font-size: .8125rem; }
+    #changelog-content a { color: var(--linkedin); font-weight: 500; }
+    #changelog-content a:hover { text-decoration: underline; }
+    #changelog-content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    #changelog-content blockquote {
+      border-left: 3px solid var(--primary);
+      padding: .25rem 0 .25rem 1rem; margin: 1rem 0;
+      color: var(--muted-fg);
+    }
+
+    .loading {
+      text-align: center; color: var(--muted-fg);
+      padding: 3rem 0; font-size: .9375rem;
+    }
+
+    /* Footer (matches landing) */
+    .footer {
+      border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+      padding: 2.5rem 0;
+    }
+    .footer-inner {
+      max-width: 72rem; margin: 0 auto; padding: 0 1.5rem;
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      gap: 1rem; font-size: .875rem; color: var(--muted-fg);
+    }
+    @media (min-width: 768px) { .footer-inner { flex-direction: row; } }
+    .footer-brand { display: flex; align-items: center; gap: .625rem; color: var(--foreground); font-weight: 500; }
+    .footer-brand img { width: 1.25rem; height: 1.25rem; border-radius: .25rem; }
+    .footer a.link { color: var(--foreground); transition: color .2s; }
+    .footer a.link:hover { color: var(--primary); }
+    .footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
+    .footer .gh:hover { color: var(--foreground); }
   </style>
 </head>
 <body>
 
-<!-- Nav -->
+<!-- ── Nav ── -->
 <header class="nav glass">
   <div class="nav-inner">
-    <a class="brand" href="https://josueluna.github.io/LinkedIn_to_Sheets/">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo">
+    <a class="brand" href="index.html">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" />
       <span>LinkedIn to Sheets</span>
     </a>
     <nav class="nav-links">
-      <a href="https://josueluna.github.io/LinkedIn_to_Sheets/wiki.html">Documentation</a>
-      <a href="https://josueluna.github.io/LinkedIn_to_Sheets/privacy.html">Privacy</a>
+      <a href="index.html">Home</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="privacy.html">Privacy</a>
     </nav>
-    <a class="btn-primary" href="https://forms.gle/xmCiUB8Tzs3ocM616" target="_blank" rel="noopener">
-      Contact Support
-      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    <a class="btn-primary" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener">
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      GitHub
     </a>
   </div>
 </header>
 
-<!-- Page Hero -->
-<div class="page-hero">
-  <div class="page-hero-bg">
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-bg">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
   </div>
-  <div class="page-hero-inner reveal">
-    <p class="eyebrow">Release Notes</p>
-    <h1 class="page-title">Changelog</h1>
-    <p class="page-sub">Every update, fix and improvement — documented.</p>
+    <div class="eyebrow">What's new</div>
+    <h1 class="page-title">
+      <span class="gradient-text">Changelog</span>
+    </h1>
+    <p class="page-sub">Every update, fix and improvement — documented as it ships.</p>
     <div class="page-actions">
-      <a class="btn-primary" href="https://josueluna.github.io/LinkedIn_to_Sheets/wiki.html">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        Documentation
+      <a class="btn-primary" href="index.html">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back to home
       </a>
-      <a class="btn-glass" href="https://josueluna.github.io/LinkedIn_to_Sheets/privacy.html">Privacy Policy</a>
+      <a class="btn-glass" href="privacy.html">
+        Privacy Policy
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
-</div>
+</section>
 
-<!-- Changelog Content -->
-<div class="content-wrap">
-  <hr class="divider">
-  <div id="changelog-content" class="reveal">Loading changelog…</div>
-</div>
+<!-- ── Content ── -->
+<main class="content-wrap">
+  <div class="content-card reveal">
+    <div id="changelog-content">
+      <div class="loading">Loading changelog…</div>
+    </div>
+  </div>
+</main>
 
-<!-- Footer -->
+<!-- ── Footer ── -->
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" />
       <span>LinkedIn to Sheets</span>
     </div>
     <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
@@ -212,24 +254,34 @@ button, a { cursor: pointer; }
 </footer>
 
 <script>
-  // Load changelog
-  fetch("https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/refs/heads/develop/CHANGELOG.md")
-    .then(r => r.text())
-    .then(md => { document.getElementById("changelog-content").innerHTML = marked.parse(md); })
-    .catch(() => { document.getElementById("changelog-content").innerHTML = "<p>Error loading changelog.</p>"; });
-
-  // Reveal on scroll
+  // Reveal-on-scroll
   (function () {
     var els = document.querySelectorAll('.reveal');
     if (!els.length) return;
-    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) { entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
       });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     els.forEach(function (el) { io.observe(el); });
   })();
+
+  // Load changelog from GitHub
+  (function () {
+    var url = 'https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/refs/heads/develop/CHANGELOG.md';
+    var target = document.getElementById('changelog-content');
+    fetch(url)
+      .then(function (r) { if (!r.ok) throw new Error('Not found'); return r.text(); })
+      .then(function (md) { target.innerHTML = marked.parse(md); })
+      .catch(function () {
+        target.innerHTML = '<p style="text-align:center;color:var(--muted-fg);">Couldn\'t load the changelog right now. Try again later or visit the <a href="https://github.com/josueluna/LinkedIn_to_Sheets/blob/main/CHANGELOG.md" target="_blank" rel="noopener" style="color:var(--linkedin);">repository</a>.</p>';
+      });
+  })();
 </script>
+
 </body>
 </html>

@@ -8,23 +8,34 @@
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <style>
-:root {
-  --radius: 0.875rem;
-  --background: oklch(0.995 0.002 255);
-  --foreground: oklch(0.18 0.025 265);
-  --card: oklch(1 0 0);
-  --muted-fg: oklch(0.50 0.02 260);
-  --primary: oklch(0.66 0.19 145);
-  --primary-fg: oklch(0.99 0.005 145);
-  --primary-glow: oklch(0.74 0.19 145);
-  --linkedin: oklch(0.50 0.15 245);
-  --border: oklch(0.92 0.008 255);
-  --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
-  --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
-  --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
-  --glass-bg: color-mix(in oklab, white 65%, transparent);
-  --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
-  --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+    :root {
+      --radius: 0.875rem;
+      --background: oklch(0.995 0.002 255);
+      --foreground: oklch(0.18 0.025 265);
+      --card: oklch(1 0 0);
+      --muted-fg: oklch(0.50 0.02 260);
+      --primary: oklch(0.66 0.19 145);
+      --primary-fg: oklch(0.99 0.005 145);
+      --primary-glow: oklch(0.74 0.19 145);
+      --linkedin: oklch(0.50 0.15 245);
+      --border: oklch(0.92 0.008 255);
+      --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
+      --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
+      --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
+      --glass-bg: color-mix(in oklab, white 65%, transparent);
+      --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
+      --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+      --gradient-brand: linear-gradient(135deg, oklch(0.50 0.15 245), oklch(0.66 0.19 145));
+    }
+
+/* --- Esto va en el archivo completo CSS --- */
+
+/* Añadir el degradado a la página de Privacy Policy */
+.page-title {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
 html, body { background: var(--background); color: var(--foreground); }
@@ -101,8 +112,8 @@ button, a { cursor: pointer; }
 .orb-2 { top: -4rem; right: -6%; width: 440px; height: 440px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.18), transparent 70%); }
 .page-hero-inner { max-width: 48rem; margin: 0 auto; }
 .eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
-.page-title { margin-top: .5rem; font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
-@media (min-width: 768px) { .page-title { font-size: 3rem; } }
+.page-title { margin-top: .75rem; font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
+@media (min-width: 768px) { .page-title { font-size: 3.25rem; } }
 .page-sub { margin-top: 1rem; color: var(--muted-fg); font-size: 1rem; }
 .page-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
 
@@ -162,7 +173,7 @@ button, a { cursor: pointer; }
 .footer a.link:hover { color: var(--primary); }
 .footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
 .footer .gh:hover { color: var(--foreground); }
-  </style>
+</style>
 </head>
 <body>
 
@@ -174,14 +185,16 @@ button, a { cursor: pointer; }
       <span>LinkedIn to Sheets</span>
     </a>
     <nav class="nav-links">
-      <a href="https://josueluna.github.io/LinkedIn_to_Sheets/wiki.html">Documentation</a>
-      <a href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html">Changelog</a>
+      <a href="index.html">Home</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="privacy.html">Privacy</a>
     </nav>
-    <a class="btn-primary" href="https://forms.gle/xmCiUB8Tzs3ocM616" target="_blank" rel="noopener">
-      Contact Support
-      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    <a class="btn-primary" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener">
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      GitHub
     </a>
   </div>
+</header>
 </header>
 
 <!-- Page Hero -->
