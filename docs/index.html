@@ -1,252 +1,532 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>LinkedIn to Sheets</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LinkedIn to Sheets — Capture candidate data in one click</title>
+<meta name="description" content="A Chrome extension for recruiters. Effortlessly capture LinkedIn profile data and paste it into Google Sheets. Join the early access beta." />
+<meta property="og:title" content="LinkedIn to Sheets" />
+<meta property="og:description" content="Effortlessly capture valuable candidate data for recruiters." />
+<meta property="og:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<style>
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.995 0.002 255);
+  --foreground: oklch(0.18 0.025 265);
+  --card: oklch(1 0 0);
+  --muted-fg: oklch(0.50 0.02 260);
+  --primary: oklch(0.66 0.19 145);
+  --primary-fg: oklch(0.99 0.005 145);
+  --primary-glow: oklch(0.74 0.19 145);
+  --linkedin: oklch(0.50 0.15 245);
+  --destructive: oklch(0.62 0.22 27);
+  --border: oklch(0.92 0.008 255);
+  --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
+  --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
+  --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
+  --shadow-card-hover: 0 1px 2px oklch(0.30 0.05 265 / 0.05), 0 20px 40px -20px oklch(0.30 0.05 265 / 0.18);
+  --glass-bg: color-mix(in oklab, white 65%, transparent);
+  --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
+  --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+html, body { background: var(--background); color: var(--foreground); }
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button, a { cursor: pointer; }
 
-  <link rel="icon" type="image/png"
-    href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png">
+.container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+.section { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 5rem 0; }
+@media (min-width: 768px) { .section { padding: 7rem 0; } }
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Roboto, Arial, sans-serif;
-      background: #f1f3f4;
-      color: #202124;
-      display: flex;
-      justify-content: center;
-      padding: 60px 20px;
-    }
+/* Glass utilities */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border: 1px solid var(--glass-border);
+}
+.glass-strong {
+  background: var(--glass-strong-bg);
+  backdrop-filter: saturate(160%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
+  border: 1px solid var(--glass-border);
+}
 
-    .container {
-      max-width: 820px;
-      width: 100%;
-      background: #ffffff;
-      padding: 40px;
-      border-radius: 16px;
-      border: 1px solid #dadce0;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
+/* Reveal-on-scroll */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease-out, transform .7s ease-out; will-change: opacity, transform; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
 
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
+/* Lift hover */
+.lift { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s cubic-bezier(.2,.7,.2,1), border-color .35s ease; }
+.lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
 
-    .logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-    }
+/* Nav */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1.5rem; max-width: 72rem; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: .625rem; font-weight: 600; letter-spacing: -0.01em; }
+.brand img { width: 2rem; height: 2rem; border-radius: .375rem; }
+.nav-links { display: none; gap: 2rem; font-size: .875rem; color: var(--muted-fg); }
+.nav-links a { transition: color .2s; }
+.nav-links a:hover { color: var(--foreground); }
+@media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
 
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 500;
-    }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--primary); color: var(--primary-fg);
+  padding: .5rem 1rem; border-radius: .5rem; font-size: .875rem; font-weight: 500;
+  box-shadow: var(--shadow-glow); border: none;
+  transition: transform .25s, filter .25s, box-shadow .25s;
+}
+.btn-primary:hover { filter: brightness(1.1); box-shadow: 0 14px 36px -12px oklch(0.66 0.19 145 / 0.45); }
+.btn-primary.lg { padding: .75rem 1.5rem; }
+.btn-primary.lg:hover { transform: translateY(-2px); box-shadow: 0 18px 42px -14px oklch(0.66 0.19 145 / 0.5); }
 
-    .version {
-      font-size: 12px;
-      color: #9aa0a6;
-      margin-left: 48px;
-      margin-bottom: 10px;
-    }
+.btn-glass {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .75rem 1.5rem; border-radius: .5rem; font-size: .875rem; font-weight: 500;
+  color: var(--foreground); transition: transform .25s;
+  background: var(--glass-bg);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border: 1px solid var(--glass-border);
+}
+.btn-glass:hover { transform: translateY(-2px); }
 
-    h2 {
-      margin-top: 30px;
-      font-size: 18px;
-      font-weight: 500;
-    }
+.icon { width: 1rem; height: 1rem; flex-shrink: 0; }
+.icon-sm { width: .875rem; height: .875rem; }
+.icon-lg { width: 1.25rem; height: 1.25rem; }
 
-    h3 {
-      margin-top: 20px;
-      font-size: 15px;
-      font-weight: 500;
-    }
+/* Hero */
+.hero { position: relative; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
+.orb-1 { top: -8rem; left: -6rem; width: 480px; height: 480px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
+.orb-2 { top: -5rem; right: -10%; width: 520px; height: 520px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.20), transparent 70%); }
+.hero-inner { padding: 5rem 1.5rem 4rem; max-width: 72rem; margin: 0 auto; }
+@media (min-width: 768px) { .hero-inner { padding: 7rem 1.5rem 6rem; } }
+.hero-text { max-width: 48rem; margin: 0 auto; text-align: center; }
 
-    p {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #5f6368;
-      margin-bottom: 12px;
-    }
+.beta-pill {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .25rem .75rem; border-radius: 9999px; font-size: .75rem;
+  color: var(--muted-fg); margin-bottom: 1.5rem;
+}
+.dot-wrap { position: relative; display: inline-flex; width: .375rem; height: .375rem; }
+.dot-ping { position: absolute; inset: 0; border-radius: 9999px; background: var(--primary); opacity: .6; animation: ping 1.4s cubic-bezier(0,0,.2,1) infinite; }
+.dot { position: relative; width: .375rem; height: .375rem; border-radius: 9999px; background: var(--primary); }
+@keyframes ping { 75%,100% { transform: scale(2); opacity: 0; } }
 
-    ul, ol {
-      padding-left: 18px;
-      color: #5f6368;
-      font-size: 14px;
-    }
+h1 {
+  font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1;
+  text-wrap: balance;
+}
+@media (min-width: 768px) { h1 { font-size: 3.75rem; } }
+.text-linkedin { color: var(--linkedin); }
+.gradient-text {
+  background: linear-gradient(90deg, var(--linkedin), var(--primary));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.lead { max-width: 36rem; margin: 1.5rem auto 0; font-size: 1rem; color: var(--muted-fg); text-wrap: balance; }
+@media (min-width: 768px) { .lead { font-size: 1.125rem; } }
 
-    li {
-      margin-bottom: 6px;
-    }
+.cta-row { margin-top: 2.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; }
+@media (min-width: 640px) { .cta-row { flex-direction: row; } }
+.fineprint { margin-top: 1.25rem; font-size: .75rem; color: var(--muted-fg); }
 
-    hr {
-      border: none;
-      border-top: 1px solid #e0e0e0;
-      margin: 25px 0;
-    }
+.hero-visual { position: relative; max-width: 64rem; margin: 4rem auto 0; }
+.hero-visual::before {
+  content: ""; position: absolute; inset: -1.5rem; z-index: -1;
+  border-radius: 2rem; filter: blur(64px); opacity: .18;
+  background: linear-gradient(135deg, var(--linkedin), var(--primary));
+}
+.frame {
+  overflow: hidden; border-radius: 1rem; border: 1px solid var(--border);
+  background: var(--card); box-shadow: var(--shadow-elegant);
+  transition: transform .5s;
+}
+.frame:hover { transform: translateY(-4px); }
 
-    code {
-      background: #f6f8fc;
-      padding: 3px 6px;
-      border-radius: 6px;
-      font-size: 13px;
-    }
+/* Section heads */
+.eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
+h2 { margin-top: .75rem; font-size: 1.875rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; text-wrap: balance; }
+@media (min-width: 768px) { h2 { font-size: 2.25rem; } }
+.section-head { max-width: 36rem; margin: 0 auto; text-align: center; }
+.section-sub { margin-top: 1rem; color: var(--muted-fg); }
 
-    .buttons {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+/* Problem/Solution grid */
+.ps-grid { display: grid; gap: 1.5rem; }
+@media (min-width: 768px) { .ps-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+.card-pad { padding: 2rem; border-radius: 1rem; }
+.icon-chip { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: .5rem; margin-bottom: 1rem; }
+.icon-chip.dest { background: color-mix(in oklab, var(--destructive) 10%, transparent); color: var(--destructive); }
+.icon-chip.prim { background: color-mix(in oklab, var(--primary) 15%, transparent); color: var(--primary); }
+h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
+.card-text { margin-top: .75rem; color: var(--muted-fg); }
+.bullet-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .625rem; font-size: .875rem; color: var(--muted-fg); }
+.bullet-list li { display: flex; gap: .5rem; }
+.bullet-x { color: var(--destructive); }
+.bullet-ok { color: var(--primary); }
+.solution-card {
+  position: relative; overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--primary) 25%, transparent);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 6%, transparent), transparent);
+  box-shadow: var(--shadow-soft);
+}
+.solution-card::after {
+  content: ""; position: absolute; top: -4rem; right: -4rem; width: 12rem; height: 12rem;
+  border-radius: 9999px; filter: blur(48px); pointer-events: none;
+  background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.18), transparent 70%);
+}
 
-    .btn {
-      display: inline-block;
-      padding: 10px 16px;
-      border-radius: 6px;
-      background: #1a73e8;
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      transition: 0.2s;
-    }
+/* Steps */
+.steps { margin-top: 3.5rem; display: grid; gap: 1.25rem; }
+@media (min-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .steps { grid-template-columns: repeat(4, 1fr); } }
+.step {
+  position: relative; overflow: hidden; padding: 1.5rem; border-radius: 1rem;
+}
+.step:hover { border-color: color-mix(in oklab, var(--primary) 40%, transparent); }
+.step.linkedin:hover { border-color: color-mix(in oklab, var(--linkedin) 40%, transparent); }
+.step::after {
+  content: ""; position: absolute; top: -3rem; right: -3rem; width: 8rem; height: 8rem;
+  border-radius: 9999px; opacity: 0; filter: blur(32px); transition: opacity .5s; pointer-events: none;
+  background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.28), transparent 70%);
+}
+.step:hover::after { opacity: 1; }
+.step.linkedin::after { background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.30), transparent 70%); }
+.step-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.step-icon { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: .75rem; transition: background-color .2s; }
+.step-icon.prim { background: color-mix(in oklab, var(--primary) 10%, transparent); color: var(--primary); }
+.step:hover .step-icon.prim { background: color-mix(in oklab, var(--primary) 15%, transparent); }
+.step-icon.linkedin { background: color-mix(in oklab, var(--linkedin) 10%, transparent); color: var(--linkedin); }
+.step:hover .step-icon.linkedin { background: color-mix(in oklab, var(--linkedin) 15%, transparent); }
+.step-num { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted-fg); }
+.step h3 { font-size: 1rem; }
+.step p { margin-top: .5rem; font-size: .875rem; line-height: 1.6; color: var(--muted-fg); }
 
-    .btn:hover {
-      background: #1558b0;
-    }
+/* Features */
+.features { margin-top: 3.5rem; display: grid; gap: 1.25rem; }
+@media (min-width: 768px) { .features { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .features { grid-template-columns: repeat(3, 1fr); } }
+.feature { position: relative; overflow: hidden; padding: 1.5rem; border-radius: 1rem; }
+.feature::after {
+  content: ""; position: absolute; top: -2.5rem; right: -2.5rem; width: 7rem; height: 7rem;
+  border-radius: 9999px; opacity: 0; filter: blur(32px); transition: opacity .5s; pointer-events: none;
+  background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%);
+}
+.feature:hover::after { opacity: 1; }
+.feature h3 { font-size: 1rem; }
+.feature p { margin-top: .5rem; font-size: .875rem; line-height: 1.6; color: var(--muted-fg); }
 
-    .footer {
-      margin-top: 30px;
-      font-size: 12px;
-      color: #9aa0a6;
-      text-align: center;
-    }
-  </style>
+/* Demo */
+.demo-grid { display: grid; gap: 3rem; align-items: center; }
+@media (min-width: 1024px) { .demo-grid { grid-template-columns: 1fr 1fr; } }
+.demo-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .75rem; font-size: .875rem; }
+.demo-list li { display: flex; gap: .625rem; align-items: flex-start; color: var(--muted-fg); }
+.demo-list svg { color: var(--primary); margin-top: .125rem; flex-shrink: 0; }
+.demo-visual { position: relative; }
+.demo-visual::before {
+  content: ""; position: absolute; inset: -1.5rem; z-index: -1;
+  border-radius: 2rem; filter: blur(64px); opacity: .14;
+  background: linear-gradient(135deg, var(--linkedin), var(--primary));
+}
+
+/* Beta CTA */
+.beta-wrap { max-width: 56rem; margin: 0 auto; padding: 0 1.5rem; }
+.beta-card {
+  position: relative; overflow: hidden; padding: 2.5rem; border-radius: 1.5rem; text-align: center;
+  box-shadow: var(--shadow-elegant);
+}
+@media (min-width: 768px) { .beta-card { padding: 4rem; } }
+.beta-card-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.beta-orb-1 { position: absolute; top: -6rem; left: 25%; transform: translateX(-50%); width: 18rem; height: 18rem; border-radius: 9999px; filter: blur(64px); background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.25), transparent 70%); }
+.beta-orb-2 { position: absolute; bottom: -5rem; right: 25%; transform: translateX(50%); width: 18rem; height: 18rem; border-radius: 9999px; filter: blur(64px); background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.22), transparent 70%); }
+.beta-pill-2 {
+  display: inline-flex; align-items: center; gap: .5rem;
+  margin: 0 auto 1.25rem; padding: .25rem .75rem; border-radius: 9999px;
+  font-size: .75rem; color: var(--primary);
+  border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+}
+
+/* Footer */
+.footer { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 2.5rem 0; }
+.footer-inner { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 1rem; font-size: .875rem; color: var(--muted-fg); }
+@media (min-width: 768px) { .footer-inner { flex-direction: row; } }
+.footer-brand { display: flex; align-items: center; gap: .625rem; }
+.footer-brand img { width: 1.25rem; height: 1.25rem; border-radius: .25rem; }
+.footer a.link { color: var(--foreground); transition: color .2s; }
+.footer a.link:hover { color: var(--primary); }
+.footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
+.footer .gh:hover { color: var(--foreground); }
+</style>
 </head>
-
 <body>
 
-  <div class="container">
-
-    <div class="header">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" class="logo">
-      <h1>LinkedIn to Sheets</h1>
-    </div>
-
-    <div class="version">Version 0.1.9</div>
-
-    <p>
-      A Chrome extension that extracts publicly available LinkedIn profile data and sends it directly to a Google Sheet.
-    </p>
-
-    <!-- CTA -->
-    <div class="buttons">
-      <a class="btn" href="#" target="_blank">
-        Add to Chrome
-      </a>
-      <a class="btn" href="https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy" target="_blank">
-        Use Template
-      </a>
-      <a class="btn" href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html" target="_blank">
-        View Changelog
-      </a>
-    </div>
-
-    <hr>
-
-    <h2>🚀 What does it do?</h2>
-    <p>
-      Quickly collect LinkedIn profile data and store it in Google Sheets with a fast and minimal workflow.
-    </p>
-
-    <h3>Extracted data:</h3>
-    <ul>
-      <li>Name</li>
-      <li>Current company</li>
-      <li>Current position</li>
-      <li>Location</li>
-      <li>Profile URL</li>
-    </ul>
-
-    <hr>
-
-    <h2>⚙️ How it works</h2>
-    <ol>
-      <li>Open a LinkedIn profile</li>
-      <li>Click the extension</li>
-      <li>Connect Google</li>
-      <li>Select spreadsheet & tab</li>
-      <li>Click "Paste Current Profile"</li>
-    </ol>
-
-    <hr>
-
-    <h2>✨ Features</h2>
-    <ul>
-      <li>🔗 One-click LinkedIn extraction</li>
-      <li>📊 Direct Google Sheets integration</li>
-      <li>📁 Spreadsheet & tab selection</li>
-      <li>💾 Remembers your configuration</li>
-      <li>🚫 Smart duplicate detection</li>
-      <li>⚡ Fast, minimal workflow</li>
-    </ul>
-
-    <hr>
-
-    <h2>🔐 Permissions</h2>
-    <ul>
-      <li><code>storage</code> → save preferences</li>
-      <li><code>identity</code> → Google login</li>
-      <li><code>activeTab</code> → read LinkedIn</li>
-      <li><code>scripting</code> → extract data</li>
-    </ul>
-
-    <hr>
-
-    <h2>🔒 Privacy</h2>
-    <p>
-      No data is stored or tracked. Everything stays in your Google account.
-    </p>
-
-    <div class="buttons">
-      <a class="btn" href="https://josueluna.github.io/LinkedIn_to_Sheets/privacy.html" target="_blank">
-        Privacy Policy
-      </a>
-    </div>
-
-    <hr>
-
-    <h2>🛠 Troubleshooting</h2>
-
-    <p><strong>Unexpected error</strong><br>Reconnect Google account</p>
-    <p><strong>Can't select spreadsheet</strong><br>Check permissions</p>
-    <p><strong>Duplicate profiles</strong><br>Detected automatically</p>
-
-    <div class="buttons">
-      <a class="btn" href="https://forms.gle/xmCiUB8Tzs3ocM616" target="_blank">
-        Contact Support
-      </a>
-    </div>
-
-    <hr>
-
-    <h2>👾 Author</h2>
-    <p>
-      <a href="https://www.linkedin.com/in/josuelunagamboa/" target="_blank">
-        Developed by Josué Luna
-      </a>
-    </p>
-
-    <div class="footer">
-      LinkedIn to Sheets · v0.1.9
-    </div>
-
+<!-- ── Nav ── -->
+<header class="nav glass">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" />
+      <span>LinkedIn to Sheets</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#demo">Demo</a>
+    </nav>
+    <a class="btn-primary" href="#beta">
+      Get Early Access
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
   </div>
+</header>
 
+<!-- ── Hero ── -->
+<section id="top" class="hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-text reveal">
+      <div class="beta-pill glass">
+        <span class="dot-wrap">
+          <span class="dot-ping"></span>
+          <span class="dot"></span>
+        </span>
+        Now in private beta
+      </div>
+      <h1>
+        Capture <span class="text-linkedin">LinkedIn</span> profiles<br />
+        <span class="gradient-text">straight into Google Sheets.</span>
+      </h1>
+      <p class="lead">Effortlessly capture valuable candidate data for recruiters — no copy-paste, no spreadsheets gymnastics. One click and you're done.</p>
+      <div class="cta-row">
+        <a class="btn-primary lg" href="#beta">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+          Get Early Access
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="btn-glass" href="#how">See how it works</a>
+      </div>
+      <p class="fineprint">Free during beta · Works with any Google account</p>
+    </div>
+
+    <div class="hero-visual reveal">
+      <div class="frame">
+        <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn profile being captured into a Google Sheet" style="width:100%;padding:6rem;background:linear-gradient(135deg, oklch(0.97 0.01 245), oklch(0.97 0.01 145));" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Problem / Solution ── -->
+<section class="section">
+  <div class="container ps-grid">
+    <div class="reveal lift card-pad glass">
+      <div class="icon-chip dest">✕</div>
+      <h3>The problem</h3>
+      <p class="card-text">Recruiters spend hours each week copy-pasting names, titles, companies and locations from LinkedIn into spreadsheets. It's tedious, error-prone, and a terrible use of senior talent's time.</p>
+      <ul class="bullet-list">
+        <li><span class="bullet-x">·</span> Switching tabs over and over</li>
+        <li><span class="bullet-x">·</span> Typos and inconsistent formatting</li>
+        <li><span class="bullet-x">·</span> Duplicate candidates slipping through</li>
+      </ul>
+    </div>
+    <div class="reveal lift card-pad solution-card">
+      <div class="icon-chip prim">
+        <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h3>The solution</h3>
+      <p class="card-text"><strong style="color:var(--foreground);font-weight:500;">LinkedIn to Sheets</strong> reads the profile you're viewing and writes it into the right columns of your chosen Google Sheet — instantly, accurately, and with duplicate detection built in.</p>
+      <ul class="bullet-list">
+        <li><span class="bullet-ok">✓</span> One click captures the full profile</li>
+        <li><span class="bullet-ok">✓</span> Customisable column mapping</li>
+        <li><span class="bullet-ok">✓</span> Warns you if the candidate already exists</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ── -->
+<section id="how" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">How it works</p>
+      <h2>From profile to spreadsheet in four steps</h2>
+      <p class="section-sub">No setup headaches, no API keys. Just install, connect, and start sourcing faster.</p>
+    </div>
+    <div class="steps">
+      <div class="step glass reveal lift" style="transition-delay:0ms">
+        <div class="step-head">
+          <div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg></div>
+          <span class="step-num">Step 01</span>
+        </div>
+        <h3>Install the extension</h3>
+        <p>Add LinkedIn to Sheets from the Chrome Web Store in seconds.</p>
+      </div>
+      <div class="step glass reveal lift" style="transition-delay:60ms">
+        <div class="step-head">
+          <div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></div>
+          <span class="step-num">Step 02</span>
+        </div>
+        <h3>Connect Google Sheets</h3>
+        <p>Sign in with Google and pick the spreadsheet and tab you want to fill.</p>
+      </div>
+      <div class="step linkedin glass reveal lift" style="transition-delay:120ms">
+        <div class="step-head">
+          <div class="step-icon linkedin"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 21v-2a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v2"/></svg></div>
+          <span class="step-num">Step 03</span>
+        </div>
+        <h3>Open any LinkedIn profile</h3>
+        <p>Browse LinkedIn the way you always do. The extension reads the profile in view.</p>
+      </div>
+      <div class="step glass reveal lift" style="transition-delay:180ms">
+        <div class="step-head">
+          <div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9l5 12 1.8-5.2L21 14z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></svg></div>
+          <span class="step-num">Step 04</span>
+        </div>
+        <h3>Click 'Paste Profile'</h3>
+        <p>Name, company, title, location and profile URL land in the right columns instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ── -->
+<section id="features" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Features</p>
+      <h2>Everything you need to source faster</h2>
+      <p class="section-sub">Thoughtful details that compound over hundreds of profiles a week.</p>
+    </div>
+    <div class="features">
+      <div class="feature glass reveal lift" style="transition-delay:0ms">
+        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>One-click capture</h3>
+        <p>Reads the LinkedIn profile you're viewing and writes a clean row to your sheet.</p>
+      </div>
+      <div class="feature glass reveal lift" style="transition-delay:50ms">
+        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/><line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/><line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/><line x1="14" y1="2" x2="14" y2="6"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="16" y1="18" x2="16" y2="22"/></svg></div>
+        <h3>Custom column mapping</h3>
+        <p>Decide exactly which column receives Name, Company, Title, Location and Profile URL.</p>
+      </div>
+      <div class="feature glass reveal lift" style="transition-delay:100ms">
+        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg></div>
+        <h3>Duplicate detection</h3>
+        <p>Already added that candidate? You'll be warned with the row number — no double entries.</p>
+      </div>
+      <div class="feature glass reveal lift" style="transition-delay:150ms">
+        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <h3>Multi-sheet support</h3>
+        <p>Switch between spreadsheets and tabs from the popup. Great for active pipelines.</p>
+      </div>
+      <div class="feature glass reveal lift" style="transition-delay:200ms">
+        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Privacy-first</h3>
+        <p>Your data stays between your browser, your Google account and your sheets.</p>
+      </div>
+      <div class="feature glass reveal lift" style="transition-delay:250ms">
+        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg></div>
+        <h3>Built for recruiters</h3>
+        <p>Designed around real sourcing workflows — fast, focused, no bloat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Demo ── -->
+<section id="demo" class="section">
+  <div class="container demo-grid">
+    <div class="reveal">
+      <p class="eyebrow">See it in action</p>
+      <h2>The popup that does the boring work</h2>
+      <p class="section-sub">A clean interface lives inside your browser. Connect Google, pick a spreadsheet, choose a tab, and paste the profile you're looking at — all from one focused popup.</p>
+      <ul class="demo-list">
+        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Search across all your spreadsheets</span></li>
+        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Pick the destination tab in one click</span></li>
+        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Configure custom column mapping</span></li>
+        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Refresh the active profile anytime</span></li>
+      </ul>
+    </div>
+    <div class="demo-visual reveal">
+      <div class="frame">
+        <img src="https://raw.githubusercontent.com/josueluna/binkedIn_to_Sheets/main/public/logo.png" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png';" alt="LinkedIn to Sheets popup interface" loading="lazy" style="width:100%;padding:6rem;background:linear-gradient(135deg, oklch(0.97 0.01 245), oklch(0.97 0.01 145));" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Beta CTA ── -->
+<section id="beta" class="section">
+  <div class="beta-wrap">
+    <div class="reveal beta-card glass-strong">
+      <div class="beta-card-bg">
+        <div class="beta-orb-1"></div>
+        <div class="beta-orb-2"></div>
+      </div>
+      <div class="beta-pill-2">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>
+        Limited beta spots
+      </div>
+      <h2>Join the beta and stop copy-pasting profiles</h2>
+      <p class="lead">Be among the first recruiters to try LinkedIn to Sheets. We're shipping fast and listening to early feedback.</p>
+      <div class="cta-row">
+        <a class="btn-primary lg" href="#">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+          Get Early Access
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="btn-glass" href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" />
+      <span>LinkedIn to Sheets</span>
+    </div>
+    <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
+    <a class="gh" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      GitHub
+    </a>
+  </div>
+</footer>
+
+<script>
+  // Reveal-on-scroll
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
 </body>
 </html>
