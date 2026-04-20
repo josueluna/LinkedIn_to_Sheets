@@ -467,11 +467,10 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
     var(--primary)
   );
 
-  opacity: 0.18;
-  filter: blur(28px);
+  opacity: 0.02; /* 👈 mucho más sutil en reposo */
+  filter: blur(16px);
   z-index: -1;
 
-  animation: glowPulse 6s ease-in-out infinite;
   transition: opacity .4s ease, filter .4s ease;
 }
 
@@ -482,8 +481,8 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
 }
 
 .video-frame:hover::before {
-  opacity: 0.45;
-  filter: blur(40px);
+  opacity: 0.18;
+  filter: blur(26px);
 }
 
 video {
@@ -502,6 +501,53 @@ video {
 /* Make sure interactive layers stay above the mesh */
 .nav, .hero, .page-hero, main, .content-wrap, .footer, section { position: relative; z-index: 1; }
 
+@media (max-width: 640px) {
+  
+  .orb-1 {
+    opacity: 0.35;
+    filter: blur(48px);
+    top: -8rem;
+    left: -6rem;
+  }
+
+  .orb-2 {
+    opacity: 0.30;
+    filter: blur(48px);
+    top: -6rem;
+    right: -10%;
+  }
+
+  .hero h1,
+  .page-title {
+    text-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  }
+}
+
+/* Reduce intensidad del mesh en la parte superior */
+.hero + * .bg-mesh,
+.hero .bg-mesh {
+  opacity: 0.35;
+}
+
+/* Fade superior del fondo animado */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40vh;
+
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    transparent 100%
+  );
+
+  z-index: -5;
+  pointer-events: none;
+}
+
 </style>
 </head>
 <body>
@@ -511,7 +557,7 @@ video {
 <!-- ── Nav ── -->
 <header class="nav glass">
   <div class="nav-inner">
-    <a class="brand" href="#top">
+    <a class="brand" href="index.html">
       <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" />
       <span>LinkedIn to Sheets</span>
     </a>
@@ -547,7 +593,7 @@ video {
         <span class="gradient-text">Save LinkedIn profiles in one click — no more copy-paste</span>
       </h1>
       <p class="lead">
-        Built by recruiters, for recruiters.
+        Built by recruiters who got tired of copy-pasting profiles all day.
 
         If you’ve ever jumped between LinkedIn and a spreadsheet 200 times a day — this is for you.
       </p>

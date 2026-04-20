@@ -127,6 +127,13 @@ button, a { cursor: pointer; }
   position: relative; overflow: hidden;
   padding: 5rem 1.5rem 4rem; text-align: center;
 }
+
+.hero,
+.page-hero {
+  position: relative;
+  isolation: isolate;
+}
+
 @media (min-width: 768px) { .page-hero { padding: 7rem 1.5rem 6rem; } }
 .page-hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 .orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
@@ -319,6 +326,25 @@ button, a { cursor: pointer; }
 /* Make sure interactive layers stay above the mesh */
 .nav, .hero, .page-hero, main, .content-wrap, .footer, section { position: relative; z-index: 1; }
 
+/* Fade superior para mejorar legibilidad del hero */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40vh;
+
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    transparent 100%
+  );
+
+  z-index: -5;
+  pointer-events: none;
+}
+
 </style>
 </head>
 <body>
@@ -342,7 +368,6 @@ button, a { cursor: pointer; }
       GitHub
     </a>
   </div>
-</header>
 </header>
 
 <!-- Page Hero -->

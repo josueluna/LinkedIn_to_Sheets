@@ -30,25 +30,25 @@
       --gradient-brand: linear-gradient(135deg, oklch(0.50 0.15 245), oklch(0.66 0.19 145));
     }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: oklch(0.16 0.025 265);
-    --foreground: oklch(0.96 0.005 255);
-    --card: oklch(0.21 0.028 265);
-    --muted-fg: oklch(0.72 0.02 260);
-    --primary: oklch(0.74 0.19 145);
-    --primary-fg: oklch(0.16 0.025 265);
-    --primary-glow: oklch(0.82 0.18 145);
-    --linkedin: oklch(0.70 0.15 245);
-    --border: oklch(1 0 0 / 0.10);
-    --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
-    --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
-    --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
-    --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
-    --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
-    --glass-border: color-mix(in oklab, white 10%, transparent);
-  }
-}
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: oklch(0.16 0.025 265);
+        --foreground: oklch(0.96 0.005 255);
+        --card: oklch(0.21 0.028 265);
+        --muted-fg: oklch(0.72 0.02 260);
+        --primary: oklch(0.74 0.19 145);
+        --primary-fg: oklch(0.16 0.025 265);
+        --primary-glow: oklch(0.82 0.18 145);
+        --linkedin: oklch(0.70 0.15 245);
+        --border: oklch(1 0 0 / 0.10);
+        --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
+        --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
+        --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
+        --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
+        --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
+        --glass-border: color-mix(in oklab, white 10%, transparent);
+      }
+    }
 
     * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
     html, body { background: var(--background); color: var(--foreground); }
@@ -111,6 +111,13 @@
       position: relative; overflow: hidden;
       padding: 5rem 1.5rem 4rem; text-align: center;
     }
+    
+    .hero,
+    .page-hero {
+      position: relative;
+      isolation: isolate;
+    }
+
     @media (min-width: 768px) { .hero { padding: 7rem 1.5rem 6rem; } }
     .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
     .orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
@@ -253,7 +260,7 @@
     .footer a.link:hover { color: var(--primary); }
     .footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
     .footer .gh:hover { color: var(--foreground); }
-  
+    
 
 /* ───────────────────────────────────────────────────────────
    Modern polish: animated gradient mesh + micro-interactions
@@ -380,10 +387,29 @@
 /* Make sure interactive layers stay above the mesh */
 .nav, .hero, .page-hero, main, .content-wrap, .footer, section { position: relative; z-index: 1; }
 
+/* Fade superior para mejorar legibilidad del hero */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40vh;
+
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    transparent 100%
+  );
+
+  z-index: -5;
+  pointer-events: none;
+}
+
 </style>
 </head>
 <body>
-<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+  <div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
 
 
 <!-- ── Nav ── -->
@@ -416,7 +442,7 @@
     <h1 class="page-title">
       <span class="gradient-text">Changelog</span>
     </h1>
-    <p class="page-sub">Every update, fix and improvement — shipped fast and documented transparently.</p>
+    <p class="page-sub">Every update, fix and improvement — shipped fast, because recruiters don’t have time to wait.</p>
     <div class="page-actions">
       <a class="btn-primary" href="index.html">
         <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -513,9 +539,9 @@
       if (!matches.length) {
         // Fallback: render the whole markdown in one card so we never lose content.
         target.innerHTML =
-          '<div class="content-card reveal">' +
-            '<div class="markdown-body">' + marked.parse(md) + '</div>' +
-          '</div>';
+        '<div class="content-card reveal">' +
+        '<div class="markdown-body">' + marked.parse(md) + '</div>' +
+        '</div>';
         observeReveals(target);
         return;
       }
@@ -524,20 +550,20 @@
       matches.forEach(function (entry, i) {
         // Strip leading/trailing horizontal rules and whitespace from the body.
         var body = entry.body
-          .replace(/^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/gm, '')
-          .trim();
+        .replace(/^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/gm, '')
+        .trim();
         var rendered = marked.parse(body);
         var latest = i === 0
-          ? '<span class="version-latest">Latest</span>'
-          : '';
+        ? '<span class="version-latest">Latest</span>'
+        : '';
         html +=
-          '<article class="version-card reveal" style="transition-delay:' + Math.min(i * 60, 240) + 'ms;">' +
-            '<header class="version-head">' +
-              '<span class="version-badge">' + escapeHtml(entry.version) + '</span>' +
-              latest +
-            '</header>' +
-            '<div class="markdown-body">' + rendered + '</div>' +
-          '</article>';
+        '<article class="version-card reveal" style="transition-delay:' + Math.min(i * 60, 240) + 'ms;">' +
+        '<header class="version-head">' +
+        '<span class="version-badge">' + escapeHtml(entry.version) + '</span>' +
+        latest +
+        '</header>' +
+        '<div class="markdown-body">' + rendered + '</div>' +
+        '</article>';
       });
       html += '</div>';
       target.innerHTML = html;
@@ -545,15 +571,15 @@
     }
 
     fetch(url)
-      .then(function (r) { if (!r.ok) throw new Error('Not found'); return r.text(); })
-      .then(renderVersions)
-      .catch(function () {
-        target.innerHTML =
-          '<div class="content-card reveal">' +
-            '<p style="text-align:center;color:var(--muted-fg);">Couldn\'t load the changelog right now. Try again later or visit the <a href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/develop/CHANGELOG.md?plain=1" target="_blank" rel="noopener" style="color:var(--linkedin);">repository</a>.</p>' +
-          '</div>';
-        observeReveals(target);
-      });
+    .then(function (r) { if (!r.ok) throw new Error('Not found'); return r.text(); })
+    .then(renderVersions)
+    .catch(function () {
+      target.innerHTML =
+      '<div class="content-card reveal">' +
+      '<p style="text-align:center;color:var(--muted-fg);">Couldn\'t load the changelog right now. Try again later or visit the <a href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/develop/CHANGELOG.md?plain=1" target="_blank" rel="noopener" style="color:var(--linkedin);">repository</a>.</p>' +
+      '</div>';
+      observeReveals(target);
+    });
   })();
 </script>
 </body>
