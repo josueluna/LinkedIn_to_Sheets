@@ -154,9 +154,30 @@
 .orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
 .orb-1 { top: -8rem; left: -6rem; width: 480px; height: 480px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
 .orb-2 { top: -5rem; right: -10%; width: 520px; height: 520px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.20), transparent 70%); }
-.hero-inner { padding: 5rem 1.5rem 4rem; max-width: 72rem; margin: 0 auto; }
-@media (min-width: 768px) { .hero-inner { padding: 7rem 1.5rem 6rem; } }
-.hero-text { max-width: 48rem; margin: 0 auto; text-align: center; }
+.hero-inner { 
+  padding: 5rem 1.5rem 4rem; 
+  max-width: 72rem; 
+  margin: 0 auto; 
+}
+
+@media (min-width: 768px) { 
+  .hero-inner { 
+    padding: 7rem 1.5rem 6rem; 
+  } 
+}
+
+.hero-text { 
+  max-width: 48rem; 
+  margin: 0 auto; 
+  text-align: center; 
+}
+
+/* 👇 ESTE BLOQUE VA SEPARADO */
+@media (min-width: 1024px) {
+  .hero-text {
+    max-width: 64rem;
+  }
+}
 
 .beta-pill {
   display: inline-flex; align-items: center; gap: .5rem;
@@ -178,8 +199,44 @@ h1 {
   background: linear-gradient(90deg, var(--linkedin), var(--primary));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.lead { max-width: 36rem; margin: 1.5rem auto 0; font-size: 1rem; color: var(--muted-fg); text-wrap: balance; }
-@media (min-width: 768px) { .lead { font-size: 1.125rem; } }
+.lead { 
+  max-width: 36rem; 
+  margin: 1.5rem auto 0; 
+  font-size: 1rem; 
+  color: var(--muted-fg); 
+  text-wrap: balance; 
+}
+
+.workflow-line {
+  display: inline-block;
+  text-align: center;
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--foreground);
+  display: inline-block;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.5rem;
+
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  
+  white-space: nowrap; /* Esto hace que se mantenga en una sola línea */
+
+  letter-spacing: -0.01em;
+  opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  .workflow-line {
+    white-space: normal; /* En dispositivos pequeños permite que el texto se divida */
+  }
+}
+
+@media (min-width: 768px) { 
+  .lead { 
+    font-size: 1.125rem; 
+  } 
+}
 
 .cta-row { margin-top: 2.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; }
 @media (min-width: 640px) { .cta-row { flex-direction: row; } }
@@ -502,7 +559,7 @@ video {
 .nav, .hero, .page-hero, main, .content-wrap, .footer, section { position: relative; z-index: 1; }
 
 @media (max-width: 640px) {
-  
+
   .orb-1 {
     opacity: 0.35;
     filter: blur(48px);
@@ -562,12 +619,14 @@ body::after {
       <span>LinkedIn to Sheets</span>
     </a>
     <nav class="nav-links">
-      <a href="#how">How it works</a>
-      <a href="#features">Features</a>
-      <a href="#demo">Demo</a>
+      <a href="index.html#how">See How It Works</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#demo">Demo</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="privacy.html">Privacy</a>
     </nav>
     <a class="btn-primary" href="#">
-      Get Early Access
+      Start Saving LinkedIn Profiles Now
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     </a>
   </div>
@@ -589,13 +648,19 @@ body::after {
         Now in private beta
       </div>
       <h1>
-        LinkedIn to Google Sheets Chrome Extension<br />
+        LinkedIn to Google Sheets Chrome Extension
         <span class="gradient-text">Save LinkedIn profiles in one click — no more copy-paste</span>
       </h1>
       <p class="lead">
-        Built by recruiters who got tired of copy-pasting profiles all day.
+        Built by recruiters who got tired of this:
+      </p>
 
-        If you’ve ever jumped between LinkedIn and a spreadsheet 200 times a day — this is for you.
+      <p class="workflow-line">
+        Open profile → copy → switch tab → paste → repeat
+      </p>
+
+      <p class="lead">
+        Hundreds of times a week. So we fixed it.
       </p>
       <div class="cta-row">
         <a class="btn-primary lg" href="#beta">
@@ -856,6 +921,23 @@ body::after {
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     els.forEach(function (el) { io.observe(el); });
   })();
+</script>
+<script>
+  // Script para hacer scroll suave en index.html
+  if (window.location.pathname === '/index.html') {
+    // Detecta los enlaces internos y activa scroll suave
+    const links = document.querySelectorAll('a[href^="#"]');
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        window.scrollTo({
+          top: target.offsetTop - 70, // Ajustamos para el header
+          behavior: 'smooth'
+        });
+      });
+    });
+  }
 </script>
 </body>
 </html>
