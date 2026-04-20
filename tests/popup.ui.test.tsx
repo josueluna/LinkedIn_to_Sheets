@@ -65,7 +65,7 @@ function createChromeMock({
 
   return {
     runtime: {
-      getManifest: vi.fn(() => ({ version: "0.1.9" })),
+      getManifest: vi.fn(() => ({ version: "0.1.10" })),
       sendMessage,
     },
     storage: {

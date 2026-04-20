@@ -1,6 +1,6 @@
 # LinkedIn to Sheets
 
-![Version](https://img.shields.io/badge/version-v0.1.9-blue)
+![Version](https://img.shields.io/badge/version-v0.1.10-blue)
 ![Status](https://img.shields.io/badge/status-beta-orange)
 ![Platform](https://img.shields.io/badge/platform-chrome-lightgrey)
 
@@ -23,6 +23,7 @@ way to capture and organize candidate data — without copy-paste.
 - One-click **Reset to Default** for column mapping
 - Duplicate detection (by profile URL)
 - Smooth popup transitions for configuration and success states
+- Improved popup loading with a dedicated loading shell
 - Clean and simple workflow
 - Secure Google OAuth integration
 - Automated UI and scraper test coverage
@@ -104,18 +105,21 @@ No data is stored externally.
 
 ## 🧩 Troubleshooting
 
-**Unexpected error**
+**Unexpected error**  
 → Try reconnecting your Google account
 
-**Can't select spreadsheet**
+**Can't select spreadsheet**  
 → Make sure permissions were granted
 
-**Duplicate profiles**
+**Duplicate profiles**  
 → The extension checks existing profile URLs before inserting
 
-**Mapping issues after an update**
+**Mapping issues after an update**  
 → Reopen the popup and review your column mapping settings. Legacy
 mappings are automatically normalized.
+
+**Documentation page doesn't load as expected**  
+→ Refresh the page or open the GitHub-hosted docs again after deployment updates.
 
 👉 [Contact Support](https://forms.gle/xmCiUB8Tzs3ocM616)
 
@@ -135,12 +139,12 @@ The project includes automated coverage for:
 
 ## 📚 Documentation
 
-- User Guide:
-https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html
-- Privacy Policy:
-https://josueluna.github.io/LinkedIn_to_Sheets/docs/privacy.html
-- Changelog:
-https://josueluna.github.io/LinkedIn_to_Sheets/docs/changelog.html
+- User Guide:  
+  https://josueluna.github.io/LinkedIn_to_Sheets/docs/index.html
+- Privacy Policy:  
+  https://josueluna.github.io/LinkedIn_to_Sheets/docs/privacy.html
+- Changelog:  
+  https://josueluna.github.io/LinkedIn_to_Sheets/docs/changelog.html
 
 ---
 
