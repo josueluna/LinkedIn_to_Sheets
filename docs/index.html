@@ -192,9 +192,11 @@ h1 {
   background: linear-gradient(135deg, var(--linkedin), var(--primary));
 }
 .frame {
-  overflow: hidden; border-radius: 1rem; border: 1px solid var(--border);
-  background: var(--card); box-shadow: var(--shadow-elegant);
-  transition: transform .5s;
+  overflow: visible;
+  border-radius: 1rem;
+  border: none;                 /* opcional */
+  background: transparent;      /* 🔥 clave */
+  box-shadow: none;             /* opcional */
 }
 .frame:hover { transform: translateY(-4px); }
 
