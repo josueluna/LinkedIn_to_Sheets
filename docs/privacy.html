@@ -28,6 +28,27 @@
       --gradient-brand: linear-gradient(135deg, oklch(0.50 0.15 245), oklch(0.66 0.19 145));
     }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.025 265);
+    --foreground: oklch(0.96 0.005 255);
+    --card: oklch(0.21 0.028 265);
+    --muted-fg: oklch(0.72 0.02 260);
+    --primary: oklch(0.74 0.19 145);
+    --primary-fg: oklch(0.16 0.025 265);
+    --primary-glow: oklch(0.82 0.18 145);
+    --linkedin: oklch(0.70 0.15 245);
+    --border: oklch(1 0 0 / 0.10);
+    --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
+    --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
+    --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
+    --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
+    --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
+    --glass-border: color-mix(in oklab, white 10%, transparent);
+  }
+}
+
+
 /* --- Esto va en el archivo completo CSS --- */
 
 /* Añadir el degradado a la página de Privacy Policy */
