@@ -270,7 +270,7 @@
 
   // Load changelog from GitHub
   (function () {
-    var url = 'https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/refs/heads/develop/CHANGELOG.md';
+    var url = 'https://github.com/josueluna/LinkedIn_to_Sheets/blob/067056d11f2bad06642534fbf61d93520828dd94/CHANGELOG.md';
     var target = document.getElementById('changelog-content');
     fetch(url)
       .then(function (r) { if (!r.ok) throw new Error('Not found'); return r.text(); })
