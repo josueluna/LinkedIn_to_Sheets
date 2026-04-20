@@ -50,3 +50,24 @@ describe("Docs HTML validation", () => {
   });
 
 });
+describe("Docs HTML snapshots", () => {
+
+  it("index.html snapshot", () => {
+    const doc = loadHTML("docs/index.html");
+
+    expect(doc.body.innerHTML.trim()).toMatchSnapshot();
+  });
+
+  it("changelog.html snapshot", () => {
+    const doc = loadHTML("docs/changelog.html");
+
+    expect(doc.body.innerHTML.trim()).toMatchSnapshot();
+  });
+
+  it("privacy.html snapshot", () => {
+    const doc = loadHTML("docs/privacy.html");
+
+    expect(doc.body.innerHTML.trim()).toMatchSnapshot();
+  });
+
+});
