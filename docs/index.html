@@ -1,53 +1,68 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LinkedIn to Sheets — Capture candidate data in one click</title>
-<meta name="description" content="A Chrome extension for recruiters. Effortlessly capture LinkedIn profile data and paste it into Google Sheets. Join the early access beta." />
-<meta property="og:title" content="LinkedIn to Sheets" />
-<meta property="og:description" content="Effortlessly capture valuable candidate data for recruiters." />
-<meta property="og:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-<link rel="preconnect" href="https://rsms.me/" />
-<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-<style>
-:root {
-  --radius: 0.875rem;
-  --background: oklch(0.995 0.002 255);
-  --foreground: oklch(0.18 0.025 265);
-  --card: oklch(1 0 0);
-  --muted-fg: oklch(0.50 0.02 260);
-  --primary: oklch(0.66 0.19 145);
-  --primary-fg: oklch(0.99 0.005 145);
-  --primary-glow: oklch(0.74 0.19 145);
-  --linkedin: oklch(0.50 0.15 245);
-  --destructive: oklch(0.62 0.22 27);
-  --border: oklch(0.92 0.008 255);
-  --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
-  --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
-  --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
-  --shadow-card-hover: 0 1px 2px oklch(0.30 0.05 265 / 0.05), 0 20px 40px -20px oklch(0.30 0.05 265 / 0.18);
-  --glass-bg: color-mix(in oklab, white 65%, transparent);
-  --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
-  --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
-html, body { background: var(--background); color: var(--foreground); }
-body {
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
-}
-img { display: block; max-width: 100%; height: auto; }
-a { color: inherit; text-decoration: none; }
-ul { list-style: none; }
-button, a { cursor: pointer; }
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LinkedIn to Sheets",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Chrome",
+      "description": "Chrome extension to save LinkedIn profiles into Google Sheets",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      }
+    }
+  </script>
+  <meta name="keywords" content="linkedin to google sheets, linkedin scraper chrome extension, linkedin sourcing tool, recruiter tools, sourcing automation, linkedin data to sheets">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LinkedIn to Sheets – Chrome Extension for Recruiters | Save LinkedIn Profiles to Google Sheets</title>
+  <meta name="description" content="Save LinkedIn profiles to Google Sheets in one click. Chrome extension built for recruiters to eliminate copy-paste and speed up sourcing." />
+  <meta property="og:title" content="LinkedIn to Sheets" />
+  <meta property="og:description" content="Effortlessly capture valuable candidate data for recruiters." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+  <link rel="preconnect" href="https://rsms.me/" />
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  <style>
+    :root {
+      --radius: 0.875rem;
+      --background: oklch(0.995 0.002 255);
+      --foreground: oklch(0.18 0.025 265);
+      --card: oklch(1 0 0);
+      --muted-fg: oklch(0.50 0.02 260);
+      --primary: oklch(0.66 0.19 145);
+      --primary-fg: oklch(0.99 0.005 145);
+      --primary-glow: oklch(0.74 0.19 145);
+      --linkedin: oklch(0.50 0.15 245);
+      --destructive: oklch(0.62 0.22 27);
+      --border: oklch(0.92 0.008 255);
+      --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
+      --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
+      --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
+      --shadow-card-hover: 0 1px 2px oklch(0.30 0.05 265 / 0.05), 0 20px 40px -20px oklch(0.30 0.05 265 / 0.18);
+      --glass-bg: color-mix(in oklab, white 65%, transparent);
+      --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
+      --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+    html, body { background: var(--background); color: var(--foreground); }
+    body {
+      font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button, a { cursor: pointer; }
 
-.container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
-.section { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 5rem 0; }
-@media (min-width: 768px) { .section { padding: 7rem 0; } }
+    .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+    .section { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 5rem 0; }
+    @media (min-width: 768px) { .section { padding: 7rem 0; } }
 
 /* Glass utilities */
 .glass {
@@ -290,7 +305,7 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
       <a href="#demo">Demo</a>
     </nav>
     <a class="btn-primary" href="#beta">
-      Get Early Access
+      Get early access
       <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     </a>
   </div>
@@ -312,10 +327,13 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
         Now in private beta
       </div>
       <h1>
-        Capture <span class="text-linkedin">LinkedIn</span> profiles<br />
-        <span class="gradient-text">straight into Google Sheets.</span>
+        LinkedIn to Google Sheets Chrome Extension<br />
+        <span class="gradient-text">Capture LinkedIn profiles in one click</span>
       </h1>
-      <p class="lead">Effortlessly capture valuable candidate data for recruiters — no copy-paste, no spreadsheets gymnastics. One click and you're done.</p>
+      <p class="lead">
+        Built by a recruiter who got tired of copying the same fields over and over.
+        If you’ve ever jumped between LinkedIn and a spreadsheet 200 times a day — this is for you.
+      </p>
       <div class="cta-row">
         <a class="btn-primary lg" href="#beta">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
@@ -341,7 +359,13 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
     <div class="reveal lift card-pad glass">
       <div class="icon-chip dest">✕</div>
       <h3>The problem</h3>
-      <p class="card-text">Recruiters spend hours each week copy-pasting names, titles, companies and locations from LinkedIn into spreadsheets. It's tedious, error-prone, and a terrible use of senior talent's time.</p>
+      <p class="card-text">
+        You know the drill:
+        open profile → copy → switch tab → paste → repeat.
+        Hundreds of times a week.
+
+        It’s slow, repetitive, and honestly — a terrible use of a recruiter’s time.
+      </p>
       <ul class="bullet-list">
         <li><span class="bullet-x">·</span> Switching tabs over and over</li>
         <li><span class="bullet-x">·</span> Typos and inconsistent formatting</li>
@@ -353,7 +377,11 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
         <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </div>
       <h3>The solution</h3>
-      <p class="card-text"><strong style="color:var(--foreground);font-weight:500;">LinkedIn to Sheets</strong> reads the profile you're viewing and writes it into the right columns of your chosen Google Sheet — instantly, accurately, and with duplicate detection built in.</p>
+      <p class="card-text">
+        LinkedIn to Sheets removes the most repetitive part of sourcing.
+        You stay on LinkedIn — the data goes where it needs to go.
+        No friction, no switching tabs, no manual errors.
+      </p>
       <ul class="bullet-list">
         <li><span class="bullet-ok">✓</span> One click captures the full profile</li>
         <li><span class="bullet-ok">✓</span> Customisable column mapping</li>
@@ -467,7 +495,7 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
     </div>
     <div class="demo-visual reveal">
       <div class="frame">
-        <img src="https://raw.githubusercontent.com/josueluna/binkedIn_to_Sheets/main/public/logo.png" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png';" alt="LinkedIn to Sheets popup interface" loading="lazy" style="width:100%;padding:6rem;background:linear-gradient(135deg, oklch(0.97 0.01 245), oklch(0.97 0.01 145));" />
+        <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png';" alt="LinkedIn to Sheets popup interface" loading="lazy" style="width:100%;padding:6rem;background:linear-gradient(135deg, oklch(0.97 0.01 245), oklch(0.97 0.01 145));" />
       </div>
     </div>
   </div>
@@ -488,9 +516,9 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
       <h2>Join the beta and stop copy-pasting profiles</h2>
       <p class="lead">Be among the first recruiters to try LinkedIn to Sheets. We're shipping fast and listening to early feedback.</p>
       <div class="cta-row">
-        <a class="btn-primary lg" href="#">
+        <a class="btn-primary lg" href="mailto:qnnmgqye2@mozmail.com">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
-          Get Early Access
+          Get early access
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
         <a class="btn-glass" href="#">Privacy Policy</a>
