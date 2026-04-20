@@ -145,6 +145,59 @@
     }
     @media (min-width: 768px) { .content-card { padding: 3rem 3rem; } }
 
+    /* ── Per-version stack ── */
+    .versions { display: flex; flex-direction: column; gap: 1.5rem; }
+    @media (min-width: 768px) { .versions { gap: 2rem; } }
+
+    .version-card {
+      position: relative;
+      border-radius: 1.25rem;
+      background: var(--glass-strong-bg);
+      backdrop-filter: saturate(160%) blur(20px);
+      -webkit-backdrop-filter: saturate(160%) blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-elegant);
+      padding: 1.75rem 1.5rem;
+      overflow: hidden;
+    }
+    @media (min-width: 768px) { .version-card { padding: 2.25rem 2.5rem; } }
+
+    /* Brand accent stripe on the left edge */
+    .version-card::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gradient-brand);
+      opacity: .85;
+    }
+
+    .version-head {
+      display: flex; align-items: center; gap: .625rem;
+      margin-bottom: 1rem;
+      padding-bottom: .875rem;
+      border-bottom: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+    }
+    .version-badge {
+      display: inline-flex; align-items: center; gap: .375rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .8125rem; font-weight: 600; letter-spacing: -0.01em;
+      color: var(--primary-fg);
+      background: var(--gradient-brand);
+      padding: .3rem .625rem; border-radius: .5rem;
+      box-shadow: var(--shadow-glow);
+    }
+    .version-badge::before {
+      content: ""; width: 6px; height: 6px; border-radius: 9999px;
+      background: var(--primary-fg);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-fg) 30%, transparent);
+    }
+    .version-latest {
+      font-size: .6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--primary);
+      padding: .25rem .5rem; border-radius: 9999px;
+      background: color-mix(in oklab, var(--primary) 12%, transparent);
+      border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
+    }
+
     /* Markdown */
     #changelog-content { color: var(--foreground); }
     #changelog-content h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.015em; margin-top: 2.5rem; margin-bottom: .5rem; }
@@ -311,12 +364,17 @@
 .footer .gh svg { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
 .footer .gh:hover svg { transform: rotate(-8deg) scale(1.1); }
 
-/* Slightly richer card hover for content card / cta-band */
-.content-card, .cta-band {
-  transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s;
+/* Slightly richer card hover for content card / cta-band / version cards */
+.content-card, .cta-band, .version-card {
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s, border-color .5s;
 }
 .content-card:hover, .cta-band:hover {
   transform: translateY(-2px);
+}
+.version-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--primary) 30%, transparent);
+  box-shadow: 0 30px 70px -28px oklch(0.30 0.05 265 / 0.30), 0 0 0 1px color-mix(in oklab, var(--primary) 18%, transparent);
 }
 
 /* Make sure interactive layers stay above the mesh */
@@ -374,8 +432,8 @@
 
 <!-- ── Content ── -->
 <main class="content-wrap">
-  <div class="content-card reveal">
-    <div id="changelog-content">
+  <div id="changelog-content">
+    <div class="content-card reveal">
       <div class="loading">Loading changelog…</div>
     </div>
   </div>
@@ -413,18 +471,90 @@
     els.forEach(function (el) { io.observe(el); });
   })();
 
-  // Load changelog from GitHub
+  // Load changelog from GitHub and split into per-version glass panels
   (function () {
-    var url = 'https://github.com/josueluna/LinkedIn_to_Sheets/blob/067056d11f2bad06642534fbf61d93520828dd94/CHANGELOG.md';
+    var url = 'https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/develop/CHANGELOG.md';
     var target = document.getElementById('changelog-content');
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, function (c) {
+        return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c];
+      });
+    }
+
+    function observeReveals(scope) {
+      var els = scope.querySelectorAll('.reveal');
+      if (!els.length) return;
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+      els.forEach(function (el) { io.observe(el); });
+    }
+
+    function renderVersions(md) {
+      // Match each "## vX.Y.Z" heading and capture its body up to the next version heading (or EOF).
+      // Horizontal-rule separators (---) between versions are stripped.
+      var versionRe = /^[ \t]*##[ \t]+(v\d[\w.\-+]*)[ \t]*\r?\n([\s\S]*?)(?=^[ \t]*##[ \t]+v\d|\Z)/gmi;
+      var matches = [];
+      var m;
+      // JS doesn't support \Z; emulate by appending sentinel
+      var src = md + '\n## v0.0.0-__end__\n';
+      while ((m = versionRe.exec(src)) !== null) {
+        if (m[1] === 'v0.0.0-__end__') break;
+        matches.push({ version: m[1], body: m[2] });
+      }
+
+      if (!matches.length) {
+        // Fallback: render the whole markdown in one card so we never lose content.
+        target.innerHTML =
+          '<div class="content-card reveal">' +
+            '<div class="markdown-body">' + marked.parse(md) + '</div>' +
+          '</div>';
+        observeReveals(target);
+        return;
+      }
+
+      var html = '<div class="versions">';
+      matches.forEach(function (entry, i) {
+        // Strip leading/trailing horizontal rules and whitespace from the body.
+        var body = entry.body
+          .replace(/^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/gm, '')
+          .trim();
+        var rendered = marked.parse(body);
+        var latest = i === 0
+          ? '<span class="version-latest">Latest</span>'
+          : '';
+        html +=
+          '<article class="version-card reveal" style="transition-delay:' + Math.min(i * 60, 240) + 'ms;">' +
+            '<header class="version-head">' +
+              '<span class="version-badge">' + escapeHtml(entry.version) + '</span>' +
+              latest +
+            '</header>' +
+            '<div class="markdown-body">' + rendered + '</div>' +
+          '</article>';
+      });
+      html += '</div>';
+      target.innerHTML = html;
+      observeReveals(target);
+    }
+
     fetch(url)
       .then(function (r) { if (!r.ok) throw new Error('Not found'); return r.text(); })
-      .then(function (md) { target.innerHTML = marked.parse(md); })
+      .then(renderVersions)
       .catch(function () {
-        target.innerHTML = '<p style="text-align:center;color:var(--muted-fg);">Couldn\'t load the changelog right now. Try again later or visit the <a href="https://github.com/josueluna/LinkedIn_to_Sheets/blob/main/CHANGELOG.md" target="_blank" rel="noopener" style="color:var(--linkedin);">repository</a>.</p>';
+        target.innerHTML =
+          '<div class="content-card reveal">' +
+            '<p style="text-align:center;color:var(--muted-fg);">Couldn\'t load the changelog right now. Try again later or visit the <a href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/develop/CHANGELOG.md?plain=1" target="_blank" rel="noopener" style="color:var(--linkedin);">repository</a>.</p>' +
+          '</div>';
+        observeReveals(target);
       });
   })();
 </script>
-
 </body>
 </html>
