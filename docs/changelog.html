@@ -200,9 +200,133 @@
     .footer a.link:hover { color: var(--primary); }
     .footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
     .footer .gh:hover { color: var(--foreground); }
-  </style>
+  
+
+/* ───────────────────────────────────────────────────────────
+   Modern polish: animated gradient mesh + micro-interactions
+   Additive only — safe to drop into any of the three pages.
+   ─────────────────────────────────────────────────────────── */
+
+/* Animated gradient mesh background — sits behind everything */
+.bg-mesh {
+  position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden;
+}
+.bg-mesh::before,
+.bg-mesh::after,
+.bg-mesh > .blob {
+  content: ""; position: absolute; border-radius: 9999px;
+  filter: blur(90px); opacity: .55; will-change: transform;
+}
+.bg-mesh::before {
+  width: 46vw; height: 46vw; top: -10vw; left: -8vw;
+  background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.35), transparent 70%);
+  animation: meshDriftA 22s ease-in-out infinite alternate;
+}
+.bg-mesh::after {
+  width: 50vw; height: 50vw; top: 20vh; right: -12vw;
+  background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.32), transparent 70%);
+  animation: meshDriftB 26s ease-in-out infinite alternate;
+}
+.bg-mesh > .blob {
+  width: 42vw; height: 42vw; bottom: -14vw; left: 25vw;
+  background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.28), transparent 70%);
+  animation: meshDriftC 30s ease-in-out infinite alternate;
+}
+@media (prefers-color-scheme: dark) {
+  .bg-mesh::before { opacity: .45; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.40), transparent 70%); }
+  .bg-mesh::after  { opacity: .42; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.42), transparent 70%); }
+  .bg-mesh > .blob { opacity: .38; background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.34), transparent 70%); }
+}
+@keyframes meshDriftA {
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  100% { transform: translate3d(6vw, 4vh, 0) scale(1.15); }
+}
+@keyframes meshDriftB {
+  0%   { transform: translate3d(0,0,0) scale(1.05); }
+  100% { transform: translate3d(-7vw, -3vh, 0) scale(1); }
+}
+@keyframes meshDriftC {
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  100% { transform: translate3d(-4vw, -6vh, 0) scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-mesh::before, .bg-mesh::after, .bg-mesh > .blob { animation: none; }
+}
+
+/* Subtle grain so the gradient never looks flat (very faint) */
+.bg-mesh::before { mix-blend-mode: normal; }
+
+/* ── Micro-interactions ─────────────────────────────────── */
+
+/* Animated underline for nav links */
+.nav-links a {
+  position: relative;
+  padding-bottom: 2px;
+}
+.nav-links a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px;
+  height: 2px; border-radius: 2px;
+  background: var(--gradient-brand, linear-gradient(90deg, var(--linkedin), var(--primary)));
+  transform: scaleX(0); transform-origin: right center;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.nav-links a:hover::after { transform: scaleX(1); transform-origin: left center; }
+
+/* Button shimmer on hover (primary) */
+.btn-primary { position: relative; overflow: hidden; isolation: isolate; }
+.btn-primary::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, white 35%, transparent) 50%, transparent 70%);
+  transform: translateX(-120%); transition: transform .7s cubic-bezier(.2,.7,.2,1);
+  pointer-events: none;
+}
+.btn-primary:hover::before { transform: translateX(120%); }
+
+/* Glass button: gentle border glow on hover */
+.btn-glass { transition: transform .25s, box-shadow .35s, border-color .35s; }
+.btn-glass:hover {
+  border-color: color-mix(in oklab, var(--primary) 45%, transparent);
+  box-shadow: 0 10px 30px -14px oklch(0.66 0.19 145 / 0.35);
+}
+
+/* Brand mark: tiny pop on hover */
+.brand { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+.brand:hover { transform: translateY(-1px); }
+.brand img { transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s; }
+.brand:hover img { transform: rotate(-4deg) scale(1.06); box-shadow: 0 6px 18px -8px oklch(0.66 0.19 145 / 0.55); }
+
+/* Icon chips / card icons: bounce + glow on card hover */
+.icon-chip, .step-icon, .card-icon {
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s;
+}
+.lift:hover .icon-chip,
+.lift:hover .card-icon,
+.step:hover .step-icon,
+.privacy-card:hover .card-icon {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 8px 24px -10px color-mix(in oklab, var(--primary) 50%, transparent);
+}
+
+/* Footer GitHub link: subtle slide */
+.footer .gh svg { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+.footer .gh:hover svg { transform: rotate(-8deg) scale(1.1); }
+
+/* Slightly richer card hover for content card / cta-band */
+.content-card, .cta-band {
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s;
+}
+.content-card:hover, .cta-band:hover {
+  transform: translateY(-2px);
+}
+
+/* Make sure interactive layers stay above the mesh */
+.nav, .hero, .page-hero, main, .content-wrap, .footer, section { position: relative; z-index: 1; }
+
+</style>
 </head>
 <body>
+<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+
 
 <!-- ── Nav ── -->
 <header class="nav glass">
