@@ -7,9 +7,6 @@ All notable changes to this project will be documented in this file.
 ## v0.1.10
 
 ### Improved
-- Added a dedicated popup loading shell to avoid a blank flash before the main UI appears.
-- Added subtle guided highlight states to the Spreadsheet and Tab selectors when a destination has not been selected yet.
-- Improved destination selection guidance so required setup steps are more visually noticeable.
 - Improved public project pages for a more consistent visual presentation across Home, Changelog, and Privacy.
 
 ### Fixed
