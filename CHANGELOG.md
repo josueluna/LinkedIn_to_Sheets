@@ -7,16 +7,11 @@ All notable changes to this project will be documented in this file.
 ## v0.1.10
 
 ### Improved
-- Redesigned `changelog.html` to match the visual style of the landing page.
-- Redesigned `privacy.html` to match the visual style of the landing page.
-- Improved documentation page consistency across Home, Changelog, and Privacy.
-- Improved popup loading behavior with a dedicated loading shell to avoid a blank flash before the UI appears.
-- Added subtle guided highlight states to the Spreadsheet and Tab selectors when a destination has not been selected yet.
-- Improved popup guidance so required destination steps are more visually noticeable.
+- Improved public project pages for a more consistent visual presentation across Home, Changelog, and Privacy.
 
 ### Fixed
-- Fixed `changelog.html` loading behavior so the changelog content can be rendered correctly from the Markdown source.
-- Improved documentation page structure and navigation consistency.
+- Fixed changelog page loading so changelog content renders correctly from the Markdown source.
+- Improved documentation page consistency and navigation.
 
 ---
 
@@ -38,6 +33,8 @@ All notable changes to this project will be documented in this file.
 ### Testing
 - Added stronger popup UI coverage for connected/disconnected states, mapping validation, and required Profile URL behavior.
 - Added fixture-based scraper tests for alternate layouts, missing fields, reordered sections, and profile URL fallback cases.
+
+---
 
 ## v0.1.8
 
