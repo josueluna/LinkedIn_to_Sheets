@@ -59,6 +59,7 @@
   color: transparent;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 html, body { background: var(--background); color: var(--foreground); }
 body {
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -78,7 +79,7 @@ button, a { cursor: pointer; }
 }
 
 /* Reveal */
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease-out, transform .7s ease-out; will-change: opacity, transform; }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease-out, transform .6s ease-out; }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
 /* Lift */
@@ -213,13 +214,13 @@ button, a { cursor: pointer; }
 
 /* Animated gradient mesh background — sits behind everything */
 .bg-mesh {
-  position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden;
+  position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden; contain: layout paint;
 }
 .bg-mesh::before,
 .bg-mesh::after,
 .bg-mesh > .blob {
   content: ""; position: absolute; border-radius: 9999px;
-  filter: blur(90px); opacity: .55; will-change: transform;
+  filter: blur(72px); opacity: .45;
 }
 .bg-mesh::before {
   width: 46vw; height: 46vw; top: -10vw; left: -8vw;
@@ -237,9 +238,9 @@ button, a { cursor: pointer; }
   animation: meshDriftC 30s ease-in-out infinite alternate;
 }
 @media (prefers-color-scheme: dark) {
-  .bg-mesh::before { opacity: .45; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.40), transparent 70%); }
-  .bg-mesh::after  { opacity: .42; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.42), transparent 70%); }
-  .bg-mesh > .blob { opacity: .38; background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.34), transparent 70%); }
+  .bg-mesh::before { opacity: .35; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.34), transparent 70%); }
+  .bg-mesh::after  { opacity: .33; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.36), transparent 70%); }
+  .bg-mesh > .blob { opacity: .3; background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.28), transparent 70%); }
 }
 @keyframes meshDriftA {
   0%   { transform: translate3d(0,0,0) scale(1); }
@@ -321,6 +322,20 @@ button, a { cursor: pointer; }
 }
 .content-card:hover, .cta-band:hover {
   transform: translateY(-2px);
+}
+
+
+
+[id] { scroll-margin-top: 5.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
 }
 
 /* Make sure interactive layers stay above the mesh */

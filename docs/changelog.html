@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
   <style>
     :root {
       --radius: 0.875rem;
@@ -51,6 +51,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+    html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     html, body { background: var(--background); color: var(--foreground); }
     body {
       font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -67,7 +68,7 @@
       border: 1px solid var(--glass-border);
     }
 
-    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease-out, transform .7s ease-out; will-change: opacity, transform; }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease-out, transform .6s ease-out; }
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
     /* ── Nav (matches landing) ── */
@@ -241,6 +242,9 @@
     .loading {
       text-align: center; color: var(--muted-fg);
       padding: 3rem 0; font-size: .9375rem;
+      min-height: 12rem;
+      display: grid;
+      place-items: center;
     }
 
     /* Footer (matches landing) */
@@ -269,13 +273,13 @@
 
 /* Animated gradient mesh background — sits behind everything */
 .bg-mesh {
-  position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden;
+  position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden; contain: layout paint;
 }
 .bg-mesh::before,
 .bg-mesh::after,
 .bg-mesh > .blob {
   content: ""; position: absolute; border-radius: 9999px;
-  filter: blur(90px); opacity: .55; will-change: transform;
+  filter: blur(72px); opacity: .45;
 }
 .bg-mesh::before {
   width: 46vw; height: 46vw; top: -10vw; left: -8vw;
@@ -293,9 +297,9 @@
   animation: meshDriftC 30s ease-in-out infinite alternate;
 }
 @media (prefers-color-scheme: dark) {
-  .bg-mesh::before { opacity: .45; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.40), transparent 70%); }
-  .bg-mesh::after  { opacity: .42; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.42), transparent 70%); }
-  .bg-mesh > .blob { opacity: .38; background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.34), transparent 70%); }
+  .bg-mesh::before { opacity: .35; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.34), transparent 70%); }
+  .bg-mesh::after  { opacity: .33; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.36), transparent 70%); }
+  .bg-mesh > .blob { opacity: .3; background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.28), transparent 70%); }
 }
 @keyframes meshDriftA {
   0%   { transform: translate3d(0,0,0) scale(1); }
@@ -382,6 +386,20 @@
   transform: translateY(-3px);
   border-color: color-mix(in oklab, var(--primary) 30%, transparent);
   box-shadow: 0 30px 70px -28px oklch(0.30 0.05 265 / 0.30), 0 0 0 1px color-mix(in oklab, var(--primary) 18%, transparent);
+}
+
+
+
+[id] { scroll-margin-top: 5.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
 }
 
 /* Make sure interactive layers stay above the mesh */
@@ -483,21 +501,30 @@ body::after {
 </footer>
 
 <script>
-  // Reveal-on-scroll
-  (function () {
-    var els = document.querySelectorAll('.reveal');
+  var canObserve = 'IntersectionObserver' in window;
+  var revealIO = canObserve
+    ? new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+    : null;
+
+  function reveal(scope) {
+    var root = scope || document;
+    var els = root.querySelectorAll('.reveal');
     if (!els.length) return;
-    if (!('IntersectionObserver' in window)) {
+    if (!canObserve) {
       els.forEach(function (el) { el.classList.add('is-visible'); });
       return;
     }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    els.forEach(function (el) { io.observe(el); });
-  })();
+    els.forEach(function (el) { revealIO.observe(el); });
+  }
+
+  reveal(document);
 
   // Load changelog from GitHub and split into per-version glass panels
   (function () {
@@ -508,21 +535,6 @@ body::after {
       return s.replace(/[&<>"']/g, function (c) {
         return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c];
       });
-    }
-
-    function observeReveals(scope) {
-      var els = scope.querySelectorAll('.reveal');
-      if (!els.length) return;
-      if (!('IntersectionObserver' in window)) {
-        els.forEach(function (el) { el.classList.add('is-visible'); });
-        return;
-      }
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-      els.forEach(function (el) { io.observe(el); });
     }
 
     function renderVersions(md) {
@@ -544,7 +556,7 @@ body::after {
         '<div class="content-card reveal">' +
         '<div class="markdown-body">' + marked.parse(md) + '</div>' +
         '</div>';
-        observeReveals(target);
+        reveal(target);
         return;
       }
 
@@ -568,11 +580,13 @@ body::after {
         '</article>';
       });
       html += '</div>';
-      target.innerHTML = html;
-      observeReveals(target);
+      requestAnimationFrame(function () {
+        target.innerHTML = html;
+        reveal(target);
+      });
     }
 
-    fetch(url)
+    fetch(url, { cache: 'force-cache' })
     .then(function (r) { if (!r.ok) throw new Error('Not found'); return r.text(); })
     .then(renderVersions)
     .catch(function () {
@@ -580,7 +594,7 @@ body::after {
       '<div class="content-card reveal">' +
       '<p style="text-align:center;color:var(--muted-fg);">Couldn\'t load the changelog right now. Try again later or visit the <a href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/develop/CHANGELOG.md?plain=1" target="_blank" rel="noopener" style="color:var(--linkedin);">repository</a>.</p>' +
       '</div>';
-      observeReveals(target);
+      reveal(target);
     });
   })();
 </script>

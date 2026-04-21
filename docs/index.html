@@ -73,6 +73,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+    html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     html, body { background: var(--background); color: var(--foreground); }
     body {
       font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -102,7 +103,7 @@
 }
 
 /* Reveal-on-scroll */
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease-out, transform .7s ease-out; will-change: opacity, transform; }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease-out, transform .6s ease-out; }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
 /* Lift hover */
@@ -387,13 +388,13 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
 
 /* Animated gradient mesh background — sits behind everything */
 .bg-mesh {
-  position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden;
+  position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden; contain: layout paint;
 }
 .bg-mesh::before,
 .bg-mesh::after,
 .bg-mesh > .blob {
   content: ""; position: absolute; border-radius: 9999px;
-  filter: blur(90px); opacity: .55; will-change: transform;
+  filter: blur(72px); opacity: .45;
 }
 .bg-mesh::before {
   width: 46vw; height: 46vw; top: -10vw; left: -8vw;
@@ -411,9 +412,9 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
   animation: meshDriftC 30s ease-in-out infinite alternate;
 }
 @media (prefers-color-scheme: dark) {
-  .bg-mesh::before { opacity: .45; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.40), transparent 70%); }
-  .bg-mesh::after  { opacity: .42; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.42), transparent 70%); }
-  .bg-mesh > .blob { opacity: .38; background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.34), transparent 70%); }
+  .bg-mesh::before { opacity: .35; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.34), transparent 70%); }
+  .bg-mesh::after  { opacity: .33; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.36), transparent 70%); }
+  .bg-mesh > .blob { opacity: .3; background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.28), transparent 70%); }
 }
 @keyframes meshDriftA {
   0%   { transform: translate3d(0,0,0) scale(1); }
@@ -561,6 +562,20 @@ video {
 .demo-visual:hover img {
   transform: translateY(-6px) scale(1.03);
   box-shadow: 0 30px 80px -20px rgba(0,0,0,0.8);
+}
+
+
+
+[id] { scroll-margin-top: 5.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
 }
 
 /* Make sure interactive layers stay above the mesh */
@@ -862,6 +877,7 @@ body::after {
       src="media/main-screen.png"
       alt="LinkedIn to Sheets extension popup interface"
       loading="lazy"
+      decoding="async"
       style="
       width:280px;
       border-radius:0.75rem;
@@ -929,23 +945,6 @@ body::after {
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     els.forEach(function (el) { io.observe(el); });
   })();
-</script>
-<script>
-  // Script para hacer scroll suave en index.html
-  if (window.location.pathname === '/index.html') {
-    // Detecta los enlaces internos y activa scroll suave
-    const links = document.querySelectorAll('a[href^="#"]');
-    links.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        window.scrollTo({
-          top: target.offsetTop - 70, // Ajustamos para el header
-          behavior: 'smooth'
-        });
-      });
-    });
-  }
 </script>
 </body>
 </html>
