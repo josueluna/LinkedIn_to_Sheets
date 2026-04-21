@@ -754,7 +754,7 @@ body.page-exit{opacity:.985;}
       <div class="mockup">
         <div class="mockup-inner">
         <video
-          autoplay
+          id="hero-video"
           muted
           loop
           playsinline
@@ -1007,6 +1007,23 @@ body.page-exit{opacity:.985;}
     document.body.classList.add('page-exit');
   },{passive:true});
 })();
+</script>
+<script>
+  const video = document.getElementById('hero-video');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+  }, {
+    threshold: 0.7
+  });
+
+  observer.observe(video);
 </script>
 </body>
 </html>.hero * {
