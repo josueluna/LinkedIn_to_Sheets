@@ -421,11 +421,9 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
 .mockup::before { display: none; }
 
 .mockup:hover {
-  border-color: color-mix(in oklab, var(--primary) 32%, var(--border));
-  box-shadow:
-    0 1px 0 color-mix(in oklab, white 60%, transparent) inset,
-    0 28px 60px -24px color-mix(in oklab, var(--primary) 50%, transparent),
-    0 40px 80px -30px color-mix(in oklab, var(--linkedin) 40%, transparent);
+  transform: none;
+  box-shadow: inherit;
+  border-color: inherit;
 }
 
 .mockup img,
