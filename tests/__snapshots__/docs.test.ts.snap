@@ -8,7 +8,7 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
 <header class="nav glass">
   <div class="nav-inner">
     <a class="brand" href="index.html">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async">
       <span>LinkedIn to Sheets</span>
     </a>
     <nav class="nav-links">
@@ -63,7 +63,7 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async">
       <span>LinkedIn to Sheets</span>
     </div>
     <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
@@ -171,6 +171,23 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
       reveal(target);
     });
   })();
+</script>
+
+<script>
+(function(){
+    var docLinks=['index.html','privacy.html','changelog.html'];
+  docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('a[href]');
+    if(!a) return;
+    var href=a.getAttribute('href');
+    if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
+    var u=new URL(a.href, location.href);
+    if(u.origin!==location.origin) return;
+    if(!/\\/(index|privacy|changelog)\\.html$/.test(u.pathname) && !/\\/LinkedIn_to_Sheets\\/$/.test(u.pathname)) return;
+    document.body.classList.add('page-exit');
+  },{passive:true});
+})();
 </script>"
 `;
 
@@ -182,7 +199,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
 <header class="nav glass">
   <div class="nav-inner">
     <a class="brand" href="index.html">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async">
       <span>LinkedIn to Sheets</span>
     </a>
     <nav class="nav-links">
@@ -249,14 +266,14 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
 
     <div class="hero-visual reveal">
-      <div class="frame video-frame">
-        <video autoplay="" muted="" loop="" playsinline="" preload="auto" poster="media/preview.png" style="
-        width:100%;
-        border-radius:0.75rem;
-        display:block;
-        object-fit:cover;">
-        <source src="media/demo-lts.mp4" type="video/mp4">
+      <div class="mockup-wrap">
+      <div class="mockup">
+        <div class="mockup-inner">
+        <video autoplay="" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png" fetchpriority="high">
+          <source src="media/demo-lts.mp4" type="video/mp4">
         </video>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -410,12 +427,13 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       background: transparent;
       ">
 
-      <img src="media/main-screen.png" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async" style="
-      width:280px;
-      border-radius:0.75rem;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
-      ">
+      <div class="mockup-wrap">
+      <div class="mockup">
+  <div class="mockup-inner">
+  <img src="media/main-screen.png" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
+  </div>
+</div>
+      </div>
 
     </div>
   </div>
@@ -452,7 +470,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async">
       <span>LinkedIn to Sheets</span>
     </div>
     <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
@@ -476,7 +494,30 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     els.forEach(function (el) { io.observe(el); });
   })();
-</script>"
+</script>
+
+<script>
+(function(){
+    var docLinks=['index.html','privacy.html','changelog.html'];
+  docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('a[href]');
+    if(!a) return;
+    var href=a.getAttribute('href');
+    if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
+    var u=new URL(a.href, location.href);
+    if(u.origin!==location.origin) return;
+    if(!/\\/(index|privacy|changelog)\\.html$/.test(u.pathname) && !/\\/LinkedIn_to_Sheets\\/$/.test(u.pathname)) return;
+    document.body.classList.add('page-exit');
+  },{passive:true});
+})();
+</script>
+
+.hero * {
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}"
 `;
 
 exports[`Docs HTML snapshots > privacy.html snapshot 1`] = `
@@ -487,7 +528,7 @@ exports[`Docs HTML snapshots > privacy.html snapshot 1`] = `
 <header class="nav glass">
   <div class="nav-inner">
     <a class="brand" href="https://josueluna.github.io/LinkedIn_to_Sheets/">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async">
       <span>LinkedIn to Sheets</span>
     </a>
     <nav class="nav-links">
@@ -580,7 +621,7 @@ exports[`Docs HTML snapshots > privacy.html snapshot 1`] = `
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async">
       <span>LinkedIn to Sheets</span>
     </div>
     <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
@@ -603,5 +644,22 @@ exports[`Docs HTML snapshots > privacy.html snapshot 1`] = `
     }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
     els.forEach(function (el) { io.observe(el); });
   })();
+</script>
+
+<script>
+(function(){
+    var docLinks=['index.html','privacy.html','changelog.html'];
+  docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('a[href]');
+    if(!a) return;
+    var href=a.getAttribute('href');
+    if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
+    var u=new URL(a.href, location.href);
+    if(u.origin!==location.origin) return;
+    if(!/\\/(index|privacy|changelog)\\.html$/.test(u.pathname) && !/\\/LinkedIn_to_Sheets\\/$/.test(u.pathname)) return;
+    document.body.classList.add('page-exit');
+  },{passive:true});
+})();
 </script>"
 `;
