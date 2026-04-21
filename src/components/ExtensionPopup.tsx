@@ -4,22 +4,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-    CheckCircle2,
-    AlertCircle,
-    Loader2,
-    User,
-    Building2,
-    Briefcase,
-    MapPin,
-    ExternalLink,
-    CircleDot,
-    ChevronDown,
-    FileSpreadsheet,
-    Table2,
-    Search,
-    Check,
-    RefreshCw,
-    SlidersHorizontal,
+  ColumnMapping,
+  defaultColumnMapping,
+  normalizeColumnMapping,
+} from "@/lib/mappings";
+import {
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  User,
+  Building2,
+  Briefcase,
+  MapPin,
+  ExternalLink,
+  CircleDot,
+  ChevronDown,
+  FileSpreadsheet,
+  Table2,
+  Search,
+  Check,
+  RefreshCw,
+  SlidersHorizontal,
 } from "lucide-react";
 
 type ConnectionStatus = "disconnected" | "connected";
@@ -27,360 +32,333 @@ type AppState = "empty" | "connected" | "saving" | "success" | "error";
 type FeedbackTone = "success" | "error" | "warning" | "";
 
 type LinkedinProfile = {
-    name: string;
-    company: string;
-    title: string;
-    location: string;
-    profileUrl: string;
+  name: string;
+  company: string;
+  title: string;
+  location: string;
+  profileUrl: string;
 };
 
 type SpreadsheetItem = {
-    id: string;
-    name: string;
-    url: string;
-    modifiedTime? : string;
+  id: string;
+  name: string;
+  url: string;
+  modifiedTime?: string;
 };
 
 type StoredConfig = {
-    isConnected?: boolean;
-    spreadsheetId?: string;
-    spreadsheetName?: string;
-    spreadsheetUrl?: string;
-    sheetName?: string;
-    columnMapping?: {
-        name: { enabled: boolean; column: string };
-        company: { enabled: boolean; column: string };
-        title: { enabled: boolean; column: string };
-        location: { enabled: boolean; column: string };
-        profileUrl: { enabled: boolean; column: string };
-    };
-};
-
-type ColumnMapping = {
+  isConnected?: boolean;
+  spreadsheetId?: string;
+  spreadsheetName?: string;
+  spreadsheetUrl?: string;
+  sheetName?: string;
+  columnMapping?: {
     name: { enabled: boolean; column: string };
     company: { enabled: boolean; column: string };
     title: { enabled: boolean; column: string };
     location: { enabled: boolean; column: string };
     profileUrl: { enabled: boolean; column: string };
+  };
 };
 
-function normalizeColumnMapping(raw: any) {
-    if (!raw) {
-        return {
-            name: { enabled: true, column: "B" },
-            company: { enabled: true, column: "C" },
-            title: { enabled: true, column: "D" },
-            location: { enabled: true, column: "E" },
-            profileUrl: { enabled: true, column: "F" },
-        };
-    }
+const COLUMN_OPTIONS = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+] as const;
 
-    const isLegacy =
-    typeof raw.name === "string" ||
-    typeof raw.company === "string" ||
-    typeof raw.title === "string" ||
-    typeof raw.location === "string" ||
-    typeof raw.profileUrl === "string";
-
-    if (isLegacy) {
-        return {
-            name: { enabled: true, column: raw.name ?? "B" },
-            company: { enabled: true, column: raw.company ?? "C" },
-            title: { enabled: true, column: raw.title ?? "D" },
-            location: { enabled: true, column: raw.location ?? "E" },
-            profileUrl: { enabled: true, column: raw.profileUrl ?? "F" },
-        };
-    }
-
-    return {
-        name: {
-            enabled: raw.name?.enabled ?? true,
-            column: raw.name?.column ?? "B",
-        },
-        company: {
-            enabled: raw.company?.enabled ?? true,
-            column: raw.company?.column ?? "C",
-        },
-        title: {
-            enabled: raw.title?.enabled ?? true,
-            column: raw.title?.column ?? "D",
-        },
-        location: {
-            enabled: raw.location?.enabled ?? true,
-            column: raw.location?.column ?? "E",
-        },
-        profileUrl: {
-            enabled: true,
-            column: raw.profileUrl?.column ?? "F",
-        },
-    };
-}
+const MAPPING_FIELDS = [
+  { key: "name", label: "Name", icon: User },
+  { key: "company", label: "Company", icon: Building2 },
+  { key: "title", label: "Title", icon: Briefcase },
+  { key: "location", label: "Location", icon: MapPin },
+  { key: "profileUrl", label: "Profile URL", icon: ExternalLink },
+] as const;
 
 function useAutoClearingFeedback() {
-    const [feedbackMessage, setFeedbackMessage] = useState("");
-    const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>("");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>("");
 
-    function showError(message: string) {
-        setFeedbackMessage(message);
-        setFeedbackTone("error");
-    }
+  function showError(message: string) {
+    setFeedbackMessage(message);
+    setFeedbackTone("error");
+  }
 
-    function clearFeedback() {
-        setFeedbackMessage("");
-        setFeedbackTone("");
-    }
+  function clearFeedback() {
+    setFeedbackMessage("");
+    setFeedbackTone("");
+  }
 
-    useEffect(() => {
-        if (!feedbackMessage) return;
+  useEffect(() => {
+    if (!feedbackMessage) return;
 
-        const timeout = window.setTimeout(() => {
-            clearFeedback();
-        }, 3000);
+    const timeout = window.setTimeout(() => {
+      clearFeedback();
+    }, 3000);
 
-        return () => window.clearTimeout(timeout);
-    }, [feedbackMessage]);
+    return () => window.clearTimeout(timeout);
+  }, [feedbackMessage]);
 
-    return {
-        feedbackMessage,
-        feedbackTone,
-        showError,
-        clearFeedback,
-    };
+  return {
+    feedbackMessage,
+    feedbackTone,
+    showError,
+    clearFeedback,
+  };
 }
 
 function usePopupToast() {
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastType, setToastType] = useState<"success" | "error" | "warning">("warning");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"success" | "error" | "warning">(
+    "warning",
+  );
 
-    function showToast(message: string, type: "success" | "error" | "warning") {
-        setToastMessage(message);
-        setToastType(type);
-    }
+  function showToast(message: string, type: "success" | "error" | "warning") {
+    setToastMessage(message);
+    setToastType(type);
+  }
 
-    return {
-        toastMessage,
-        toastType,
-        setToastMessage,
-        setToastType,
-        showToast,
-    };
+  return {
+    toastMessage,
+    toastType,
+    setToastMessage,
+    setToastType,
+    showToast,
+  };
 }
 
 function FeedbackBanner({
-    feedbackMessage,
-    feedbackTone,
+  feedbackMessage,
+  feedbackTone,
 }: {
-    feedbackMessage: string;
-    feedbackTone: FeedbackTone;
+  feedbackMessage: string;
+  feedbackTone: FeedbackTone;
 }) {
-    if (!feedbackMessage) return null;
+  if (!feedbackMessage) return null;
 
-    return (
-        <div
-            className={
-                feedbackTone === "error"
-                ? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
-                : feedbackTone === "warning"
-                ? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
-                : "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
-            }
-        >
-            {feedbackTone === "error" ? (
-                <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
-                ) : feedbackTone === "warning" ? (
-                <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                ) : (
-                <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
-                )}
-                <span
-                    className={
-                        feedbackTone === "error"
-                        ? "text-[11px] text-destructive font-medium"
-                        : feedbackTone === "warning"
-                        ? "text-[11px] text-amber-700 font-medium"
-                        : "text-[11px] text-success font-medium"
-                    }
-                >
-                    {feedbackMessage}
-                </span>
-            </div>
-            );
+  return (
+    <div
+      className={
+        feedbackTone === "error"
+          ? "flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20"
+          : feedbackTone === "warning"
+            ? "flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/30"
+            : "flex items-center gap-2 p-2 rounded-md bg-success/10 border border-success/20"
+      }
+    >
+      {feedbackTone === "error" ? (
+        <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0" />
+      ) : feedbackTone === "warning" ? (
+        <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+      ) : (
+        <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+      )}
+      <span
+        className={
+          feedbackTone === "error"
+            ? "text-[11px] text-destructive font-medium"
+            : feedbackTone === "warning"
+              ? "text-[11px] text-amber-700 font-medium"
+              : "text-[11px] text-success font-medium"
+        }
+      >
+        {feedbackMessage}
+      </span>
+    </div>
+  );
 }
 
 function SuccessState({
-    profileName,
-    spreadsheetName,
-    selectedTab,
+  profileName,
+  spreadsheetName,
+  selectedTab,
 }: {
-    profileName?: string;
-    spreadsheetName: string;
-    selectedTab: string;
+  profileName?: string;
+  spreadsheetName: string;
+  selectedTab: string;
 }) {
-    return (
-        <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-success" />
-            </div>
-            <div className="space-y-1">
-                <h2 className="text-sm font-semibold text-foreground">
-                    Profile Pasted
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                    <b>{profileName || "This profile"}</b> was pasted into
-                    <br />
-                    <b>
-                        {spreadsheetName
-                        ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
-                        : "your spreadsheet"}
-                    </b>
-                    .
-                </p>
-            </div>
-        </div>
-        );
+  return (
+    <div className="px-4 py-12 flex flex-col items-center justify-center text-center space-y-3">
+      <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
+        <CheckCircle2 className="w-6 h-6 text-success" />
+      </div>
+      <div className="space-y-1">
+        <h2 className="text-sm font-semibold text-foreground">
+          Profile Pasted
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          <b>{profileName || "This profile"}</b> was pasted into
+          <br />
+          <b>
+            {spreadsheetName
+              ? `${spreadsheetName}${selectedTab ? ` → ${selectedTab}` : ""}`
+              : "your spreadsheet"}
+          </b>
+          .
+        </p>
+      </div>
+    </div>
+  );
 }
 
 function ColumnMappingPanel({
-    mappingFields,
-    columnMapping,
-    mappedColumns,
-    availableHeaders,
-    columnOptions,
-    hasDuplicateColumns,
-    setColumnMapping,
-    onBack,
-    onReset,
-    onSave,
+  mappingFields,
+  columnMapping,
+  mappedColumns,
+  availableHeaders,
+  columnOptions,
+  hasDuplicateColumns,
+  setColumnMapping,
+  onBack,
+  onReset,
+  onSave,
 }: {
-    mappingFields: readonly { key: keyof ColumnMapping; label: string; icon: any }[];
-    columnMapping: ColumnMapping;
-    mappedColumns: string[];
-    availableHeaders: { column: string; header: string }[];
-    columnOptions: string[];
-    hasDuplicateColumns: boolean;
-    setColumnMapping: (value: React.SetStateAction<ColumnMapping>) => void;
-    onBack: () => void;
-    onReset: () => void;
-    onSave: () => void;
+  mappingFields: readonly {
+    key: keyof ColumnMapping;
+    label: string;
+    icon: any;
+  }[];
+  columnMapping: ColumnMapping;
+  mappedColumns: string[];
+  availableHeaders: { column: string; header: string }[];
+  columnOptions: readonly string[];
+  hasDuplicateColumns: boolean;
+  setColumnMapping: (value: React.SetStateAction<ColumnMapping>) => void;
+  onBack: () => void;
+  onReset: () => void;
+  onSave: () => void;
 }) {
-    return (
-        <div className="px-4 py-4 space-y-4">
-            <div className="flex items-center justify-between">
-                <div>
-                    <div className="flex items-center gap-1.5">
-                        <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
-                        <h2 className="text-sm font-semibold text-[#434343]">
-                            Column Mapping
-                        </h2>
-                    </div>
-                    <p className="text-[11px] text-[#434343]">
-                        Choose which column receives each LinkedIn field
-                    </p>
-                </div>
-
-                <Button
-                    size="sm"
-                    className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
-                    onClick={onBack}
-                >
-                    ← Back
-                </Button>
-            </div>
-
-            <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
-                <div className="rounded-lg border border-input bg-card overflow-hidden">
-                    {mappingFields.map((field) => {
-                        const Icon = field.icon;
-                        const isDuplicate =
-                        columnMapping[field.key].enabled &&
-                        mappedColumns.filter((col) => col === columnMapping[field.key].column).length > 1;
-
-                        return (
-                            <div
-                                key={field.key}
-                                className={`flex items-center justify-between gap-3 px-3 py-3 ${
-                                    isDuplicate ? "bg-amber-500/5" : ""
-                                }`}
-                            >
-                                <div className="flex items-center gap-2 min-w-0">
-                                    <input
-                                        type="checkbox"
-                                        checked={columnMapping[field.key].enabled}
-                                        disabled={field.key === "profileUrl"}
-                                        onChange={(e) =>
-                                        setColumnMapping((prev) => ({
-                                            ...prev,
-                                            [field.key]: {
-                                                ...prev[field.key],
-                                                enabled: e.target.checked,
-                                            },
-                                        }))
-                                    }
-                                    className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
-                                />
-                                <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                <span className="text-xs text-[#434343]">{field.label}</span>
-                                {field.key === "profileUrl" && (
-                                    <span className="text-[10px] text-muted-foreground">Required</span>
-                                    )}
-                            </div>
-
-                            <select
-                                value={columnMapping[field.key].column}
-                                onChange={(e) =>
-                                setColumnMapping((prev) => ({
-                                    ...prev,
-                                    [field.key]: {
-                                        ...prev[field.key],
-                                        column: e.target.value,
-                                    },
-                                }))
-                            }
-                            disabled={!columnMapping[field.key].enabled}
-                            className={`h-8 w-[160px] rounded-md border pl-2 pr-7 text-xs outline-none truncate ${
-                                !columnMapping[field.key].enabled
-                                ? "border-input bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-                                : isDuplicate
-                                ? "border-amber-500/40 bg-background text-[#434343]"
-                                : "border-input bg-background text-[#434343]"
-                            }`}
-                        >
-                            {(availableHeaders.length
-                                ? availableHeaders
-                                : columnOptions.map((col) => ({ column: col, header: "" }))
-                                ).map((item) => (
-                                    <option key={item.column} value={item.column}>
-                                        {item.header ? `${item.column} : ${item.header}` : item.column}
-                                    </option>
-                                    ))}
-                            </select>
-                        </div>
-                        );
-                    })}
-                </div>
-
-                <div className="flex justify-between gap-2 pt-1">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 text-xs text-[#434343]"
-                        onClick={onReset}
-                    >
-                        Reset to Default
-                    </Button>
-
-                    <Button
-                        size="sm"
-                        className="h-8 text-xs"
-                        onClick={onSave}
-                        disabled={hasDuplicateColumns}
-                    >
-                        Save changes
-                    </Button>
-                </div>
-            </div>
+  return (
+    <div className="px-4 py-4 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-1.5">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#434343]" />
+            <h2 className="text-sm font-semibold text-[#434343]">
+              Column Mapping
+            </h2>
+          </div>
+          <p className="text-[11px] text-[#434343]">
+            Choose which column receives each LinkedIn field
+          </p>
         </div>
-        );
+
+        <Button
+          size="sm"
+          className="h-7 px-3 text-[11px] bg-primary/85 hover:bg-primary text-primary-foreground"
+          onClick={onBack}
+        >
+          ← Back
+        </Button>
+      </div>
+
+      <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
+        <div className="rounded-lg border border-input bg-card overflow-hidden">
+          {mappingFields.map((field) => {
+            const Icon = field.icon;
+            const isDuplicate =
+              columnMapping[field.key].enabled &&
+              mappedColumns.filter(
+                (col) => col === columnMapping[field.key].column,
+              ).length > 1;
+
+            return (
+              <div
+                key={field.key}
+                className={`flex items-center justify-between gap-3 px-3 py-3 ${
+                  isDuplicate ? "bg-amber-500/5" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <input
+                    type="checkbox"
+                    checked={columnMapping[field.key].enabled}
+                    disabled={field.key === "profileUrl"}
+                    onChange={(e) =>
+                      setColumnMapping((prev) => ({
+                        ...prev,
+                        [field.key]: {
+                          ...prev[field.key],
+                          enabled: e.target.checked,
+                        },
+                      }))
+                    }
+                    className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                  <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  <span className="text-xs text-[#434343]">{field.label}</span>
+                  {field.key === "profileUrl" && (
+                    <span className="text-[10px] text-muted-foreground">
+                      Required
+                    </span>
+                  )}
+                </div>
+
+                <select
+                  value={columnMapping[field.key].column}
+                  onChange={(e) =>
+                    setColumnMapping((prev) => ({
+                      ...prev,
+                      [field.key]: {
+                        ...prev[field.key],
+                        column: e.target.value,
+                      },
+                    }))
+                  }
+                  disabled={!columnMapping[field.key].enabled}
+                  className={`h-8 w-[160px] rounded-md border pl-2 pr-7 text-xs outline-none truncate ${
+                    !columnMapping[field.key].enabled
+                      ? "border-input bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                      : isDuplicate
+                        ? "border-amber-500/40 bg-background text-[#434343]"
+                        : "border-input bg-background text-[#434343]"
+                  }`}
+                >
+                  {(availableHeaders.length
+                    ? availableHeaders
+                    : columnOptions.map((col) => ({ column: col, header: "" }))
+                  ).map((item) => (
+                    <option key={item.column} value={item.column}>
+                      {item.header
+                        ? `${item.column} : ${item.header}`
+                        : item.column}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-between gap-2 pt-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs text-[#434343]"
+            onClick={onReset}
+          >
+            Reset to Default
+          </Button>
+
+          <Button
+            size="sm"
+            className="h-8 text-xs"
+            onClick={onSave}
+            disabled={hasDuplicateColumns}
+          >
+            Save changes
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function LoadingShell() {
@@ -393,439 +371,421 @@ function LoadingShell() {
               src="/logo.png"
               alt="LinkedIn to Sheets logo"
               className="w-full h-full object-contain"
-          />
+            />
+          </div>
+          <div>
+            <h1 className="text-sm font-semibold text-foreground leading-tight">
+              LinkedIn to Sheets
+            </h1>
+            <p className="text-[11px] text-muted-foreground leading-tight">
+              Paste LinkedIn profile information into Google Sheets
+            </p>
+          </div>
+        </div>
       </div>
-      <div>
-        <h1 className="text-sm font-semibold text-foreground leading-tight">
-          LinkedIn to Sheets
-      </h1>
-      <p className="text-[11px] text-muted-foreground leading-tight">
-          Paste LinkedIn profile information into Google Sheets
-      </p>
-  </div>
-</div>
-</div>
 
-<div className="h-[calc(100%-69px)] flex items-center justify-center">
-    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-      <Loader2 className="w-4 h-4 animate-spin" />
-      <span className="text-xs">Loading...</span>
-  </div>
-</div>
-</div>
-);
+      <div className="h-[calc(100%-69px)] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-xs">Loading...</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function ExtensionPopup() {
-    const [connectionStatus, setConnectionStatus] =
-    useState < ConnectionStatus > ("disconnected");
-    const [appState, setAppState] = useState < AppState > ("empty");
-    const [isHydrating, setIsHydrating] = useState(true);
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>("disconnected");
+  const [appState, setAppState] = useState<AppState>("empty");
+  const [isHydrating, setIsHydrating] = useState(true);
 
-    const [profile, setProfile] = useState < LinkedinProfile | null > (null);
-    const {
-        feedbackMessage,
-        feedbackTone,
-        showError,
-        clearFeedback,
-    } = useAutoClearingFeedback();
+  const [profile, setProfile] = useState<LinkedinProfile | null>(null);
+  const { feedbackMessage, feedbackTone, showError, clearFeedback } =
+    useAutoClearingFeedback();
 
-    const [spreadsheetId, setSpreadsheetId] = useState("");
-    const [spreadsheetName, setSpreadsheetName] = useState("");
-    const [spreadsheetUrl, setSpreadsheetUrl] = useState("");
-    const [selectedTab, setSelectedTab] = useState("");
+  const [spreadsheetId, setSpreadsheetId] = useState("");
+  const [spreadsheetName, setSpreadsheetName] = useState("");
+  const [spreadsheetUrl, setSpreadsheetUrl] = useState("");
+  const [selectedTab, setSelectedTab] = useState("");
 
-    const [allSpreadsheets, setAllSpreadsheets] = useState < SpreadsheetItem[] > ([]);
-    const [availableTabs, setAvailableTabs] = useState < string[] > ([]);
-    const [availableHeaders, setAvailableHeaders] = useState<
+  const [allSpreadsheets, setAllSpreadsheets] = useState<SpreadsheetItem[]>([]);
+  const [availableTabs, setAvailableTabs] = useState<string[]>([]);
+  const [availableHeaders, setAvailableHeaders] = useState<
     { column: string; header: string }[]
-    >([]);
+  >([]);
 
-    const [sheetPickerOpen, setSheetPickerOpen] = useState(false);
-    const [tabPickerOpen, setTabPickerOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
+  const [sheetPickerOpen, setSheetPickerOpen] = useState(false);
+  const [tabPickerOpen, setTabPickerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-    const [isConnecting, setIsConnecting] = useState(false);
-    const [isRefreshingProfile, setIsRefreshingProfile] = useState(false);
-    const [isLoadingSpreadsheets, setIsLoadingSpreadsheets] = useState(false);
-    const [isLoadingTabs, setIsLoadingTabs] = useState(false);
-    const [isDisconnectHover, setIsDisconnectHover] = useState(false);
-    const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isRefreshingProfile, setIsRefreshingProfile] = useState(false);
+  const [isLoadingSpreadsheets, setIsLoadingSpreadsheets] = useState(false);
+  const [isLoadingTabs, setIsLoadingTabs] = useState(false);
+  const [isDisconnectHover, setIsDisconnectHover] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
-    const {
-        toastMessage,
-        toastType,
-        setToastMessage,
-        setToastType,
-        showToast,
-    } = usePopupToast();
+  const { toastMessage, toastType, setToastMessage, setToastType, showToast } =
+    usePopupToast();
 
-    const [showColumnMapping, setShowColumnMapping] = useState(false);
+  const [showColumnMapping, setShowColumnMapping] = useState(false);
 
-    const defaultColumnMapping: ColumnMapping = {
-        name: { enabled: true, column: "B" },
-        company: { enabled: true, column: "C" },
-        title: { enabled: true, column: "D" },
-        location: { enabled: true, column: "E" },
-        profileUrl: { enabled: true, column: "F" },
-    };
+  const [columnMapping, setColumnMapping] =
+    useState<ColumnMapping>(defaultColumnMapping);
+  const [draftColumnMapping, setDraftColumnMapping] =
+    useState<ColumnMapping | null>(null);
 
-    const [columnMapping, setColumnMapping] = useState<ColumnMapping>(defaultColumnMapping);
-    const [draftColumnMapping, setDraftColumnMapping] = useState<ColumnMapping | null>(null);
+  const isConnected = connectionStatus === "connected";
 
-    const isConnected = connectionStatus === "connected";
-
-    const version = chrome.runtime.getManifest().version;
-
-    const columnOptions = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-
-    const mappingFields = [
-      { key: "name", label: "Name", icon: User },
-      { key: "company", label: "Company", icon: Building2 },
-      { key: "title", label: "Title", icon: Briefcase },
-      { key: "location", label: "Location", icon: MapPin },
-      { key: "profileUrl", label: "Profile URL", icon: ExternalLink },
-  ] as const;
+  const version = chrome.runtime.getManifest().version;
 
   const filteredSpreadsheets = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return allSpreadsheets;
     return allSpreadsheets.filter((sheet) =>
-        sheet.name.toLowerCase().includes(q)
-        );
-}, [allSpreadsheets, searchQuery]);
+      sheet.name.toLowerCase().includes(q),
+    );
+  }, [allSpreadsheets, searchQuery]);
 
   const activeColumnMapping =
-  showColumnMapping && draftColumnMapping ? draftColumnMapping : columnMapping;
+    showColumnMapping && draftColumnMapping
+      ? draftColumnMapping
+      : columnMapping;
 
   const mappedColumns = Object.values(activeColumnMapping)
-  .filter((field) => field.enabled)
-  .map((field) => field.column);
+    .filter((field) => field.enabled)
+    .map((field) => field.column);
 
-  const hasDuplicateColumns = new Set(mappedColumns).size !== mappedColumns.length;
+  const hasDuplicateColumns =
+    new Set(mappedColumns).size !== mappedColumns.length;
 
-  const hasCustomColumnMapping =
-  columnMapping.name.enabled !== defaultColumnMapping.name.enabled ||
-  columnMapping.name.column !== defaultColumnMapping.name.column ||
-  columnMapping.company.enabled !== defaultColumnMapping.company.enabled ||
-  columnMapping.company.column !== defaultColumnMapping.company.column ||
-  columnMapping.title.enabled !== defaultColumnMapping.title.enabled ||
-  columnMapping.title.column !== defaultColumnMapping.title.column ||
-  columnMapping.location.enabled !== defaultColumnMapping.location.enabled ||
-  columnMapping.location.column !== defaultColumnMapping.location.column ||
-  columnMapping.profileUrl.enabled !== defaultColumnMapping.profileUrl.enabled ||
-  columnMapping.profileUrl.column !== defaultColumnMapping.profileUrl.column;
+  const hasCustomColumnMapping = useMemo(() => {
+    return (
+      Object.keys(defaultColumnMapping) as Array<keyof ColumnMapping>
+    ).some((key) => {
+      const current = columnMapping[key];
+      const baseline = defaultColumnMapping[key];
+      return (
+        current.enabled !== baseline.enabled ||
+        current.column !== baseline.column
+      );
+    });
+  }, [columnMapping]);
 
   const canPaste =
-  isConnected &&
-  !!profile &&
-  !!spreadsheetId &&
-  !!selectedTab &&
-  !isRefreshingProfile &&
-  appState !== "saving";
+    isConnected &&
+    !!profile &&
+    !!spreadsheetId &&
+    !!selectedTab &&
+    !isRefreshingProfile &&
+    appState !== "saving";
 
   const shouldHighlightSpreadsheet = isConnected && !spreadsheetName;
   const shouldHighlightTab = isConnected && !!spreadsheetId && !selectedTab;
 
   async function handleResetColumnMapping() {
     await chrome.storage.local.set({
-        columnMapping: defaultColumnMapping,
+      columnMapping: defaultColumnMapping,
     });
 
     setColumnMapping(defaultColumnMapping);
     setDraftColumnMapping(null);
     setShowColumnMapping(false);
     showToast("Column mapping reset to default.", "success");
-}
+  }
 
-async function handleSaveColumnMapping() {
+  async function handleSaveColumnMapping() {
     if (!draftColumnMapping) {
-        setShowColumnMapping(false);
-        return;
+      setShowColumnMapping(false);
+      return;
     }
 
     if (hasDuplicateColumns) {
-        return;
+      return;
     }
 
     await chrome.storage.local.set({
-        columnMapping: draftColumnMapping,
+      columnMapping: draftColumnMapping,
     });
 
     setColumnMapping(draftColumnMapping);
     setDraftColumnMapping(null);
     showToast("Column mapping saved.", "success");
     setShowColumnMapping(false);
-}
+  }
 
-const pasteButtonLabel = useMemo(() => {
-    if (appState === "saving") return "Pasting...";
-    return "Paste Current Profile";
-}, [appState]);
+  const pasteButtonLabel =
+    appState === "saving" ? "Pasting..." : "Paste Current Profile";
 
-useEffect(() => {
+  useEffect(() => {
     void hydrate();
 
     const onChanged = (
-        changes: Record<string, chrome.storage.StorageChange>,
-        areaName: string
-        ) => {
-        if (areaName !== "local") return;
+      changes: Record<string, chrome.storage.StorageChange>,
+      areaName: string,
+    ) => {
+      if (areaName !== "local") return;
 
-        if (
-            changes.isConnected ||
-            changes.spreadsheetId ||
-            changes.spreadsheetName ||
-            changes.spreadsheetUrl ||
-            changes.sheetName
-            ) {
-            void hydrate();
-    }
-};
+      if (
+        changes.isConnected ||
+        changes.spreadsheetId ||
+        changes.spreadsheetName ||
+        changes.spreadsheetUrl ||
+        changes.sheetName
+      ) {
+        void hydrate();
+      }
+    };
 
-chrome.storage.onChanged.addListener(onChanged);
-return () => chrome.storage.onChanged.removeListener(onChanged);
-}, []);
+    chrome.storage.onChanged.addListener(onChanged);
+    return () => chrome.storage.onChanged.removeListener(onChanged);
+  }, []);
 
-if (isHydrating) {
-  return <LoadingShell />;
-}
+  if (isHydrating) {
+    return <LoadingShell />;
+  }
 
-async function loadHeaders(spreadsheetId: string, sheetName: string) {
+  async function loadHeaders(spreadsheetId: string, sheetName: string) {
     try {
-        const response = await chrome.runtime.sendMessage({
-            type: "GET_SHEET_HEADERS",
-            spreadsheetId,
-            sheetName,
-        });
+      const response = await chrome.runtime.sendMessage({
+        type: "GET_SHEET_HEADERS",
+        spreadsheetId,
+        sheetName,
+      });
 
-        if (!response?.ok) {
-            throw new Error(response?.error || "Could not load sheet headers.");
-        }
+      if (!response?.ok) {
+        throw new Error(response?.error || "Could not load sheet headers.");
+      }
 
-        const headers = Array.isArray(response.headers) ? response.headers : [];
-        setAvailableHeaders(headers);
+      const headers = Array.isArray(response.headers) ? response.headers : [];
+      setAvailableHeaders(headers);
     } catch {
+      setAvailableHeaders([]);
+    }
+  }
+
+  async function hydrate() {
+    try {
+      const data = (await chrome.storage.local.get([
+        "isConnected",
+        "spreadsheetId",
+        "spreadsheetName",
+        "spreadsheetUrl",
+        "sheetName",
+        "columnMapping",
+      ])) as StoredConfig;
+
+      const connected = Boolean(data.isConnected);
+      setConnectionStatus(connected ? "connected" : "disconnected");
+      setAppState(connected ? "connected" : "empty");
+
+      setSpreadsheetId(data.spreadsheetId ?? "");
+      setSpreadsheetName(data.spreadsheetName ?? "");
+      setSpreadsheetUrl(data.spreadsheetUrl ?? "");
+      setSelectedTab(data.sheetName ?? "");
+      setSearchQuery("");
+      setColumnMapping(normalizeColumnMapping(data.columnMapping));
+
+      if (connected) {
+        await Promise.all([loadCurrentProfile(false), loadSpreadsheets(true)]);
+      } else {
+        setProfile(null);
+        setAllSpreadsheets([]);
+        setAvailableTabs([]);
+      }
+
+      if (data.spreadsheetId) {
+        await Promise.all([
+          loadTabs(data.spreadsheetId, data.sheetName),
+          data.sheetName
+            ? loadHeaders(data.spreadsheetId, data.sheetName)
+            : (setAvailableHeaders([]), Promise.resolve()),
+        ]);
+      } else {
+        setAvailableTabs([]);
         setAvailableHeaders([]);
-    }
-}
-
-async function hydrate() {
-    try {
-        const data = (await chrome.storage.local.get([
-            "isConnected",
-            "spreadsheetId",
-            "spreadsheetName",
-            "spreadsheetUrl",
-            "sheetName",
-            "columnMapping",
-        ])) as StoredConfig;
-
-        const connected = Boolean(data.isConnected);
-        setConnectionStatus(connected ? "connected" : "disconnected");
-        setAppState(connected ? "connected" : "empty");
-
-        setSpreadsheetId(data.spreadsheetId ?? "");
-        setSpreadsheetName(data.spreadsheetName ?? "");
-        setSpreadsheetUrl(data.spreadsheetUrl ?? "");
-        setSelectedTab(data.sheetName ?? "");
-        setSearchQuery("");
-        setColumnMapping(normalizeColumnMapping(data.columnMapping));
-
-        if (connected) {
-            await Promise.all([loadCurrentProfile(false), loadSpreadsheets(true)]);
-        } else {
-            setProfile(null);
-            setAllSpreadsheets([]);
-            setAvailableTabs([]);
-        }
-
-        if (data.spreadsheetId) {
-            await loadTabs(data.spreadsheetId);
-        } else {
-            setAvailableTabs([]);
-        }
-
-        if (data.spreadsheetId && data.sheetName) {
-            await loadHeaders(data.spreadsheetId, data.sheetName);
-        } else {
-            setAvailableHeaders([]);
-        }
+      }
     } finally {
-        setIsHydrating(false);
+      setIsHydrating(false);
     }
-}
+  }
 
-async function handleConnect() {
+  async function handleConnect() {
     try {
-        setIsConnecting(true);
-        clearFeedback();
+      setIsConnecting(true);
+      clearFeedback();
 
-        const response = await chrome.runtime.sendMessage({
-            type: "AUTH_GOOGLE",
-        });
+      const response = await chrome.runtime.sendMessage({
+        type: "AUTH_GOOGLE",
+      });
 
-        if (!response?.ok) {
-            throw new Error(response?.error || "Google authentication failed.");
+      if (!response?.ok) {
+        throw new Error(response?.error || "Google authentication failed.");
+      }
+
+      await chrome.storage.local.set({ isConnected: true });
+
+      setConnectionStatus("connected");
+      setAppState("connected");
+      showToast("Google account connected.", "success");
+
+      await loadSpreadsheets(true);
+      await loadCurrentProfile(false);
+    } catch (error) {
+      setAppState("error");
+      showError(
+        error instanceof Error
+          ? error.message
+          : "Google authentication failed.",
+      );
+    } finally {
+      setIsConnecting(false);
+    }
+  }
+
+  async function handleDisconnect() {
+    try {
+      setIsDisconnecting(true);
+      clearFeedback();
+
+      const response = await chrome.runtime.sendMessage({
+        type: "DISCONNECT_GOOGLE",
+      });
+
+      if (!response?.ok) {
+        throw new Error(
+          response?.error || "Could not disconnect Google account.",
+        );
+      }
+
+      setConnectionStatus("disconnected");
+      setAppState("empty");
+      setProfile(null);
+      setSpreadsheetId("");
+      setSpreadsheetName("");
+      setSpreadsheetUrl("");
+      setSelectedTab("");
+      setAllSpreadsheets([]);
+      setAvailableTabs([]);
+      setSheetPickerOpen(false);
+      setTabPickerOpen(false);
+      setSearchQuery("");
+      setIsDisconnectHover(false);
+
+      showToast("Google account disconnected.", "success");
+    } catch (error) {
+      setAppState("error");
+      showError(
+        error instanceof Error
+          ? error.message
+          : "Could not disconnect Google account.",
+      );
+    } finally {
+      setIsDisconnecting(false);
+    }
+  }
+
+  async function loadCurrentProfile(showLoadedMessage = true) {
+    try {
+      setIsRefreshingProfile(true);
+      if (showLoadedMessage) clearFeedback();
+
+      const response = await chrome.runtime.sendMessage({
+        type: "GET_ACTIVE_PROFILE",
+      });
+      console.log("[popup] GET_ACTIVE_PROFILE response", response);
+
+      if (!response?.ok || !response.profile) {
+        setProfile(null);
+        if (appState === "error") {
+          setAppState("connected");
         }
 
-        await chrome.storage.local.set({ isConnected: true });
+        return;
+      }
 
-        setConnectionStatus("connected");
+      setProfile(response.profile as LinkedinProfile);
+      console.log("[popup] Active profile loaded", response.profile);
+
+      if (appState === "error") {
         setAppState("connected");
-        showToast("Google account connected.", "success");
+      }
 
-        await loadSpreadsheets(true);
-        await loadCurrentProfile(false);
-    } catch (error) {
-        setAppState("error");
-        showError(
-            error instanceof Error ? error.message : "Google authentication failed."
-            );
-    } finally {
-        setIsConnecting(false);
-    }
-}
-
-async function handleDisconnect() {
-    try {
-        setIsDisconnecting(true);
-        clearFeedback();
-
-        const response = await chrome.runtime.sendMessage({
-            type: "DISCONNECT_GOOGLE",
-        });
-
-        if (!response?.ok) {
-            throw new Error(response?.error || "Could not disconnect Google account.");
-        }
-
-        setConnectionStatus("disconnected");
-        setAppState("empty");
-        setProfile(null);
-        setSpreadsheetId("");
-        setSpreadsheetName("");
-        setSpreadsheetUrl("");
-        setSelectedTab("");
-        setAllSpreadsheets([]);
-        setAvailableTabs([]);
-        setSheetPickerOpen(false);
-        setTabPickerOpen(false);
-        setSearchQuery("");
-        setIsDisconnectHover(false);
-
-        showToast("Google account disconnected.", "success");
-    } catch (error) {
-        setAppState("error");
-        showError(
-            error instanceof Error ? error.message : "Could not disconnect Google account."
-            );
-    } finally {
-        setIsDisconnecting(false);
-    }
-}
-
-async function loadCurrentProfile(showLoadedMessage = true) {
-    try {
-        setIsRefreshingProfile(true);
-        if (showLoadedMessage) clearFeedback();
-
-        const response = await chrome.runtime.sendMessage({
-            type: "GET_ACTIVE_PROFILE",
-        });
-        console.log("[popup] GET_ACTIVE_PROFILE response", response);
-
-        if (!response?.ok || !response.profile) {
-            setProfile(null);
-            if (appState === "error") {
-                setAppState("connected");
-            }
-
-            return;
-        }
-
-        setProfile(response.profile as LinkedinProfile);
-        console.log("[popup] Active profile loaded", response.profile);
-
-        if (appState === "error") {
-            setAppState("connected");
-        }
-
-        if (showLoadedMessage) {
-            showToast("LinkedIn profile loaded.", "success");
-        }
+      if (showLoadedMessage) {
+        showToast("LinkedIn profile loaded.", "success");
+      }
     } catch (_error) {
-        setProfile(null);
-        if (appState === "error") {
-            setAppState("connected");
-        }
+      setProfile(null);
+      if (appState === "error") {
+        setAppState("connected");
+      }
     } finally {
-        setIsRefreshingProfile(false);
+      setIsRefreshingProfile(false);
     }
-}
+  }
 
-async function loadSpreadsheets(forceRefresh: boolean) {
+  async function loadSpreadsheets(forceRefresh: boolean) {
     try {
-        setIsLoadingSpreadsheets(true);
+      setIsLoadingSpreadsheets(true);
 
-        const response = await chrome.runtime.sendMessage({
-            type: "LIST_SPREADSHEETS",
-            forceRefresh,
-        });
+      const response = await chrome.runtime.sendMessage({
+        type: "LIST_SPREADSHEETS",
+        forceRefresh,
+      });
 
-        if (!response?.ok) {
-            throw new Error(response?.error || "Could not load spreadsheets.");
-        }
+      if (!response?.ok) {
+        throw new Error(response?.error || "Could not load spreadsheets.");
+      }
 
-        const spreadsheets = Array.isArray(response.spreadsheets) ?
-        response.spreadsheets : [];
+      const spreadsheets = Array.isArray(response.spreadsheets)
+        ? response.spreadsheets
+        : [];
 
-        setAllSpreadsheets(spreadsheets);
-        setSearchQuery("");
+      setAllSpreadsheets(spreadsheets);
+      setSearchQuery("");
     } catch (error) {
-        setAllSpreadsheets([]);
-        setAppState("error");
-        showError(
-            error instanceof Error ? error.message : "Could not load spreadsheets."
-            );
+      setAllSpreadsheets([]);
+      setAppState("error");
+      showError(
+        error instanceof Error ? error.message : "Could not load spreadsheets.",
+      );
     } finally {
-        setIsLoadingSpreadsheets(false);
+      setIsLoadingSpreadsheets(false);
     }
-}
+  }
 
-async function loadTabs(id: string) {
+  async function loadTabs(id: string, preferredTab?: string) {
     try {
-        setIsLoadingTabs(true);
+      setIsLoadingTabs(true);
 
-        const response = await chrome.runtime.sendMessage({
-            type: "GET_SHEET_TABS",
-            spreadsheetId: id,
-        });
+      const response = await chrome.runtime.sendMessage({
+        type: "GET_SHEET_TABS",
+        spreadsheetId: id,
+      });
 
-        if (!response?.ok) {
-            throw new Error(response?.error || "Could not load spreadsheet tabs.");
-        }
+      if (!response?.ok) {
+        throw new Error(response?.error || "Could not load spreadsheet tabs.");
+      }
 
-        const tabs = Array.isArray(response.tabs) ? response.tabs : [];
-        setAvailableTabs(tabs);
+      const tabs = Array.isArray(response.tabs) ? response.tabs : [];
+      setAvailableTabs(tabs);
 
-// 🧠 intento de auto-selección inteligente
-        const stored = await chrome.storage.local.get(["sheetName"]);
-        const storedTab = stored.sheetName;
-
-        if (storedTab && tabs.includes(storedTab)) {
-            setSelectedTab(storedTab);
-        }
+      if (preferredTab && tabs.includes(preferredTab)) {
+        setSelectedTab(preferredTab);
+      }
     } catch (error) {
-        setAvailableTabs([]);
-        setAppState("error");
-        showError(error instanceof Error ? error.message : "Could not load tabs.");
+      setAvailableTabs([]);
+      setAppState("error");
+      showError(
+        error instanceof Error ? error.message : "Could not load tabs.",
+      );
     } finally {
-        setIsLoadingTabs(false);
+      setIsLoadingTabs(false);
     }
-}
+  }
 
-async function handleSelectSpreadsheet(sheet: SpreadsheetItem) {
+  async function handleSelectSpreadsheet(sheet: SpreadsheetItem) {
     clearFeedback();
 
     setSpreadsheetId(sheet.id);
@@ -838,622 +798,645 @@ async function handleSelectSpreadsheet(sheet: SpreadsheetItem) {
     setSearchQuery("");
 
     await chrome.storage.local.set({
-        spreadsheetId: sheet.id,
-        spreadsheetName: sheet.name,
-        spreadsheetUrl: sheet.url,
-        sheetName: "",
+      spreadsheetId: sheet.id,
+      spreadsheetName: sheet.name,
+      spreadsheetUrl: sheet.url,
+      sheetName: "",
     });
 
     await loadTabs(sheet.id);
     showToast("Destination spreadsheet saved.", "success");
     setAppState("connected");
-}
+  }
 
-async function handleSelectTab(tab: string) {
+  async function handleSelectTab(tab: string) {
     clearFeedback();
 
     setSelectedTab(tab);
     setTabPickerOpen(false);
 
     await chrome.storage.local.set({
-        sheetName: tab,
+      sheetName: tab,
     });
 
     if (spreadsheetId) {
-        await loadHeaders(spreadsheetId, tab);
+      await loadHeaders(spreadsheetId, tab);
     } else {
-        setAvailableHeaders([]);
+      setAvailableHeaders([]);
     }
 
     showToast("Destination tab saved.", "success");
     setAppState("connected");
-}
+  }
 
-async function handlePasteProfile() {
+  async function handlePasteProfile() {
     try {
-        setAppState("saving");
-        clearFeedback();
-        setToastMessage(null);
+      setAppState("saving");
+      clearFeedback();
+      setToastMessage(null);
 
-        if (!profile) {
-            showToast("Please load a LinkedIn profile first.", "warning");
-            return;
-        }
-
-        if (!spreadsheetId) {
-            throw new Error("Choose a spreadsheet first.");
-        }
-
-        if (!selectedTab) {
-            throw new Error("Choose a destination tab first.");
-        }
-
-        let currentProfile = profile;
-
-        if (!currentProfile) {
-            const response = await chrome.runtime.sendMessage({
-                type: "GET_ACTIVE_PROFILE",
-            });
-            console.log("[popup] GET_ACTIVE_PROFILE response (paste fallback)", response);
-
-            if (!response?.ok || !response.profile) {
-                throw new Error(response?.error || "Could not load LinkedIn profile.");
-            }
-
-            currentProfile = response.profile as LinkedinProfile;
-            setProfile(currentProfile);
-        }
-
-        const response = await chrome.runtime.sendMessage({
-            type: "APPEND_PROFILE",
-            spreadsheetId,
-            sheetName: selectedTab,
-            profile: currentProfile,
-            columnMapping,
-        });
-
-        if (!response?.ok) {
-            throw new Error(response?.error || "Could not write to Google Sheets.");
-        }
-
-        if (response.result?.duplicate) {
-            setAppState("connected");
-
-            setToastMessage(
-        `This LinkedIn profile already exists in row ${response.result?.row ?? "?"}.`
-        );
-            setToastType("warning");
-
-            return;
-        }
-
-        setAppState("success");
-
-        setTimeout(() => {
-            setAppState("connected");
-        }, 2200);
-    } catch (error) {
-        setAppState("error");
-        showError(
-            error instanceof Error ? error.message : "Could not paste profile."
-            );
-    }
-}
-
-return (
-  <div className="w-[380px] h-[582px] bg-background text-foreground overflow-hidden">
-    <div className="relative h-full overflow-hidden">
-      {/* ── Main Panel ── */}
-      <div
-        className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out ${
-          showColumnMapping
-          ? "-translate-x-1/3 pointer-events-none"
-          : appState === "success"
-          ? "-translate-y-full pointer-events-none"
-          : "translate-x-0 translate-y-0 pointer-events-auto"
-      }`}
-  >
-        {/* ── Shared header (always visible) ── */}
-    <div className="px-4 pt-4 pb-3 border-b border-border">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
-          <img
-            src="/logo.png"
-            alt="LinkedIn to Sheets logo"
-            className="w-full h-full object-contain"
-        />
-    </div>
-    <div>
-      <h1 className="text-sm font-semibold text-foreground leading-tight">
-        LinkedIn to Sheets
-    </h1>
-    <p className="text-[11px] text-muted-foreground leading-tight">
-        Paste LinkedIn profile information into Google Sheets
-    </p>
-</div>
-</div>
-</div>
-
-        {/* ── Inner panels container ── */}
-<div className="relative h-[calc(100%-69px)] overflow-hidden">
-
-          {/* ── Login panel — slides down when connecting, up when disconnecting ── */}
-  <div
-   className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out ${
-    isConnected
-    ? "-translate-y-full pointer-events-none"
-    : "translate-y-0 pointer-events-auto"
-}`}
->
-    <div className="px-4 py-3 h-full flex flex-col relative">
-      <div className="space-y-3 pb-10">
-        <section className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Google Account
-          </span>
-          <Badge
-              variant="outline"
-              className="text-muted-foreground text-[10px] px-2 py-0 h-5"
-          >
-              <CircleDot className="w-2.5 h-2.5 mr-1" />
-              Not connected
-          </Badge>
-      </div>
-
-      <div className="pt-10">
-        <Button
-          onClick={handleConnect}
-          className="w-full h-8 text-xs"
-          disabled={isConnecting}
-      >
-          {isConnecting && (
-            <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-            )}
-          {isConnecting ? "Connecting..." : "Connect Google Account"}
-      </Button>
-  </div>
-</section>
-</div>
-
-              {/* Shared footer */}
-<div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 text-xs text-muted-foreground flex justify-between items-center bg-background border-t border-border/40">
-    <div className="space-x-2">
-      <a
-        href="https://forms.gle/xmCiUB8Tzs3ocM616"
-        target="_blank"
-        className="hover:text-primary transition-colors"
-    >
-        Send feedback
-    </a>
-    <span>·</span>
-    <a
-        href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
-        target="_blank"
-        className="hover:text-primary transition-colors"
-    >
-        Changelog
-    </a>
-</div>
-<div className="flex items-center gap-2">
-  <a
-    href="https://www.linkedin.com/in/josuelunagamboa/"
-    target="_blank"
-    className="hover:text-primary transition-colors"
->
-    Developed by Josué
-</a>
-<span className="opacity-70">v{version}</span>
-</div>
-</div>
-</div>
-</div>
-
-          {/* ── Connected panel — slides up from bottom when connecting, down when disconnecting ── */}
-<div
-  className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out shadow-[0_-4px_16px_rgba(0,0,0,0.08)] ${
-    isConnected
-    ? "translate-y-0 pointer-events-auto"
-    : "translate-y-full pointer-events-none"
-}`}
->
-    <div className="px-4 py-3 h-full flex flex-col relative">
-      <div className="space-y-3 pb-10">
-        <section className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Google Account
-          </span>
-          <button
-              type="button"
-              onClick={() => void handleDisconnect()}
-              onMouseEnter={() => setIsDisconnectHover(true)}
-              onMouseLeave={() => setIsDisconnectHover(false)}
-              disabled={isDisconnecting}
-              className="transition-colors"
-          >
-              <Badge
-                variant="default"
-                className={
-                  isDisconnectHover
-                  ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-                  : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
-              }
-          >
-            <CircleDot className="w-2.5 h-2.5 mr-1" />
-            {isDisconnecting
-            ? "Disconnecting..."
-            : isDisconnectHover
-            ? "Disconnect Google Account"
-            : "Connected"}
-        </Badge>
-    </button>
-</div>
-</section>
-
-<section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
-  <div className="flex items-center justify-between gap-2">
-    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
-      Destination
-  </span>
-  <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        className="h-6 text-[10px] px-2"
-        onClick={() =>
-        window.open(
-            "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
-            "_blank"
-            )
-    }
->
-    Google Sheet Template
-</Button>
-<Button
-    variant="outline"
-    size="sm"
-    className="h-6 text-[10px] px-2"
-    onClick={() => {
-      setDraftColumnMapping(JSON.parse(JSON.stringify(columnMapping)) as ColumnMapping);
-      setShowColumnMapping(true);
-  }}
->
-    <SlidersHorizontal className="w-3 h-3 mr-1" />
-    Config Columns
-</Button>
-</div>
-</div>
-
-<div className="space-y-1.5">
-    <div className="relative">
-      <Label className="text-[11px] text-muted-foreground">
-        Spreadsheet
-    </Label>
-    <button
-      type="button"
-      onClick={async () => {
-        const nextOpen = !sheetPickerOpen;
-        setSheetPickerOpen(nextOpen);
-        setTabPickerOpen(false);
-        setSearchQuery("");
-        if (nextOpen) {
-          await loadSpreadsheets(true);
+      if (!profile) {
+        showToast("Please load a LinkedIn profile first.", "warning");
+        return;
       }
-  }}
-  className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md px-2.5 text-xs transition-colors ${
-    shouldHighlightSpreadsheet
-    ? "border border-amber-400/60 bg-amber-50/60 dark:bg-amber-500/10 text-foreground animate-pulse hover:bg-amber-50/70"
-    : "border border-input bg-card text-foreground hover:bg-accent/50"
-}`}
->
-    <span className="flex items-center gap-1.5 truncate">
-      <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
-      <span className={spreadsheetName ? "text-foreground" : "text-muted-foreground"}>
-        {spreadsheetName || "Choose a spreadsheet…"}
-    </span>
-</span>
-{isLoadingSpreadsheets ? (
-  <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-  ) : (
-  <ChevronDown
-    className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform duration-200 ${
-      sheetPickerOpen ? "rotate-180" : ""
-  }`}
-  />
-  )}
-</button>
 
-{sheetPickerOpen && (
-    <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200">
-      <div className="p-1.5 border-b border-border">
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search spreadsheets…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
-            autoFocus
-        />
-    </div>
-</div>
-<div className="max-h-[180px] overflow-y-auto">
-    {isLoadingSpreadsheets ? (
-      <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-        Loading spreadsheets...
-    </div>
-    ) : filteredSpreadsheets.length === 0 ? (
-    <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
-        No spreadsheets found
-    </div>
-    ) : (
-    filteredSpreadsheets.map((sheet) => (
-        <button
-          key={sheet.id}
-          type="button"
-          onClick={() => void handleSelectSpreadsheet(sheet)}
-          className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-            spreadsheetId === sheet.id ? "bg-accent/30" : ""
-        }`}
-    >
-      <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
-      <div className="flex-1 min-w-0">
-        <div className="text-xs text-foreground truncate">{sheet.name}</div>
-        <div className="text-[10px] text-muted-foreground truncate">{sheet.url}</div>
-    </div>
-    {spreadsheetId === sheet.id && (
-        <Check className="w-3 h-3 text-primary shrink-0" />
-        )}
-</button>
-))
-    )}
-</div>
-</div>
-)}
-</div>
+      if (!spreadsheetId) {
+        throw new Error("Choose a spreadsheet first.");
+      }
 
-<div className="relative">
-  <Label className="text-[11px] text-muted-foreground">Tab</Label>
-  <button
-    type="button"
-    onClick={() => {
-      if (availableTabs.length) {
-        setTabPickerOpen(!tabPickerOpen);
-        setSheetPickerOpen(false);
-    }
-}}
-disabled={!spreadsheetId || isLoadingTabs}
-className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md px-2.5 text-xs transition-colors ${
-  !spreadsheetId
-  ? "border border-input bg-muted/30 text-muted-foreground cursor-not-allowed"
-  : shouldHighlightTab
-  ? "border border-amber-400/60 bg-amber-50/60 dark:bg-amber-500/10 text-foreground animate-pulse hover:bg-amber-50/70"
-  : "border border-input bg-card text-foreground hover:bg-accent/50"
-}`}
->
-    <span className="flex items-center gap-1.5 truncate">
-      <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-      <span className={selectedTab ? "text-foreground" : "text-muted-foreground"}>
-        {isLoadingTabs ? "Loading tabs..." : selectedTab || "Choose a tab…"}
-    </span>
-</span>
-{isLoadingTabs ? (
-  <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-  ) : (
-  <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
-  )}
-  {tabPickerOpen && availableTabs.length > 0 && (
-      <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200">
-        <div className="max-h-[140px] overflow-y-auto">
-          {availableTabs.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => void handleSelectTab(tab)}
-              className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
-                selectedTab === tab ? "bg-accent/30" : ""
-            }`}
-        >
-          <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
-          <span className="text-xs text-foreground">{tab}</span>
-          {selectedTab === tab && (
-            <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
-            )}
-      </button>
-      ))}
-      </div>
-  </div>
-  )}
-</button>
-</div>
+      if (!selectedTab) {
+        throw new Error("Choose a destination tab first.");
+      }
 
-{spreadsheetName && selectedTab && (
-  <div className="space-y-1 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
-    <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
-      <Check className="w-3 h-3 text-primary shrink-0" />
-      <span className="text-[10px] text-foreground truncate">
-        {spreadsheetName} → {selectedTab}
-    </span>
-</div>
-{hasCustomColumnMapping && (
-  <div className="flex justify-end">
-    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-      <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
-      <span>Custom Column Mapping active</span>
-  </div>
-</div>
-)}
-</div>
-)}
-</div>
-</section>
+      const currentProfile = profile;
 
-<section className="space-y-2">
-  <div className="flex items-center justify-between">
-    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-      Current Profile
-  </span>
-  <Button
-      variant="ghost"
-      size="sm"
-      className="h-7 px-2 text-[11px]"
-      onClick={() => void loadCurrentProfile(true)}
-      disabled={isRefreshingProfile}
-  >
-      {isRefreshingProfile ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-        ) : (
-        <>
-        <RefreshCw className="w-3.5 h-3.5 mr-1" />
-        Refresh
-        </>
-        )}
-    </Button>
-</div>
-<div className="rounded-lg border border-border bg-card p-3 space-y-1.5">
-    {profile ? (
-      mappingFields
-      .filter(({ key }) => columnMapping[key].enabled)
-      .map(({ key, icon: Icon }) => {
-          const value =
-          key === "name"
-          ? profile.name
-          : key === "company"
-          ? profile.company
-          : key === "title"
-          ? profile.title
-          : key === "location"
-          ? profile.location
-          : profile.profileUrl;
-          return (
-            <div
-              key={key}
-              className="flex items-center gap-2 animate-in fade-in-0 duration-150"
-          >
-              <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
-              <span className="text-xs text-foreground truncate">
-                {value || "—"}
-            </span>
-        </div>
-        );
-      })
-      ) : (
-      <div className="text-xs text-muted-foreground">
-        Open a LinkedIn profile and click Refresh.
-    </div>
-    )}
-  </div>
-</section>
-
-<Button
-  onClick={handlePasteProfile}
-  disabled={!canPaste}
-  className="w-full h-9 text-xs font-medium"
->
-  {appState === "saving" && (
-    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-    )}
-  {pasteButtonLabel}
-</Button>
-
-<div>
-  <FeedbackBanner feedbackMessage={feedbackMessage} feedbackTone={feedbackTone} />
-</div>
-</div>
-
-              {/* Shared footer */}
-<div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 text-xs text-muted-foreground flex justify-between items-center bg-background border-t border-border/40">
-    <div className="space-x-2">
-      <a
-        href="https://forms.gle/xmCiUB8Tzs3ocM616"
-        target="_blank"
-        className="hover:text-primary transition-colors"
-    >
-        Send feedback
-    </a>
-    <span>·</span>
-    <a
-        href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
-        target="_blank"
-        className="hover:text-primary transition-colors"
-    >
-        Changelog
-    </a>
-</div>
-<div className="flex items-center gap-2">
-  <a
-    href="https://www.linkedin.com/in/josuelunagamboa/"
-    target="_blank"
-    className="hover:text-primary transition-colors"
->
-    Developed by Josué
-</a>
-<span className="opacity-70">v{version}</span>
-</div>
-</div>
-</div>
-</div>
-
-</div>
-</div>
-
-      {/* ── Column Mapping Panel ── */}
-<div
-    className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out shadow-[-4px_0_16px_rgba(0,0,0,0.08)] ${
-      showColumnMapping
-      ? "translate-x-0 pointer-events-auto"
-      : "translate-x-full pointer-events-none"
-  }`}
->
-    <ColumnMappingPanel
-      mappingFields={mappingFields}
-      columnMapping={activeColumnMapping}
-      mappedColumns={mappedColumns}
-      availableHeaders={availableHeaders}
-      columnOptions={columnOptions}
-      hasDuplicateColumns={hasDuplicateColumns}
-      setColumnMapping={(nextMapping) => {
-        setDraftColumnMapping((prev) => {
-          const baseMapping = prev ?? columnMapping;
-          return typeof nextMapping === "function"
-          ? (nextMapping as (prev: ColumnMapping) => ColumnMapping)(baseMapping)
-          : nextMapping;
+      const response = await chrome.runtime.sendMessage({
+        type: "APPEND_PROFILE",
+        spreadsheetId,
+        sheetName: selectedTab,
+        profile: currentProfile,
+        columnMapping,
       });
-    }}
-    onBack={() => {
-        setDraftColumnMapping(null);
-        setShowColumnMapping(false);
-    }}
-    onReset={() => void handleResetColumnMapping()}
-    onSave={() => void handleSaveColumnMapping()}
-/>
-</div>
 
-      {/* ── Success State ── */}
-<div
-    className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out shadow-[0_-4px_16px_rgba(0,0,0,0.08)] ${
-      appState === "success"
-      ? "translate-y-0 pointer-events-auto"
-      : "translate-y-full pointer-events-none"
-  }`}
->
-    <SuccessState
-      profileName={profile?.name}
-      spreadsheetName={spreadsheetName}
-      selectedTab={selectedTab}
-  />
-</div>
-</div>
+      if (!response?.ok) {
+        throw new Error(response?.error || "Could not write to Google Sheets.");
+      }
 
-{toastMessage && (
-  <Toast
-    message={toastMessage}
-    type={toastType}
-    onClose={() => setToastMessage(null)}
-    />
-    )}
-</div>
-);
+      if (response.result?.duplicate) {
+        setAppState("connected");
+
+        setToastMessage(
+          `This LinkedIn profile already exists in row ${response.result?.row ?? "?"}.`,
+        );
+        setToastType("warning");
+
+        return;
+      }
+
+      setAppState("success");
+
+      setTimeout(() => {
+        setAppState("connected");
+      }, 2200);
+    } catch (error) {
+      setAppState("error");
+      showError(
+        error instanceof Error ? error.message : "Could not paste profile.",
+      );
+    }
+  }
+
+  return (
+    <div className="w-[380px] h-[582px] bg-background text-foreground overflow-hidden">
+      <div className="relative h-full overflow-hidden">
+        {/* ── Main Panel ── */}
+        <div
+          className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out ${
+            showColumnMapping
+              ? "-translate-x-1/3 pointer-events-none"
+              : appState === "success"
+                ? "-translate-y-full pointer-events-none"
+                : "translate-x-0 translate-y-0 pointer-events-auto"
+          }`}
+        >
+          {/* ── Shared header (always visible) ── */}
+          <div className="px-4 pt-4 pb-3 border-b border-border">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                <img
+                  src="/logo.png"
+                  alt="LinkedIn to Sheets logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div>
+                <h1 className="text-sm font-semibold text-foreground leading-tight">
+                  LinkedIn to Sheets
+                </h1>
+                <p className="text-[11px] text-muted-foreground leading-tight">
+                  Paste LinkedIn profile information into Google Sheets
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Inner panels container ── */}
+          <div className="relative h-[calc(100%-69px)] overflow-hidden">
+            {/* ── Login panel — slides down when connecting, up when disconnecting ── */}
+            <div
+              className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out ${
+                isConnected
+                  ? "-translate-y-full pointer-events-none"
+                  : "translate-y-0 pointer-events-auto"
+              }`}
+            >
+              <div className="px-4 py-3 h-full flex flex-col relative">
+                <div className="space-y-3 pb-10">
+                  <section className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Google Account
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className="text-muted-foreground text-[10px] px-2 py-0 h-5"
+                      >
+                        <CircleDot className="w-2.5 h-2.5 mr-1" />
+                        Not connected
+                      </Badge>
+                    </div>
+
+                    <div className="pt-10">
+                      <Button
+                        onClick={handleConnect}
+                        className="w-full h-8 text-xs"
+                        disabled={isConnecting}
+                      >
+                        {isConnecting && (
+                          <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                        )}
+                        {isConnecting
+                          ? "Connecting..."
+                          : "Connect Google Account"}
+                      </Button>
+                    </div>
+                  </section>
+                </div>
+
+                {/* Shared footer */}
+                <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 text-xs text-muted-foreground flex justify-between items-center bg-background border-t border-border/40">
+                  <div className="space-x-2">
+                    <a
+                      href="https://forms.gle/xmCiUB8Tzs3ocM616"
+                      target="_blank"
+                      className="hover:text-primary transition-colors"
+                    >
+                      Send feedback
+                    </a>
+                    <span>·</span>
+                    <a
+                      href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
+                      target="_blank"
+                      className="hover:text-primary transition-colors"
+                    >
+                      Changelog
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="https://www.linkedin.com/in/josuelunagamboa/"
+                      target="_blank"
+                      className="hover:text-primary transition-colors"
+                    >
+                      Developed by Josué
+                    </a>
+                    <span className="opacity-70">v{version}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Connected panel — slides up from bottom when connecting, down when disconnecting ── */}
+            <div
+              className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out shadow-[0_-4px_16px_rgba(0,0,0,0.08)] ${
+                isConnected
+                  ? "translate-y-0 pointer-events-auto"
+                  : "translate-y-full pointer-events-none"
+              }`}
+            >
+              <div className="px-4 py-3 h-full flex flex-col relative">
+                <div className="space-y-3 pb-10">
+                  <section className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Google Account
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => void handleDisconnect()}
+                        onMouseEnter={() => setIsDisconnectHover(true)}
+                        onMouseLeave={() => setIsDisconnectHover(false)}
+                        disabled={isDisconnecting}
+                        className="transition-colors"
+                      >
+                        <Badge
+                          variant="default"
+                          className={
+                            isDisconnectHover
+                              ? "bg-destructive/90 text-destructive-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+                              : "bg-success text-success-foreground text-[10px] px-2 py-0 h-5 cursor-pointer"
+                          }
+                        >
+                          <CircleDot className="w-2.5 h-2.5 mr-1" />
+                          {isDisconnecting
+                            ? "Disconnecting..."
+                            : isDisconnectHover
+                              ? "Disconnect Google Account"
+                              : "Connected"}
+                        </Badge>
+                      </button>
+                    </div>
+                  </section>
+
+                  <section className="space-y-2 p-3 rounded-lg bg-muted/50 border border-border">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0">
+                        Destination
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 text-[10px] px-2"
+                          onClick={() =>
+                            window.open(
+                              "https://docs.google.com/spreadsheets/d/1w7nUnxSllVPVc7t1OhE-M6hN3zbeYIGK0jMf2SBsE60/copy",
+                              "_blank",
+                            )
+                          }
+                        >
+                          Google Sheet Template
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 text-[10px] px-2"
+                          onClick={() => {
+                            setDraftColumnMapping(
+                              JSON.parse(
+                                JSON.stringify(columnMapping),
+                              ) as ColumnMapping,
+                            );
+                            setShowColumnMapping(true);
+                          }}
+                        >
+                          <SlidersHorizontal className="w-3 h-3 mr-1" />
+                          Config Columns
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="relative">
+                        <Label className="text-[11px] text-muted-foreground">
+                          Spreadsheet
+                        </Label>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const nextOpen = !sheetPickerOpen;
+                            setSheetPickerOpen(nextOpen);
+                            setTabPickerOpen(false);
+                            setSearchQuery("");
+                            if (nextOpen) {
+                              await loadSpreadsheets(true);
+                            }
+                          }}
+                          className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md px-2.5 text-xs transition-colors ${
+                            shouldHighlightSpreadsheet
+                              ? "border border-amber-400/60 bg-amber-50/60 dark:bg-amber-500/10 text-foreground animate-pulse hover:bg-amber-50/70"
+                              : "border border-input bg-card text-foreground hover:bg-accent/50"
+                          }`}
+                        >
+                          <span className="flex items-center gap-1.5 truncate">
+                            <FileSpreadsheet className="w-3 h-3 text-muted-foreground shrink-0" />
+                            <span
+                              className={
+                                spreadsheetName
+                                  ? "text-foreground"
+                                  : "text-muted-foreground"
+                              }
+                            >
+                              {spreadsheetName || "Choose a spreadsheet…"}
+                            </span>
+                          </span>
+                          {isLoadingSpreadsheets ? (
+                            <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+                          ) : (
+                            <ChevronDown
+                              className={`w-3 h-3 text-muted-foreground shrink-0 transition-transform duration-200 ${
+                                sheetPickerOpen ? "rotate-180" : ""
+                              }`}
+                            />
+                          )}
+                        </button>
+
+                        {sheetPickerOpen && (
+                          <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200">
+                            <div className="p-1.5 border-b border-border">
+                              <div className="relative">
+                                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                                <input
+                                  type="text"
+                                  placeholder="Search spreadsheets…"
+                                  value={searchQuery}
+                                  onChange={(e) =>
+                                    setSearchQuery(e.target.value)
+                                  }
+                                  className="w-full h-7 pl-6 pr-2 rounded-md bg-muted/50 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
+                                  autoFocus
+                                />
+                              </div>
+                            </div>
+                            <div className="max-h-[180px] overflow-y-auto">
+                              {isLoadingSpreadsheets ? (
+                                <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                                  Loading spreadsheets...
+                                </div>
+                              ) : filteredSpreadsheets.length === 0 ? (
+                                <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                                  No spreadsheets found
+                                </div>
+                              ) : (
+                                filteredSpreadsheets.map((sheet) => (
+                                  <button
+                                    key={sheet.id}
+                                    type="button"
+                                    onClick={() =>
+                                      void handleSelectSpreadsheet(sheet)
+                                    }
+                                    className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+                                      spreadsheetId === sheet.id
+                                        ? "bg-accent/30"
+                                        : ""
+                                    }`}
+                                  >
+                                    <FileSpreadsheet className="w-3.5 h-3.5 text-success shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-xs text-foreground truncate">
+                                        {sheet.name}
+                                      </div>
+                                      <div className="text-[10px] text-muted-foreground truncate">
+                                        {sheet.url}
+                                      </div>
+                                    </div>
+                                    {spreadsheetId === sheet.id && (
+                                      <Check className="w-3 h-3 text-primary shrink-0" />
+                                    )}
+                                  </button>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="relative">
+                        <Label className="text-[11px] text-muted-foreground">
+                          Tab
+                        </Label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (availableTabs.length) {
+                              setTabPickerOpen(!tabPickerOpen);
+                              setSheetPickerOpen(false);
+                            }
+                          }}
+                          disabled={!spreadsheetId || isLoadingTabs}
+                          className={`mt-0.5 w-full h-8 flex items-center justify-between gap-2 rounded-md px-2.5 text-xs transition-colors ${
+                            !spreadsheetId
+                              ? "border border-input bg-muted/30 text-muted-foreground cursor-not-allowed"
+                              : shouldHighlightTab
+                                ? "border border-amber-400/60 bg-amber-50/60 dark:bg-amber-500/10 text-foreground animate-pulse hover:bg-amber-50/70"
+                                : "border border-input bg-card text-foreground hover:bg-accent/50"
+                          }`}
+                        >
+                          <span className="flex items-center gap-1.5 truncate">
+                            <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+                            <span
+                              className={
+                                selectedTab
+                                  ? "text-foreground"
+                                  : "text-muted-foreground"
+                              }
+                            >
+                              {isLoadingTabs
+                                ? "Loading tabs..."
+                                : selectedTab || "Choose a tab…"}
+                            </span>
+                          </span>
+                          {isLoadingTabs ? (
+                            <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+                          ) : (
+                            <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+                          )}
+                          {tabPickerOpen && availableTabs.length > 0 && (
+                            <div className="absolute z-20 mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200">
+                              <div className="max-h-[140px] overflow-y-auto">
+                                {availableTabs.map((tab) => (
+                                  <button
+                                    key={tab}
+                                    type="button"
+                                    onClick={() => void handleSelectTab(tab)}
+                                    className={`w-full flex items-center gap-2 px-2.5 py-2 text-left hover:bg-accent/50 transition-colors ${
+                                      selectedTab === tab ? "bg-accent/30" : ""
+                                    }`}
+                                  >
+                                    <Table2 className="w-3 h-3 text-muted-foreground shrink-0" />
+                                    <span className="text-xs text-foreground">
+                                      {tab}
+                                    </span>
+                                    {selectedTab === tab && (
+                                      <Check className="w-3 h-3 text-primary shrink-0 ml-auto" />
+                                    )}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      </div>
+
+                      {spreadsheetName && selectedTab && (
+                        <div className="space-y-1 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
+                          <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-primary/5 border border-primary/10">
+                            <Check className="w-3 h-3 text-primary shrink-0" />
+                            <span className="text-[10px] text-foreground truncate">
+                              {spreadsheetName} → {selectedTab}
+                            </span>
+                          </div>
+                          {hasCustomColumnMapping && (
+                            <div className="flex justify-end">
+                              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
+                                <span>Custom Column Mapping active</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </section>
+
+                  <section className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Current Profile
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-[11px]"
+                        onClick={() => void loadCurrentProfile(true)}
+                        disabled={isRefreshingProfile}
+                      >
+                        {isRefreshingProfile ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 mr-1" />
+                            Refresh
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <div className="rounded-lg border border-border bg-card p-3 space-y-1.5">
+                      {profile ? (
+                        MAPPING_FIELDS.filter(
+                          ({ key }) => columnMapping[key].enabled,
+                        ).map(({ key, icon: Icon }) => {
+                          const value =
+                            key === "name"
+                              ? profile.name
+                              : key === "company"
+                                ? profile.company
+                                : key === "title"
+                                  ? profile.title
+                                  : key === "location"
+                                    ? profile.location
+                                    : profile.profileUrl;
+                          return (
+                            <div
+                              key={key}
+                              className="flex items-center gap-2 animate-in fade-in-0 duration-150"
+                            >
+                              <Icon className="w-3 h-3 text-muted-foreground shrink-0" />
+                              <span className="text-xs text-foreground truncate">
+                                {value || "—"}
+                              </span>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-xs text-muted-foreground">
+                          Open a LinkedIn profile and click Refresh.
+                        </div>
+                      )}
+                    </div>
+                  </section>
+
+                  <Button
+                    onClick={handlePasteProfile}
+                    disabled={!canPaste}
+                    className="w-full h-9 text-xs font-medium"
+                  >
+                    {appState === "saving" && (
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                    )}
+                    {pasteButtonLabel}
+                  </Button>
+
+                  <div>
+                    <FeedbackBanner
+                      feedbackMessage={feedbackMessage}
+                      feedbackTone={feedbackTone}
+                    />
+                  </div>
+                </div>
+
+                {/* Shared footer */}
+                <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-2 text-xs text-muted-foreground flex justify-between items-center bg-background border-t border-border/40">
+                  <div className="space-x-2">
+                    <a
+                      href="https://forms.gle/xmCiUB8Tzs3ocM616"
+                      target="_blank"
+                      className="hover:text-primary transition-colors"
+                    >
+                      Send feedback
+                    </a>
+                    <span>·</span>
+                    <a
+                      href="https://josueluna.github.io/LinkedIn_to_Sheets/changelog.html"
+                      target="_blank"
+                      className="hover:text-primary transition-colors"
+                    >
+                      Changelog
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="https://www.linkedin.com/in/josuelunagamboa/"
+                      target="_blank"
+                      className="hover:text-primary transition-colors"
+                    >
+                      Developed by Josué
+                    </a>
+                    <span className="opacity-70">v{version}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Column Mapping Panel ── */}
+        <div
+          className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out shadow-[-4px_0_16px_rgba(0,0,0,0.08)] ${
+            showColumnMapping
+              ? "translate-x-0 pointer-events-auto"
+              : "translate-x-full pointer-events-none"
+          }`}
+        >
+          <ColumnMappingPanel
+            mappingFields={MAPPING_FIELDS}
+            columnMapping={activeColumnMapping}
+            mappedColumns={mappedColumns}
+            availableHeaders={availableHeaders}
+            columnOptions={COLUMN_OPTIONS}
+            hasDuplicateColumns={hasDuplicateColumns}
+            setColumnMapping={(nextMapping) => {
+              setDraftColumnMapping((prev) => {
+                const baseMapping = prev ?? columnMapping;
+                return typeof nextMapping === "function"
+                  ? (nextMapping as (prev: ColumnMapping) => ColumnMapping)(
+                      baseMapping,
+                    )
+                  : nextMapping;
+              });
+            }}
+            onBack={() => {
+              setDraftColumnMapping(null);
+              setShowColumnMapping(false);
+            }}
+            onReset={() => void handleResetColumnMapping()}
+            onSave={() => void handleSaveColumnMapping()}
+          />
+        </div>
+
+        {/* ── Success State ── */}
+        <div
+          className={`absolute inset-0 bg-background transition-transform duration-300 ease-in-out shadow-[0_-4px_16px_rgba(0,0,0,0.08)] ${
+            appState === "success"
+              ? "translate-y-0 pointer-events-auto"
+              : "translate-y-full pointer-events-none"
+          }`}
+        >
+          <SuccessState
+            profileName={profile?.name}
+            spreadsheetName={spreadsheetName}
+            selectedTab={selectedTab}
+          />
+        </div>
+      </div>
+
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
+    </div>
+  );
 }

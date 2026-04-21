@@ -1,9 +1,16 @@
-import { ColumnMapping, defaultColumnMapping, normalizeColumnMapping } from "./lib/mappings";
 import {
+  ColumnMapping,
+  defaultColumnMapping,
+  normalizeColumnMapping,
+} from "./lib/mappings";
+import {
+  buildRow,
+  getMaxColumnIndex,
   getProfileUrlDuplicateColumns,
   isDuplicateProfile,
   normalizeProfileUrl,
 } from "./lib/sheets";
+
 type LinkedinProfile = {
   name: string;
   company: string;
@@ -11,9 +18,26 @@ type LinkedinProfile = {
   location: string;
   profileUrl: string;
 };
+
 type ExtractProfileSuccessResponse = { ok: true; profile: LinkedinProfile };
 type ExtractProfileErrorResponse = { ok: false; error: string };
-type ExtractProfileResponse = ExtractProfileSuccessResponse | ExtractProfileErrorResponse;
+type ExtractProfileResponse =
+  | ExtractProfileSuccessResponse
+  | ExtractProfileErrorResponse;
+
+type SpreadsheetItem = {
+  id: string;
+  name: string;
+  url: string;
+};
+
+type SpreadsheetCacheEntry = {
+  expiresAt: number;
+  value: SpreadsheetItem[];
+};
+
+const SPREADSHEET_CACHE_TTL_MS = 30_000;
+let spreadsheetsCache: SpreadsheetCacheEntry | null = null;
 
 // --------------------
 // TAB / LINKEDIN
@@ -34,11 +58,14 @@ async function getActiveTab() {
 
 function isLinkedInProfileUrl(url?: string): boolean {
   if (!url) return false;
+
   try {
     const parsed = new URL(url);
     const isLinkedInHost =
-      parsed.hostname === "www.linkedin.com" || parsed.hostname === "linkedin.com";
+      parsed.hostname === "www.linkedin.com" ||
+      parsed.hostname === "linkedin.com";
     const normalizedPath = parsed.pathname.toLowerCase();
+
     return isLinkedInHost && /^\/in\/[^/]+\/?$/.test(normalizedPath);
   } catch {
     return false;
@@ -59,7 +86,9 @@ async function ensureContentScript(tabId: number) {
       target: { tabId },
       files: ["assets/content.js"],
     });
-    console.log("[background] Content script ensured via executeScript", { tabId });
+    console.log("[background] Content script ensured via executeScript", {
+      tabId,
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
 
@@ -68,7 +97,10 @@ async function ensureContentScript(tabId: number) {
     }
 
     // Content script may already be present via manifest injection.
-    console.log("[background] executeScript skipped/ignored", { tabId, error: message });
+    console.log("[background] executeScript skipped/ignored", {
+      tabId,
+      error: message,
+    });
   }
 }
 
@@ -123,7 +155,9 @@ function normalizeExtractProfileResponse(raw: unknown): ExtractProfileResponse {
   }
 
   // Defensive fallback for accidental nested envelopes.
-  const nested = (raw as any)?.data as Partial<ExtractProfileResponse> | undefined;
+  const nested = (raw as any)?.data as
+    | Partial<ExtractProfileResponse>
+    | undefined;
   if (nested?.ok === true && nested.profile) {
     return { ok: true, profile: nested.profile };
   }
@@ -203,6 +237,7 @@ async function connectGoogle(): Promise<string> {
 
 async function disconnectGoogle() {
   await chrome.identity.clearAllCachedAuthTokens();
+  spreadsheetsCache = null;
 
   await chrome.storage.local.remove([
     "isConnected",
@@ -219,21 +254,20 @@ async function disconnectGoogle() {
 // GOOGLE DRIVE
 // --------------------
 
-async function listSpreadsheets() {
+async function fetchSpreadsheets(): Promise<SpreadsheetItem[]> {
   const token = await getGoogleAuthTokenSafe();
-
   const query = encodeURIComponent(
-    "mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
-    );
+    "mimeType='application/vnd.google-apps.spreadsheet' and trashed=false",
+  );
 
   const response = await fetch(
-`https://www.googleapis.com/drive/v3/files?q=${query}&orderBy=modifiedTime desc&pageSize=100`,
-{
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-}
-);
+    `https://www.googleapis.com/drive/v3/files?q=${query}&orderBy=modifiedTime desc&pageSize=100`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
 
   const data = await response.json();
 
@@ -241,11 +275,29 @@ async function listSpreadsheets() {
     throw new Error(data?.error?.message || "Unable to list spreadsheets.");
   }
 
-  return data.files.map((file: any) => ({
+  return (Array.isArray(data.files) ? data.files : []).map((file: any) => ({
     id: file.id,
     name: file.name,
     url: `https://docs.google.com/spreadsheets/d/${file.id}/edit`,
   }));
+}
+
+async function listSpreadsheets(
+  forceRefresh = false,
+): Promise<SpreadsheetItem[]> {
+  const now = Date.now();
+
+  if (!forceRefresh && spreadsheetsCache && spreadsheetsCache.expiresAt > now) {
+    return spreadsheetsCache.value;
+  }
+
+  const value = await fetchSpreadsheets();
+  spreadsheetsCache = {
+    value,
+    expiresAt: now + SPREADSHEET_CACHE_TTL_MS,
+  };
+
+  return value;
 }
 
 // --------------------
@@ -256,13 +308,13 @@ async function getSheetTabs(spreadsheetId: string) {
   const token = await getGoogleAuthTokenSafe();
 
   const response = await fetch(
-`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}`,
-{
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-}
-);
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
 
   const data = await response.json();
 
@@ -272,6 +324,7 @@ async function getSheetTabs(spreadsheetId: string) {
 
   return data.sheets.map((s: any) => s.properties.title);
 }
+
 function columnOptionsFromHeaders(headers: string[]) {
   return Array.from({ length: 10 }, (_, index) => {
     const column = String.fromCharCode(65 + index);
@@ -283,9 +336,9 @@ function columnOptionsFromHeaders(headers: string[]) {
     };
   });
 }
+
 async function getSheetHeaders(spreadsheetId: string, sheetName: string) {
   const token = await getGoogleAuthTokenSafe();
-
   const range = `${sheetName}!A1:J1`;
 
   const response = await fetch(
@@ -294,7 +347,7 @@ async function getSheetHeaders(spreadsheetId: string, sheetName: string) {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   const data = await response.json();
@@ -309,41 +362,21 @@ async function getSheetHeaders(spreadsheetId: string, sheetName: string) {
 }
 
 // --------------------
-// WRITE PROFILE (FIXED)
+// WRITE PROFILE
 // --------------------
-
-function columnLetterToIndex(letter: string): number {
-  return letter.toUpperCase().charCodeAt(0) - 65;
-}
-
-function columnLetterToRange(letter: string, row: number): string {
-  return `${letter.toUpperCase()}${row}`;
-}
-
-function getMaxColumnIndex(mapping: ColumnMapping): number {
-  const enabledColumns = Object.values(mapping)
-    .filter((field) => field.enabled)
-    .map((field) => columnLetterToIndex(field.column));
-
-  if (enabledColumns.length === 0) {
-    return columnLetterToIndex(defaultColumnMapping.profileUrl.column);
-  }
-
-  return Math.max(...enabledColumns);
-}
 
 async function appendProfileToSheet(
   spreadsheetId: string,
   sheetName: string,
   profile: LinkedinProfile,
-  columnMapping: ColumnMapping = defaultColumnMapping
+  columnMapping: ColumnMapping = defaultColumnMapping,
 ) {
   const normalizedMapping = normalizeColumnMapping(columnMapping);
   const normalizedProfileUrl = normalizeProfileUrl(profile.profileUrl);
   const token = await getGoogleAuthTokenSafe();
 
-  // 🔍 1. Buscar duplicados en columna mapeada + fallback F
-  const duplicateCheckColumns = getProfileUrlDuplicateColumns(normalizedMapping);
+  const duplicateCheckColumns =
+    getProfileUrlDuplicateColumns(normalizedMapping);
 
   for (const column of duplicateCheckColumns) {
     const checkRange = `${sheetName}!${column}2:${column}`;
@@ -352,74 +385,61 @@ async function appendProfileToSheet(
       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(checkRange)}`,
       {
         headers: { Authorization: `Bearer ${token}` },
-      }
+      },
     );
 
     const checkData = await checkRes.json();
-    const existingRows = Array.isArray(checkData.values) ? checkData.values : [];
+    const existingRows = Array.isArray(checkData.values)
+      ? checkData.values
+      : [];
 
-    const duplicateResult = isDuplicateProfile(existingRows, normalizedProfileUrl);
+    const duplicateResult = isDuplicateProfile(
+      existingRows,
+      normalizedProfileUrl,
+    );
     if (duplicateResult.duplicate) {
       return duplicateResult;
     }
   }
 
-  // 🔢 2. Encontrar siguiente fila disponible usando la columna más a la derecha del mapping
-  const maxColumnLetter = String.fromCharCode(65 + getMaxColumnIndex(normalizedMapping));
+  const maxColumnIndex = getMaxColumnIndex(normalizedMapping);
+  const maxColumnLetter = String.fromCharCode(65 + maxColumnIndex);
   const readRange = `${sheetName}!A2:${maxColumnLetter}`;
 
   const readRes = await fetch(
-`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(readRange)}`,
-{
-  headers: { Authorization: `Bearer ${token}` },
-}
-);
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(readRange)}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
 
   const readData = await readRes.json();
   const rows = Array.isArray(readData.values) ? readData.values : [];
-
   const nextRow = rows.length + 2;
 
-// ✍️ 3. Escribir en las columnas configuradas
-  const maxColumnIndex = getMaxColumnIndex(normalizedMapping);
-  const rowValues = new Array(maxColumnIndex + 1).fill("");
+  const rowValues = buildRow(
+    {
+      ...profile,
+      profileUrl: normalizedProfileUrl,
+    },
+    normalizedMapping,
+  );
 
-    if (normalizedMapping.name.enabled) {
-      rowValues[columnLetterToIndex(normalizedMapping.name.column)] = profile.name;
-    }
-
-    if (normalizedMapping.company.enabled) {
-      rowValues[columnLetterToIndex(normalizedMapping.company.column)] = profile.company;
-    }
-
-    if (normalizedMapping.title.enabled) {
-      rowValues[columnLetterToIndex(normalizedMapping.title.column)] = profile.title;
-    }
-
-    if (normalizedMapping.location.enabled) {
-      rowValues[columnLetterToIndex(normalizedMapping.location.column)] = profile.location;
-    }
-
-    if (normalizedMapping.profileUrl.enabled) {
-      rowValues[columnLetterToIndex(normalizedMapping.profileUrl.column)] =
-        normalizedProfileUrl;
-}
-
-  const writeRange = `${sheetName}!A${nextRow}:${String.fromCharCode(65 + maxColumnIndex)}${nextRow}`;
+  const writeRange = `${sheetName}!A${nextRow}:${maxColumnLetter}${nextRow}`;
 
   const writeRes = await fetch(
-`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(writeRange)}?valueInputOption=USER_ENTERED`,
-{
-  method: "PUT",
-  headers: {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    values: [rowValues],
-  }),
-}
-);
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(writeRange)}?valueInputOption=USER_ENTERED`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        values: [rowValues],
+      }),
+    },
+  );
 
   const writeData = await writeRes.json();
 
@@ -441,69 +461,71 @@ async function appendProfileToSheet(
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   (async () => {
     switch (message?.type) {
-    case "GET_ACTIVE_PROFILE": {
-      console.log("[background] Handling GET_ACTIVE_PROFILE");
-      const profile = await getProfileFromActiveTab();
-      console.log("[background] Returning GET_ACTIVE_PROFILE response", {
-        hasProfile: Boolean(profile),
-      });
-      sendResponse({ ok: true, profile });
-      break;
+      case "GET_ACTIVE_PROFILE": {
+        console.log("[background] Handling GET_ACTIVE_PROFILE");
+        const profile = await getProfileFromActiveTab();
+        console.log("[background] Returning GET_ACTIVE_PROFILE response", {
+          hasProfile: Boolean(profile),
+        });
+        sendResponse({ ok: true, profile });
+        break;
+      }
+
+      case "AUTH_GOOGLE": {
+        const token = await connectGoogle();
+        sendResponse({ ok: true, token });
+        break;
+      }
+
+      case "DISCONNECT_GOOGLE": {
+        const result = await disconnectGoogle();
+        sendResponse({ ok: true, result });
+        break;
+      }
+
+      case "LIST_SPREADSHEETS": {
+        const spreadsheets = await listSpreadsheets(
+          Boolean(message.forceRefresh),
+        );
+        sendResponse({ ok: true, spreadsheets });
+        break;
+      }
+
+      case "GET_SHEET_TABS": {
+        const tabs = await getSheetTabs(message.spreadsheetId);
+        sendResponse({ ok: true, tabs });
+        break;
+      }
+
+      case "GET_SHEET_HEADERS": {
+        const headers = await getSheetHeaders(
+          message.spreadsheetId,
+          message.sheetName,
+        );
+        sendResponse({ ok: true, headers });
+        break;
+      }
+
+      case "APPEND_PROFILE": {
+        const result = await appendProfileToSheet(
+          message.spreadsheetId,
+          message.sheetName,
+          message.profile,
+          message.columnMapping ?? defaultColumnMapping,
+        );
+        sendResponse({ ok: true, result });
+        break;
+      }
+
+      default:
+        sendResponse({ ok: false, error: "Unknown message type." });
     }
-
-  case "AUTH_GOOGLE": {
-    const token = await connectGoogle();
-    sendResponse({ ok: true, token });
-    break;
-  }
-
-case "DISCONNECT_GOOGLE": {
-  const result = await disconnectGoogle();
-  sendResponse({ ok: true, result });
-  break;
-}
-
-case "LIST_SPREADSHEETS": {
-  const spreadsheets = await listSpreadsheets();
-  sendResponse({ ok: true, spreadsheets });
-  break;
-}
-
-case "GET_SHEET_TABS": {
-  const tabs = await getSheetTabs(message.spreadsheetId);
-  sendResponse({ ok: true, tabs });
-  break;
-}
-
-case "GET_SHEET_HEADERS": {
-  const headers = await getSheetHeaders(
-    message.spreadsheetId,
-    message.sheetName
-  );
-  sendResponse({ ok: true, headers });
-  break;
-}
-
-case "APPEND_PROFILE": {
-  const result = await appendProfileToSheet(
-    message.spreadsheetId,
-    message.sheetName,
-    message.profile,
-    message.columnMapping ?? defaultColumnMapping
-    );
-  sendResponse({ ok: true, result });
-  break;
-}
-
-default:
-  sendResponse({ ok: false, error: "Unknown message type." });
-}
-})().catch((error) => {
-  sendResponse({
-    ok: false,
-    error: error instanceof Error ? error.message : "Unexpected error.",
+  })().catch((error) => {
+    sendResponse({
+      ok: false,
+      error: error instanceof Error ? error.message : "Unexpected error.",
+    });
   });
-});
 
-return true;
+  return true;
 });
