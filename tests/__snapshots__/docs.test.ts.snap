@@ -75,21 +75,30 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
 </footer>
 
 <script>
-  // Reveal-on-scroll
-  (function () {
-    var els = document.querySelectorAll('.reveal');
+  var canObserve = 'IntersectionObserver' in window;
+  var revealIO = canObserve
+    ? new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+    : null;
+
+  function reveal(scope) {
+    var root = scope || document;
+    var els = root.querySelectorAll('.reveal');
     if (!els.length) return;
-    if (!('IntersectionObserver' in window)) {
+    if (!canObserve) {
       els.forEach(function (el) { el.classList.add('is-visible'); });
       return;
     }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    els.forEach(function (el) { io.observe(el); });
-  })();
+    els.forEach(function (el) { revealIO.observe(el); });
+  }
+
+  reveal(document);
 
   // Load changelog from GitHub and split into per-version glass panels
   (function () {
@@ -100,21 +109,6 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
       return s.replace(/[&<>"']/g, function (c) {
         return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c];
       });
-    }
-
-    function observeReveals(scope) {
-      var els = scope.querySelectorAll('.reveal');
-      if (!els.length) return;
-      if (!('IntersectionObserver' in window)) {
-        els.forEach(function (el) { el.classList.add('is-visible'); });
-        return;
-      }
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-      els.forEach(function (el) { io.observe(el); });
     }
 
     function renderVersions(md) {
@@ -136,7 +130,7 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
         '<div class="content-card reveal">' +
         '<div class="markdown-body">' + marked.parse(md) + '</div>' +
         '</div>';
-        observeReveals(target);
+        reveal(target);
         return;
       }
 
@@ -160,11 +154,13 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
         '</article>';
       });
       html += '</div>';
-      target.innerHTML = html;
-      observeReveals(target);
+      requestAnimationFrame(function () {
+        target.innerHTML = html;
+        reveal(target);
+      });
     }
 
-    fetch(url)
+    fetch(url, { cache: 'force-cache' })
     .then(function (r) { if (!r.ok) throw new Error('Not found'); return r.text(); })
     .then(renderVersions)
     .catch(function () {
@@ -172,7 +168,7 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
       '<div class="content-card reveal">' +
       '<p style="text-align:center;color:var(--muted-fg);">Couldn\\'t load the changelog right now. Try again later or visit the <a href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/develop/CHANGELOG.md?plain=1" target="_blank" rel="noopener" style="color:var(--linkedin);">repository</a>.</p>' +
       '</div>';
-      observeReveals(target);
+      reveal(target);
     });
   })();
 </script>"
@@ -414,7 +410,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       background: transparent;
       ">
 
-      <img src="media/main-screen.png" alt="LinkedIn to Sheets extension popup interface" loading="lazy" style="
+      <img src="media/main-screen.png" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async" style="
       width:280px;
       border-radius:0.75rem;
       border: 1px solid rgba(255,255,255,0.08);
@@ -480,23 +476,6 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     els.forEach(function (el) { io.observe(el); });
   })();
-</script>
-<script>
-  // Script para hacer scroll suave en index.html
-  if (window.location.pathname === '/index.html') {
-    // Detecta los enlaces internos y activa scroll suave
-    const links = document.querySelectorAll('a[href^="#"]');
-    links.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        window.scrollTo({
-          top: target.offsetTop - 70, // Ajustamos para el header
-          behavior: 'smooth'
-        });
-      });
-    });
-  }
 </script>"
 `;
 
