@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Every update, fix and improvement to LinkedIn to Sheets — documented." />
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png">
-  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="dns-prefetch" href="https://rsms.me" />
+  <link rel="preconnect" href="https://rsms.me/" crossorigin>
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
   <style>
@@ -424,7 +425,23 @@ body::after {
   pointer-events: none;
 }
 
+
+/* Performance-focused overrides */
+html{overflow-y:scroll;}
+body{opacity:1;transition:opacity .14s ease-out;}
+body.page-exit{opacity:.985;}
+.bg-mesh::before,.bg-mesh::after,.bg-mesh>.blob{animation:none !important;filter:blur(52px);opacity:.22;}
+.glass,.glass-strong,.btn-glass,.content-card,.version-card,.cta-band,.video-frame{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+.hero-visual,.demo-visual,.content-card,.version-card,.privacy-card,.feature,.step,.cta-band{content-visibility:auto;contain-intrinsic-size:1px 520px;}
+@media (hover:none){
+  .lift:hover,.btn-primary:hover,.btn-glass:hover,.content-card:hover,.cta-band:hover,.version-card:hover,.demo-visual:hover img,.video-frame:hover{transform:none !important;box-shadow:inherit !important;}
+  .btn-primary::before,.nav-links a::after,.privacy-card::after,.feature::after,.step::after{display:none !important;}
+}
+
 </style>
+  <link rel="prefetch" href="index.html" />
+  <link rel="prefetch" href="privacy.html" />
+  <link rel="prefetch" href="changelog.html" />
 </head>
 <body>
   <div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
@@ -434,7 +451,7 @@ body::after {
 <header class="nav glass">
   <div class="nav-inner">
     <a class="brand" href="index.html">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" />
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async" />
       <span>LinkedIn to Sheets</span>
     </a>
     <nav class="nav-links">
@@ -489,7 +506,7 @@ body::after {
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" />
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async" />
       <span>LinkedIn to Sheets</span>
     </div>
     <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
@@ -597,6 +614,23 @@ body::after {
       reveal(target);
     });
   })();
+</script>
+
+<script>
+(function(){
+    var docLinks=['index.html','privacy.html','changelog.html'];
+  docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('a[href]');
+    if(!a) return;
+    var href=a.getAttribute('href');
+    if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
+    var u=new URL(a.href, location.href);
+    if(u.origin!==location.origin) return;
+    if(!/\/(index|privacy|changelog)\.html$/.test(u.pathname) && !/\/LinkedIn_to_Sheets\/$/.test(u.pathname)) return;
+    document.body.classList.add('page-exit');
+  },{passive:true});
+})();
 </script>
 </body>
 </html>
