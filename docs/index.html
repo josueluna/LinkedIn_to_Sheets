@@ -160,6 +160,22 @@
 
 /* Hero */
 .hero { position: relative; overflow: hidden; }
+/* Disable ALL motion in hero */
+.hero * {
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+.hero-visual.reveal {
+  opacity: 0 !important;
+  transform: translateY(14px) !important;
+  transition: opacity .6s ease-out, transform .6s ease-out !important;
+}
+
+.hero-visual.reveal.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
 .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 .orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
 .orb-1 { top: -8rem; left: -6rem; width: 480px; height: 480px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
@@ -254,18 +270,15 @@ h1 {
 
 .hero-visual { position: relative; max-width: 64rem; margin: 4rem auto 0; }
 .hero-visual::before {
-  content: ""; position: absolute; inset: -1.5rem; z-index: -1;
-  border-radius: 2rem; filter: blur(64px); opacity: .18;
-  background: linear-gradient(135deg, var(--linkedin), var(--primary));
+  display: none;
 }
 .frame {
-  overflow: visible;
   border-radius: 1rem;
-  border: none;                 /* opcional */
-  background: transparent;      /* 🔥 clave */
-  box-shadow: none;             /* opcional */
+  background: transparent;
+  overflow: hidden;
 }
-.frame:hover { transform: translateY(-4px); }
+
+.frame:hover { }
 
 /* Section heads */
 .eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
@@ -344,12 +357,89 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
 @media (min-width: 1024px) { .demo-grid { grid-template-columns: 1fr 1fr; } }
 .demo-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .75rem; font-size: .875rem; }
 .demo-list li { display: flex; gap: .625rem; align-items: flex-start; color: var(--muted-fg); }
+/* ===== HERO VIDEO FIX (NO TRIANGLES) ===== */
+
+.mockup-wrap {
+  position: relative;
+  border-radius: 24px;
+  padding: 1px;
+
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--primary) 40%, transparent),
+    color-mix(in oklab, var(--linkedin) 35%, transparent)
+  );
+
+  box-shadow:
+    0 10px 30px -15px color-mix(in oklab, var(--primary) 40%, transparent),
+    0 20px 50px -25px color-mix(in oklab, var(--linkedin) 40%, transparent);
+}
+
+.mockup {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--card);
+
+  border: 10px solid color-mix(in oklab, var(--border) 70%, transparent);
+}
+
+/* ❌ eliminar cualquier radio interno */
+.mockup-inner {
+  border-radius: 0;
+  overflow: hidden;
+  background: #ffffff; /* <- CRÍTICO */
+}
+
+/* 🔥 elimina gaps invisibles del video/img */
+.mockup video,
+.mockup img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 🚫 elimina cualquier pseudo-elemento viejo */
+.mockup::before,
+.mockup::after,
+.mockup-inner::before,
+.mockup-inner::after {
+  content: none !important;
+}
+
+/* 🚫 elimina sombras agresivas */
+.mockup,
+.mockup-inner {
+  box-shadow: none !important;
+}
+
+.mockup:hover {
+  transform: none;
+}
+
+/* No longer needed as a separate element */
+.mockup::before { display: none; }
+
+.mockup:hover {
+  border-color: color-mix(in oklab, var(--primary) 32%, var(--border));
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 60%, transparent) inset,
+    0 28px 60px -24px color-mix(in oklab, var(--primary) 50%, transparent),
+    0 40px 80px -30px color-mix(in oklab, var(--linkedin) 40%, transparent);
+}
+
+.mockup img,
+.mockup video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+  box-shadow: none;
+}
 .demo-list svg { color: var(--primary); margin-top: .125rem; flex-shrink: 0; }
 .demo-visual { position: relative; }
 .demo-visual::before {
-  content: ""; position: absolute; inset: -1.5rem; z-index: -1;
-  border-radius: 2rem; filter: blur(64px); opacity: .14;
-  background: linear-gradient(135deg, var(--linkedin), var(--primary));
+  display: none;
 }
 
 /* Beta CTA */
@@ -499,71 +589,10 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
   transform: translateY(-2px);
 }
 
-/* 🎥 Glass video frame */
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.18; }
-  50% { opacity: 0.28; }
-}
+/* 🎥 Hero video uses the shared .mockup frame (see above). */
 
-.video-frame {
-  position: relative;
-  padding: 1.5rem;
-  border-radius: 1.25rem;
-
-  background: color-mix(in oklab, var(--card) 40%, transparent);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-elegant);
-
-  overflow: hidden;
-  transition: transform .4s ease, box-shadow .4s ease;
-}
-
-/* Glow base */
-.video-frame::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-
-  background: linear-gradient(
-    135deg,
-    var(--linkedin),
-    var(--primary)
-  );
-
-  opacity: 0.02; /* 👈 mucho más sutil en reposo */
-  filter: blur(16px);
-  z-index: -1;
-
-  transition: opacity .4s ease, filter .4s ease;
-}
-
-/* Hover effect */
-.video-frame:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 30px 80px -20px oklch(0.30 0.05 265 / 0.5);
-}
-
-.video-frame:hover::before {
-  opacity: 0.18;
-  filter: blur(26px);
-}
-
-video {
-  box-shadow: 0 10px 40px -20px rgba(0,0,0,0.6);
-}
-
-.demo-visual img {
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-.demo-visual:hover img {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.8);
-}
+/* Hover handled by .mockup itself; avoid double-transforming the image. */
+.demo-visual { overflow: visible; }
 
 
 
@@ -635,10 +664,10 @@ html{overflow-y:scroll;}
 body{opacity:1;transition:opacity .14s ease-out;}
 body.page-exit{opacity:.985;}
 .bg-mesh::before,.bg-mesh::after,.bg-mesh>.blob{animation:none !important;filter:blur(52px);opacity:.22;}
-.glass,.glass-strong,.btn-glass,.content-card,.version-card,.cta-band,.video-frame{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
-.hero-visual,.demo-visual,.content-card,.version-card,.privacy-card,.feature,.step,.cta-band{content-visibility:auto;contain-intrinsic-size:1px 520px;}
+.glass,.glass-strong,.btn-glass,.content-card,.version-card,.cta-band{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+.hero-visual,.content-card,.version-card,.privacy-card,.feature,.step,.cta-band{content-visibility:auto;contain-intrinsic-size:1px 520px;}
 @media (hover:none){
-  .lift:hover,.btn-primary:hover,.btn-glass:hover,.content-card:hover,.cta-band:hover,.version-card:hover,.demo-visual:hover img,.video-frame:hover{transform:none !important;box-shadow:inherit !important;}
+  .lift:hover,.btn-primary:hover,.btn-glass:hover,.content-card:hover,.cta-band:hover,.version-card:hover,.demo-visual:hover img{transform:none !important;box-shadow:inherit !important;}
   .btn-primary::before,.nav-links a::after,.privacy-card::after,.feature::after,.step::after{display:none !important;}
 }
 
@@ -723,21 +752,21 @@ body.page-exit{opacity:.985;}
     </div>
 
     <div class="hero-visual reveal">
-      <div class="frame video-frame">
-        <video 
-        autoplay 
-        muted 
-        loop 
-        playsinline
-        preload="metadata"
-        poster="media/preview.png" fetchpriority="high" 
-        style="
-        width:100%;
-        border-radius:0.75rem;
-        display:block;
-        object-fit:cover;">
-        <source src="media/demo-lts.mp4" type="video/mp4">
+      <div class="mockup-wrap">
+      <div class="mockup">
+        <div class="mockup-inner">
+        <video
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="media/preview.png"
+          fetchpriority="high">
+          <source src="media/demo-lts.mp4" type="video/mp4">
         </video>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -891,18 +920,18 @@ body.page-exit{opacity:.985;}
       background: transparent;
       ">
 
-      <img 
-      src="media/main-screen.png"
-      alt="LinkedIn to Sheets extension popup interface"
-      loading="lazy"
-      decoding="async"
-      style="
-      width:280px;
-      border-radius:0.75rem;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
-      "
-      />
+      <div class="mockup-wrap">
+      <div class="mockup">
+  <div class="mockup-inner">
+  <img 
+    src="media/main-screen.png"
+    alt="LinkedIn to Sheets extension popup interface"
+    loading="lazy"
+    decoding="async"
+  />
+  </div>
+</div>
+      </div>
 
     </div>
   </div>
@@ -982,4 +1011,8 @@ body.page-exit{opacity:.985;}
 })();
 </script>
 </body>
-</html>
+</html>.hero * {
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
