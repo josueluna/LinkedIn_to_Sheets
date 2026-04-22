@@ -3,99 +3,99 @@
 <head>
 
 <!-- [HEAD: Structured data / SEO] Schema.org markup for the Chrome extension, used by search engines to understand the product -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "LinkedIn to Sheets",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Chrome",
-      "description": "Chrome extension to save LinkedIn profiles into Google Sheets",
-      "offers": {
-        "@type": "Offer",
-        "price": "0"
-      }
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LinkedIn to Sheets",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Chrome",
+    "description": "Chrome extension to save LinkedIn profiles into Google Sheets",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
     }
-  </script>
-  <meta name="keywords" content="linkedin to google sheets, linkedin scraper chrome extension, linkedin sourcing tool, recruiter tools, sourcing automation, linkedin data to sheets">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LinkedIn to Sheets - Chrome Extension for Recruiters | Save LinkedIn Profiles to Google Sheets</title>
-  <meta name="description" content="Save LinkedIn profiles to Google Sheets in one click. Chrome extension built for recruiters to eliminate copy-paste and speed up sourcing." />
-  <meta property="og:title" content="LinkedIn to Sheets" />
-  <meta property="og:description" content="Effortlessly capture valuable candidate data for recruiters." />
-  <meta property="og:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-  <link rel="dns-prefetch" href="https://rsms.me" />
-  <link rel="preconnect" href="https://rsms.me/" crossorigin />
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  }
+</script>
+<meta name="keywords" content="linkedin to google sheets, linkedin scraper chrome extension, linkedin sourcing tool, recruiter tools, sourcing automation, linkedin data to sheets">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LinkedIn to Sheets - Chrome Extension for Recruiters | Save LinkedIn Profiles to Google Sheets</title>
+<meta name="description" content="Save LinkedIn profiles to Google Sheets in one click. Chrome extension built for recruiters to eliminate copy-paste and speed up sourcing." />
+<meta property="og:title" content="LinkedIn to Sheets" />
+<meta property="og:description" content="Effortlessly capture valuable candidate data for recruiters." />
+<meta property="og:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+<link rel="dns-prefetch" href="https://rsms.me" />
+<link rel="preconnect" href="https://rsms.me/" crossorigin />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 <!-- [/HEAD: Structured data / SEO] -->
 
-  <style>
+<style>
 
 /* [CSS: Design tokens] Global CSS custom properties for colors, shadows, and glass surfaces — light and dark mode */
-    :root {
-      --radius: 0.875rem;
-      --background: oklch(0.995 0.002 255);
-      --foreground: oklch(0.18 0.025 265);
-      --card: oklch(1 0 0);
-      --muted-fg: oklch(0.50 0.02 260);
-      --primary: oklch(0.66 0.19 145);
-      --primary-fg: oklch(0.99 0.005 145);
-      --primary-glow: oklch(0.74 0.19 145);
-      --linkedin: oklch(0.50 0.15 245);
-      --destructive: oklch(0.62 0.22 27);
-      --border: oklch(0.92 0.008 255);
-      --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
-      --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
-      --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
-      --shadow-card-hover: 0 1px 2px oklch(0.30 0.05 265 / 0.05), 0 20px 40px -20px oklch(0.30 0.05 265 / 0.18);
-      --glass-bg: color-mix(in oklab, white 65%, transparent);
-      --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
-      --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
-    }
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.995 0.002 255);
+  --foreground: oklch(0.18 0.025 265);
+  --card: oklch(1 0 0);
+  --muted-fg: oklch(0.50 0.02 260);
+  --primary: oklch(0.66 0.19 145);
+  --primary-fg: oklch(0.99 0.005 145);
+  --primary-glow: oklch(0.74 0.19 145);
+  --linkedin: oklch(0.50 0.15 245);
+  --destructive: oklch(0.62 0.22 27);
+  --border: oklch(0.92 0.008 255);
+  --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
+  --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
+  --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
+  --shadow-card-hover: 0 1px 2px oklch(0.30 0.05 265 / 0.05), 0 20px 40px -20px oklch(0.30 0.05 265 / 0.18);
+  --glass-bg: color-mix(in oklab, white 65%, transparent);
+  --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
+  --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+}
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --background: oklch(0.16 0.025 265);
-        --foreground: oklch(0.96 0.005 255);
-        --card: oklch(0.21 0.028 265);
-        --muted-fg: oklch(0.72 0.02 260);
-        --primary: oklch(0.74 0.19 145);
-        --primary-fg: oklch(0.16 0.025 265);
-        --primary-glow: oklch(0.82 0.18 145);
-        --linkedin: oklch(0.70 0.15 245);
-        --destructive: oklch(0.70 0.20 27);
-        --border: oklch(1 0 0 / 0.10);
-        --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
-        --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
-        --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
-        --shadow-card-hover: 0 1px 2px oklch(0 0 0 / 0.35), 0 20px 40px -20px oklch(0 0 0 / 0.55);
-        --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
-        --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
-        --glass-border: color-mix(in oklab, white 10%, transparent);
-      }
-    }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.025 265);
+    --foreground: oklch(0.96 0.005 255);
+    --card: oklch(0.21 0.028 265);
+    --muted-fg: oklch(0.72 0.02 260);
+    --primary: oklch(0.74 0.19 145);
+    --primary-fg: oklch(0.16 0.025 265);
+    --primary-glow: oklch(0.82 0.18 145);
+    --linkedin: oklch(0.70 0.15 245);
+    --destructive: oklch(0.70 0.20 27);
+    --border: oklch(1 0 0 / 0.10);
+    --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
+    --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
+    --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
+    --shadow-card-hover: 0 1px 2px oklch(0 0 0 / 0.35), 0 20px 40px -20px oklch(0 0 0 / 0.55);
+    --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
+    --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
+    --glass-border: color-mix(in oklab, white 10%, transparent);
+  }
+}
 /* [/CSS: Design tokens] */
 
 /* [CSS: Base reset and global layout] Box model reset, smooth scrolling, font stack, and shared container/section utility classes */
-    * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
-    html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
-    html, body { background: var(--background); color: var(--foreground); }
-    body {
-      font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-      -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
-    }
-    img { display: block; max-width: 100%; height: auto; }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
-    button, a { cursor: pointer; }
+* { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+html, body { background: var(--background); color: var(--foreground); }
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button, a { cursor: pointer; }
 
-    .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
-    .section { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 5rem 0; }
-    @media (min-width: 768px) { .section { padding: 7rem 0; } }
+.container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+.section { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 5rem 0; }
+@media (min-width: 768px) { .section { padding: 7rem 0; } }
 /* [/CSS: Base reset and global layout] */
 
 /* [CSS: Glass effect utilities] Frosted-glass surface classes used across cards, nav, and the beta CTA */
@@ -246,8 +246,8 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
     color-mix(in oklab, var(--linkedin) 35%, transparent)
   );
   box-shadow:
-    0 10px 30px -15px color-mix(in oklab, var(--primary) 40%, transparent),
-    0 20px 50px -25px color-mix(in oklab, var(--linkedin) 40%, transparent);
+  0 10px 30px -15px color-mix(in oklab, var(--primary) 40%, transparent),
+  0 20px 50px -25px color-mix(in oklab, var(--linkedin) 40%, transparent);
 }
 .mockup {
   position: relative;
@@ -265,7 +265,8 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
 .mockup img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   border-radius: 0;
   box-shadow: none;
 }
@@ -543,20 +544,20 @@ body.page-exit { opacity: .985; }
 }
 /* [/CSS: Performance overrides] */
 
-  </style>
+</style>
 
 <!-- [HEAD: Resource hints] Prefetch the three site pages for instant navigation; preload the hero video poster so the placeholder renders before JS fires -->
-  <link rel="prefetch" href="index.html" />
-  <link rel="prefetch" href="privacy.html" />
-  <link rel="prefetch" href="changelog.html" />
-  <link rel="preload" as="image" href="media/preview.png" fetchpriority="high" />
+<link rel="prefetch" href="index.html" />
+<link rel="prefetch" href="privacy.html" />
+<link rel="prefetch" href="changelog.html" />
+<link rel="preload" as="image" href="media/preview.png" fetchpriority="high" />
 <!-- [/HEAD: Resource hints] -->
 
 </head>
 <body>
 
 <!-- [BODY: Animated mesh background] Fixed full-screen layer with three blurred drifting blobs. aria-hidden keeps it invisible to screen readers -->
-  <div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
 <!-- [/BODY: Animated mesh background] -->
 
 <!-- [SECTION: Navigation bar] Sticky header with the brand logo, page links (desktop only), and the primary CTA button -->
@@ -631,13 +632,13 @@ body.page-exit { opacity: .985; }
         <div class="mockup">
           <div class="mockup-inner">
             <video
-              id="hero-video"
-              muted
-              loop
-              playsinline
-              preload="metadata"
-              poster="media/preview.png">
-              <source src="media/demo-lts.mp4" type="video/mp4">
+            id="hero-video"
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster="media/preview.png">
+            <source src="media/demo-lts.mp4" type="video/mp4">
             </video>
           </div>
         </div>
@@ -796,10 +797,10 @@ body.page-exit { opacity: .985; }
           <div class="mockup">
             <div class="mockup-inner">
               <img
-                src="media/main-screen.jpg"
-                alt="LinkedIn to Sheets extension popup interface"
-                loading="lazy"
-                decoding="async"
+              src="media/main-screen.jpg"
+              alt="LinkedIn to Sheets extension popup interface"
+              loading="lazy"
+              decoding="async"
               />
             </div>
           </div>
@@ -871,20 +872,20 @@ body.page-exit { opacity: .985; }
 
 <!-- [SCRIPT: Prefetch and page transition] Prefetches the three site pages on load for near-instant navigation. On internal link click, adds .page-exit to body to trigger a subtle opacity fade before the browser navigates away -->
 <script>
-(function(){
-  var docLinks=['index.html','privacy.html','changelog.html'];
-  docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
-  document.addEventListener('click', function(e){
-    var a=e.target.closest('a[href]');
-    if(!a) return;
-    var href=a.getAttribute('href');
-    if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
-    var u=new URL(a.href, location.href);
-    if(u.origin!==location.origin) return;
-    if(!/\/(index|privacy|changelog)\.html$/.test(u.pathname) && !/\/LinkedIn_to_Sheets\/$/.test(u.pathname)) return;
-    document.body.classList.add('page-exit');
-  },{passive:true});
-})();
+  (function(){
+    var docLinks=['index.html','privacy.html','changelog.html'];
+    docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
+    document.addEventListener('click', function(e){
+      var a=e.target.closest('a[href]');
+      if(!a) return;
+      var href=a.getAttribute('href');
+      if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
+      var u=new URL(a.href, location.href);
+      if(u.origin!==location.origin) return;
+      if(!/\/(index|privacy|changelog)\.html$/.test(u.pathname) && !/\/LinkedIn_to_Sheets\/$/.test(u.pathname)) return;
+      document.body.classList.add('page-exit');
+    },{passive:true});
+  })();
 </script>
 <!-- [/SCRIPT: Prefetch and page transition] -->
 
@@ -900,28 +901,53 @@ body.page-exit { opacity: .985; }
     }
 
     var playPromise = null;
+    var playTimeout = null;
 
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
+
         if (entry.isIntersecting) {
-          if (video.paused) {
-            playPromise = video.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(function () {});
-            }
+
+          if (!playTimeout && video.paused && !playPromise) {
+            playTimeout = setTimeout(function () {
+
+              playPromise = video.play();
+
+              if (playPromise !== undefined) {
+                playPromise
+                .then(function () {
+                  playTimeout = null;
+                })
+                .catch(function () {
+                  playTimeout = null;
+                });
+              }
+
+            }, 2000);
           }
+
         } else {
+
+          if (playTimeout) {
+            clearTimeout(playTimeout);
+            playTimeout = null;
+          }
+
           if (playPromise !== undefined) {
-            playPromise.then(function () {
+            playPromise
+            .then(function () {
               video.pause();
               playPromise = null;
-            }).catch(function () {
+            })
+            .catch(function () {
               playPromise = null;
             });
           } else if (!video.paused) {
             video.pause();
           }
+
         }
+
       });
     }, {
       threshold: 0.7
