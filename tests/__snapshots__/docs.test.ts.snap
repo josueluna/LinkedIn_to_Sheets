@@ -264,18 +264,17 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
         Takes less than 30 seconds to get started
       </p>
     </div>
-
     <div class="hero-visual reveal">
-      <div class="mockup-wrap">
-      <div class="mockup">
-        <div class="mockup-inner">
-        <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png" fetchpriority="high">
+  <div class="mockup-wrap">
+    <div class="mockup">
+      <div class="mockup-inner">
+        <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png">
           <source src="media/demo-lts.mp4" type="video/mp4">
         </video>
-        </div>
-      </div>
       </div>
     </div>
+  </div>
+</div>
   </div>
 </section>
 
