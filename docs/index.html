@@ -272,14 +272,49 @@ h1 {
 .hero-visual::before {
   display: none;
 }
-.frame {
-  border-radius: 1rem;
-  background: transparent;
-  overflow: hidden;
+/* HERO VIDEO — CLEAN + PERFORMANCE */
+
+.mockup-wrap {
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--primary) 30%, transparent),
+    color-mix(in oklab, var(--linkedin) 30%, transparent)
+  );
 }
 
-.frame:hover { }
+.mockup {
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
 
+.mockup-inner {
+  overflow: hidden;
+  background: var(--card);
+}
+
+/* video limpio */
+.mockup video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mockup,
+.mockup-inner,
+.hero-visual,
+.hero-visual * {
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.mockup:hover {
+  transform: none;
+}
 /* Section heads */
 .eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
 h2 { margin-top: .75rem; font-size: 1.875rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; text-wrap: balance; }
@@ -748,25 +783,23 @@ body.page-exit{opacity:.985;}
         Takes less than 30 seconds to get started
       </p>
     </div>
-
     <div class="hero-visual reveal">
-      <div class="mockup-wrap">
-      <div class="mockup">
-        <div class="mockup-inner">
+  <div class="mockup-wrap">
+    <div class="mockup">
+      <div class="mockup-inner">
         <video
           id="hero-video"
           muted
           loop
           playsinline
           preload="metadata"
-          poster="media/preview.png"
-          fetchpriority="high">
+          poster="media/preview.png">
           <source src="media/demo-lts.mp4" type="video/mp4">
         </video>
-        </div>
-      </div>
       </div>
     </div>
+  </div>
+</div>
   </div>
 </section>
 
