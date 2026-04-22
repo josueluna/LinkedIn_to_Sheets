@@ -193,7 +193,7 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
 
 exports[`Docs HTML snapshots > index.html snapshot 1`] = `
 "<!-- [BODY: Animated mesh background] Fixed full-screen layer with three blurred drifting blobs. aria-hidden keeps it invisible to screen readers -->
-  <div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
 <!-- [/BODY: Animated mesh background] -->
 
 <!-- [SECTION: Navigation bar] Sticky header with the brand logo, page links (desktop only), and the primary CTA button -->
@@ -268,7 +268,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
         <div class="mockup">
           <div class="mockup-inner">
             <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png">
-              <source src="media/demo-lts.mp4" type="video/mp4">
+            <source src="media/demo-lts.mp4" type="video/mp4">
             </video>
           </div>
         </div>
@@ -497,20 +497,20 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
 
 <!-- [SCRIPT: Prefetch and page transition] Prefetches the three site pages on load for near-instant navigation. On internal link click, adds .page-exit to body to trigger a subtle opacity fade before the browser navigates away -->
 <script>
-(function(){
-  var docLinks=['index.html','privacy.html','changelog.html'];
-  docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
-  document.addEventListener('click', function(e){
-    var a=e.target.closest('a[href]');
-    if(!a) return;
-    var href=a.getAttribute('href');
-    if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
-    var u=new URL(a.href, location.href);
-    if(u.origin!==location.origin) return;
-    if(!/\\/(index|privacy|changelog)\\.html$/.test(u.pathname) && !/\\/LinkedIn_to_Sheets\\/$/.test(u.pathname)) return;
-    document.body.classList.add('page-exit');
-  },{passive:true});
-})();
+  (function(){
+    var docLinks=['index.html','privacy.html','changelog.html'];
+    docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
+    document.addEventListener('click', function(e){
+      var a=e.target.closest('a[href]');
+      if(!a) return;
+      var href=a.getAttribute('href');
+      if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
+      var u=new URL(a.href, location.href);
+      if(u.origin!==location.origin) return;
+      if(!/\\/(index|privacy|changelog)\\.html$/.test(u.pathname) && !/\\/LinkedIn_to_Sheets\\/$/.test(u.pathname)) return;
+      document.body.classList.add('page-exit');
+    },{passive:true});
+  })();
 </script>
 <!-- [/SCRIPT: Prefetch and page transition] -->
 
@@ -526,28 +526,53 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     }
 
     var playPromise = null;
+    var playTimeout = null;
 
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
+
         if (entry.isIntersecting) {
-          if (video.paused) {
-            playPromise = video.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(function () {});
-            }
+
+          if (!playTimeout && video.paused && !playPromise) {
+            playTimeout = setTimeout(function () {
+
+              playPromise = video.play();
+
+              if (playPromise !== undefined) {
+                playPromise
+                .then(function () {
+                  playTimeout = null;
+                })
+                .catch(function () {
+                  playTimeout = null;
+                });
+              }
+
+            }, 2000);
           }
+
         } else {
+
+          if (playTimeout) {
+            clearTimeout(playTimeout);
+            playTimeout = null;
+          }
+
           if (playPromise !== undefined) {
-            playPromise.then(function () {
+            playPromise
+            .then(function () {
               video.pause();
               playPromise = null;
-            }).catch(function () {
+            })
+            .catch(function () {
               playPromise = null;
             });
           } else if (!video.paused) {
             video.pause();
           }
+
         }
+
       });
     }, {
       threshold: 0.7
