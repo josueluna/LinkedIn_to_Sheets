@@ -192,10 +192,11 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
 `;
 
 exports[`Docs HTML snapshots > index.html snapshot 1`] = `
-"<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+"<!-- [BODY: Animated mesh background] Fixed full-screen layer with three blurred drifting blobs. aria-hidden keeps it invisible to screen readers -->
+  <div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+<!-- [/BODY: Animated mesh background] -->
 
-
-<!-- ── Nav ── -->
+<!-- [SECTION: Navigation bar] Sticky header with the brand logo, page links (desktop only), and the primary CTA button -->
 <header class="nav glass">
   <div class="nav-inner">
     <a class="brand" href="index.html">
@@ -215,8 +216,9 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </a>
   </div>
 </header>
+<!-- [/SECTION: Navigation bar] -->
 
-<!-- ── Hero ── -->
+<!-- [SECTION: Hero] Full-width opening section with headline, value prop, CTA buttons, fine print, and the looping demo video inside the mockup frame -->
 <section id="top" class="hero">
   <div class="hero-bg">
     <div class="orb orb-1"></div>
@@ -238,11 +240,9 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       <p class="lead">
         Built by recruiters who got tired of this:
       </p>
-
       <p class="workflow-line">
         Open profile → copy → switch tab → paste → repeat
       </p>
-
       <p class="lead">
         Hundreds of times a week. So we fixed it.
       </p>
@@ -265,20 +265,21 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       </p>
     </div>
     <div class="hero-visual reveal">
-  <div class="mockup-wrap">
-    <div class="mockup">
-      <div class="mockup-inner">
-        <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png">
-          <source src="media/demo-lts.mp4" type="video/mp4">
-        </video>
+      <div class="mockup-wrap">
+        <div class="mockup">
+          <div class="mockup-inner">
+            <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png">
+              <source src="media/demo-lts.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-  </div>
 </section>
+<!-- [/SECTION: Hero] -->
 
-<!-- ── Problem / Solution ── -->
+<!-- [SECTION: Problem / Solution] Side-by-side cards contrasting the manual copy-paste pain against the extension's one-click solution, each backed by a bullet list -->
 <section class="section">
   <div class="container ps-grid">
     <div class="reveal lift card-pad glass">
@@ -289,7 +290,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
         open profile → copy → switch tab → paste → repeat.
         Hundreds of times a week.
 
-        It’s slow, repetitive, and honestly — a terrible use of a recruiter’s time.
+        It's slow, repetitive, and honestly — a terrible use of a recruiter's time.
       </p>
       <ul class="bullet-list">
         <li><span class="bullet-x">·</span> Switching tabs over and over</li>
@@ -315,8 +316,9 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
   </div>
 </section>
+<!-- [/SECTION: Problem / Solution] -->
 
-<!-- ── How it works ── -->
+<!-- [SECTION: How it works] Four sequential step cards: install → connect → browse → capture. Each has an icon, step number, and a short description -->
 <section id="how" class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -360,8 +362,9 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
   </div>
 </section>
+<!-- [/SECTION: How it works] -->
 
-<!-- ── Features ── -->
+<!-- [SECTION: Features] Six feature cards in a 3-column grid: one-click capture, column mapping, duplicate detection, multi-sheet support, privacy, and recruiter focus -->
 <section id="features" class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -403,8 +406,9 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
   </div>
 </section>
+<!-- [/SECTION: Features] -->
 
-<!-- ── Demo ── -->
+<!-- [SECTION: Demo] Two-column layout with a bullet list describing the extension popup on the left, and a mockup screenshot of the interface on the right -->
 <section id="demo" class="section">
   <div class="container demo-grid">
     <div class="reveal">
@@ -419,27 +423,21 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       </ul>
     </div>
     <div class="demo-visual reveal">
-      <div class="frame" style="
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background: transparent;
-      ">
-
-      <div class="mockup-wrap">
-      <div class="mockup">
-  <div class="mockup-inner">
-  <img src="media/main-screen.png" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
-  </div>
-</div>
+      <div class="frame" style="display:flex; justify-content:center; align-items:center; background: transparent;">
+        <div class="mockup-wrap">
+          <div class="mockup">
+            <div class="mockup-inner">
+              <img src="media/main-screen.png" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
       </div>
-
     </div>
   </div>
-</div>
 </section>
+<!-- [/SECTION: Demo] -->
 
-<!-- ── Beta CTA ── -->
+<!-- [SECTION: Beta CTA] Centered conversion card with decorative orbs, a "limited spots" pill badge, headline, body copy, and email + privacy policy buttons -->
 <section id="beta" class="section">
   <div class="beta-wrap">
     <div class="reveal beta-card glass-strong">
@@ -464,8 +462,9 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
   </div>
 </section>
+<!-- [/SECTION: Beta CTA] -->
 
-<!-- ── Footer ── -->
+<!-- [SECTION: Footer] Minimal bar with brand logo, author credit, and GitHub repository link -->
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
@@ -479,9 +478,10 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </a>
   </div>
 </footer>
+<!-- [/SECTION: Footer] -->
 
+<!-- [SCRIPT: Scroll reveal] IntersectionObserver that adds .is-visible to every .reveal element once it enters the viewport by at least 12%, triggering the CSS fade-in. Falls back to instant visibility if the API is unavailable -->
 <script>
-  // Reveal-on-scroll
   (function () {
     var els = document.querySelectorAll('.reveal');
     if (!els.length) return;
@@ -494,10 +494,12 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     els.forEach(function (el) { io.observe(el); });
   })();
 </script>
+<!-- [/SCRIPT: Scroll reveal] -->
 
+<!-- [SCRIPT: Prefetch and page transition] Prefetches the three site pages on load for near-instant navigation. On internal link click, adds .page-exit to body to trigger a subtle opacity fade before the browser navigates away -->
 <script>
 (function(){
-    var docLinks=['index.html','privacy.html','changelog.html'];
+  var docLinks=['index.html','privacy.html','changelog.html'];
   docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
   document.addEventListener('click', function(e){
     var a=e.target.closest('a[href]');
@@ -511,29 +513,51 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
   },{passive:true});
 })();
 </script>
+<!-- [/SCRIPT: Prefetch and page transition] -->
+
+<!-- [SCRIPT: Hero video autoplay on visibility] IntersectionObserver that plays the hero video only when at least 70% of it is visible in the viewport, and pauses it when it scrolls out. The play() Promise is tracked to avoid browser errors if pause is called while play is still resolving -->
 <script>
-  const video = document.getElementById('hero-video');
+  (function () {
+    var video = document.getElementById('hero-video');
+    if (!video) return;
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        video.play();
-      } else {
-        video.pause();
-      }
+    if (!('IntersectionObserver' in window)) {
+      video.play().catch(function () {});
+      return;
+    }
+
+    var playPromise = null;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (video.paused) {
+            playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(function () {});
+            }
+          }
+        } else {
+          if (playPromise !== undefined) {
+            playPromise.then(function () {
+              video.pause();
+              playPromise = null;
+            }).catch(function () {
+              playPromise = null;
+            });
+          } else if (!video.paused) {
+            video.pause();
+          }
+        }
+      });
+    }, {
+      threshold: 0.7
     });
-  }, {
-    threshold: 0.7
-  });
 
-  observer.observe(video);
+    observer.observe(video);
+  })();
 </script>
-
-.hero * {
-  transform: none !important;
-  animation: none !important;
-  transition: none !important;
-}"
+<!-- [/SCRIPT: Hero video autoplay on visibility] -->"
 `;
 
 exports[`Docs HTML snapshots > privacy.html snapshot 1`] = `
