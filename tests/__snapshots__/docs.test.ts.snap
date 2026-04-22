@@ -427,7 +427,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
         <div class="mockup-wrap">
           <div class="mockup">
             <div class="mockup-inner">
-              <img src="media/main-screen.png" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
+              <img src="media/main-screen.jpg" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
             </div>
           </div>
         </div>
