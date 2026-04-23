@@ -234,15 +234,15 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
         Now in private beta
       </div>
       <h1>
-Save LinkedIn profiles to Google Sheets in seconds
-<span class="gradient-text">No copy-paste. No tab switching. Just one click.</span>
-</h1>
+        Save LinkedIn profiles to Google Sheets in seconds
+        <span class="gradient-text">No copy-paste. No tab switching. Just one click.</span>
+      </h1>
       <p class="lead">
-Built for recruiters, sales teams, and operators who source on LinkedIn daily.
-</p>
+        Built for recruiters, sales teams, and operators who source on LinkedIn daily.
+      </p>
       <p class="workflow-line">
-Open profile → copy → switch tab → paste → repeat… hundreds of times
-</p>
+        Open profile → copy → switch tab → paste → repeat… hundreds of times
+      </p>
       <div class="cta-row">
         <a class="btn-primary lg" href="#beta">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -287,9 +287,9 @@ Open profile → copy → switch tab → paste → repeat… hundreds of times
         Hundreds of times a week. It's slow, repetitive — and it kills your productivity.
       </p>
       <ul class="bullet-list">
-<li><span class="bullet-x">·</span> Constant tab switching kills your flow</li>
-<li><span class="bullet-x">·</span> Manual copy-paste leads to errors</li>
-<li><span class="bullet-x">·</span> Duplicate candidates waste time</li>
+        <li><span class="bullet-x">·</span> Constant tab switching kills your flow</li>
+        <li><span class="bullet-x">·</span> Manual copy-paste leads to errors</li>
+        <li><span class="bullet-x">·</span> Duplicate candidates waste time</li>
       </ul>
     </div>
     <div class="reveal lift card-pad solution-card">
@@ -542,7 +542,7 @@ Open profile → copy → switch tab → paste → repeat… hundreds of times
                 });
               }
 
-            }, 2000);
+            }, 1500);
           }
 
         } else {
