@@ -237,9 +237,34 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
 
 /* [CSS: Video / mockup frame] Rounded device frame with gradient border glow that wraps the hero video and the demo screenshot. Overrides suppress unwanted shadows, transforms, and pseudo-element artifacts */
 .mockup-wrap {
-  position: relative;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1),
+              box-shadow .35s cubic-bezier(.2,.7,.2,1);
+}
+
+.mockup-wrap:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.mockup-wrap::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
   border-radius: 24px;
-  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--primary) 25%, transparent),
+    color-mix(in oklab, var(--linkedin) 25%, transparent)
+  );
+  opacity: 0;
+  transition: opacity .4s;
+  z-index: -1;
+}
+
+.mockup-wrap:hover::after {
+  opacity: 1;
+}
+  
   background: linear-gradient(
     135deg,
     color-mix(in oklab, var(--primary) 40%, transparent),
@@ -254,7 +279,7 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
   border-radius: 22px;
   overflow: hidden;
   background: var(--card);
-  border: 10px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border: 1px solid var(--border);
 }
 .mockup-inner {
   border-radius: 0;
@@ -366,6 +391,10 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
 .demo-list svg { color: var(--primary); margin-top: .125rem; flex-shrink: 0; }
 .demo-visual { position: relative; overflow: visible; }
 .demo-visual::before { display: none; }
+.demo-visual .mockup {
+  max-width: 420px;
+  margin: 0 auto;
+}
 /* [/CSS: Demo section] */
 
 /* [CSS: Beta CTA section] Centered call-to-action card with glass-strong surface, decorative orbs, a pill badge, headline, and action buttons */
@@ -625,7 +654,7 @@ body.page-exit { opacity: .985; }
       </p>
     </div>
     <div class="hero-visual reveal">
-      <div class="mockup-wrap">
+      <div class="mockup-wrap glass lift">
         <div class="mockup">
           <div class="mockup-inner">
             <video
