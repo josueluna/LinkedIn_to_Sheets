@@ -192,228 +192,88 @@ exports[`Docs HTML snapshots > changelog.html snapshot 1`] = `
 `;
 
 exports[`Docs HTML snapshots > index.html snapshot 1`] = `
-"<!-- [BODY: Animated mesh background] Fixed full-screen layer with three blurred drifting blobs. aria-hidden keeps it invisible to screen readers -->
-<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
-<!-- [/BODY: Animated mesh background] -->
-
-<!-- [SECTION: Navigation bar] Sticky header with the brand logo, page links (desktop only), and the primary CTA button -->
+"<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
 <header class="nav glass">
   <div class="nav-inner">
-    <a class="brand" href="index.html">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async">
-      <span>LinkedIn to Sheets</span>
-    </a>
+    <a class="brand" href="index.html"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async"><span>LinkedIn to Sheets</span></a>
     <nav class="nav-links">
-      <a href="index.html#how">See How It Works</a>
-      <a href="index.html#features">Features</a>
-      <a href="index.html#demo">Demo</a>
-      <a href="changelog.html">Changelog</a>
-      <a href="privacy.html">Privacy</a>
+      <a href="index.html#how">See How It Works</a><a href="index.html#features">Features</a><a href="index.html#demo">Demo</a><a href="changelog.html">Changelog</a><a href="privacy.html">Privacy</a>
     </nav>
-    <a class="btn-primary" href="#">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
-      Start Saving LinkedIn Profiles Now
-    </a>
+    <a class="btn-primary" href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>Start Saving LinkedIn Profiles Now</a>
   </div>
 </header>
-<!-- [/SECTION: Navigation bar] -->
-
-<!-- [SECTION: Hero] Full-width opening section with headline, value prop, CTA buttons, fine print, and the looping demo video inside the mockup frame -->
 <section id="top" class="hero">
-  <div class="hero-bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-  </div>
+  <div class="hero-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
   <div class="hero-inner">
     <div class="hero-text reveal">
-      <div class="beta-pill glass">
-        <span class="dot-wrap">
-          <span class="dot-ping"></span>
-          <span class="dot"></span>
-        </span>
-        Now in private beta
-      </div>
-      <h1>
-        Save LinkedIn profiles to Google Sheets in seconds
-        <span class="gradient-text">No copy-paste. No tab switching. Just one click.</span>
-      </h1>
-      <p class="lead">
-        Built for recruiters, sales teams, and operators who source on LinkedIn daily.
-      </p>
-      <p class="workflow-line">
-        Open profile → copy → switch tab → paste → repeat… hundreds of times
-      </p>
+      <div class="beta-pill glass"><span class="dot-wrap"><span class="dot-ping"></span><span class="dot"></span></span>Now in private beta</div>
+      <h1>Save LinkedIn profiles to Google Sheets in seconds<span class="gradient-text">No copy-paste. No tab switching. Just one click.</span></h1>
+      <p class="lead">Built for recruiters, sales teams, and operators who source on LinkedIn daily.</p>
+      <p class="workflow-line">Open profile → copy → switch tab → paste → repeat… hundreds of times</p>
       <div class="cta-row">
-        <a class="btn-primary lg" href="#beta">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          Install Chrome Extension
-        </a>
+        <a class="btn-primary lg" href="#beta"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Install Chrome Extension</a>
         <a class="btn-glass" href="#how">See how it works</a>
       </div>
-      <p class="fineprint">
-        No data stored · Works with any Google account · No setup required
-      </p>
-      <p class="fineprint" style="opacity:0.8;">
-        Used by recruiters sourcing hundreds of candidates weekly
-      </p>
-      <p class="fineprint" style="margin-top:0.25rem;">
-        Takes less than 30 seconds to get started
-      </p>
+      <p class="fineprint">No data stored · Works with any Google account · No setup required</p>
+      <p class="fineprint" style="opacity:0.8;">Used by recruiters sourcing hundreds of candidates weekly</p>
+      <p class="fineprint" style="margin-top:0.25rem;">Takes less than 30 seconds to get started</p>
     </div>
     <div class="hero-visual reveal">
       <div class="mockup-wrap glass lift">
         <div class="chrome-bar chrome-bar-hero">
-          <div class="chrome-dots">
-            <span class="cdot cdot-r"></span>
-            <span class="cdot cdot-y"></span>
-            <span class="cdot cdot-g"></span>
-          </div>
-          <div class="chrome-tab-pill">
-            <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="12" height="12" alt="">
-            <span>LinkedIn to Sheets</span>
-          </div>
+          <div class="chrome-dots"><span class="cdot cdot-r"></span><span class="cdot cdot-y"></span><span class="cdot cdot-g"></span></div>
+          <div class="chrome-tab-pill"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="12" height="12" alt=""><span>LinkedIn to Sheets</span></div>
         </div>
         <div class="mockup mockup-hero">
           <div class="mockup-inner">
-            <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png">
-            <source src="media/demo.mp4" type="video/mp4">
-            </video>
+            <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png"><source src="media/demo.mp4" type="video/mp4"></video>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- [/SECTION: Hero] -->
-
-<!-- [SECTION: Problem / Solution] Side-by-side cards contrasting the manual copy-paste pain against the extension's one-click solution, each backed by a bullet list -->
 <section class="section">
   <div class="container ps-grid">
     <div class="reveal lift card-pad glass">
-      <div class="icon-chip dest">✕</div>
-      <h3>The problem</h3>
-      <p class="card-text">
-        You know the drill:<br>
-        open profile → copy → switch tab → paste → repeat.
-        Hundreds of times a week. It's slow, repetitive — and it kills your productivity.
-      </p>
-      <ul class="bullet-list">
-        <li><span class="bullet-x">·</span> Constant tab switching kills your flow</li>
-        <li><span class="bullet-x">·</span> Manual copy-paste leads to errors</li>
-        <li><span class="bullet-x">·</span> Duplicate candidates waste time</li>
-      </ul>
+      <div class="icon-chip dest">✕</div><h3>The problem</h3>
+      <p class="card-text">You know the drill:<br>open profile → copy → switch tab → paste → repeat. Hundreds of times a week. It's slow, repetitive — and it kills your productivity.</p>
+      <ul class="bullet-list"><li><span class="bullet-x">·</span> Constant tab switching kills your flow</li><li><span class="bullet-x">·</span> Manual copy-paste leads to errors</li><li><span class="bullet-x">·</span> Duplicate candidates waste time</li></ul>
     </div>
     <div class="reveal lift card-pad solution-card">
-      <div class="icon-chip prim">
-        <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-      </div>
+      <div class="icon-chip prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
       <h3>The solution</h3>
-      <p class="card-text">
-        LinkedIn to Sheets automates the most repetitive part of sourcing.
-        Stay on LinkedIn. Your data updates automatically in Google Sheets.
-        No friction, no switching tabs, no manual errors.
-      </p>
-      <ul class="bullet-list">
-        <li><span class="bullet-ok">✓</span> One click captures the full profile</li>
-        <li><span class="bullet-ok">✓</span> Customisable column mapping</li>
-        <li><span class="bullet-ok">✓</span> Warns you if the candidate already exists</li>
-      </ul>
+      <p class="card-text">LinkedIn to Sheets automates the most repetitive part of sourcing. Stay on LinkedIn. Your data updates automatically in Google Sheets. No friction, no switching tabs, no manual errors.</p>
+      <ul class="bullet-list"><li><span class="bullet-ok">✓</span> One click captures the full profile</li><li><span class="bullet-ok">✓</span> Customisable column mapping</li><li><span class="bullet-ok">✓</span> Warns you if the candidate already exists</li></ul>
     </div>
   </div>
 </section>
-<!-- [/SECTION: Problem / Solution] -->
-
-<!-- [SECTION: How it works] Four sequential step cards: install → connect → browse → capture. Each has an icon, step number, and a short description -->
 <section id="how" class="section">
   <div class="container">
-    <div class="section-head reveal">
-      <p class="eyebrow">How it works</p>
-      <h2>From profile to spreadsheet in four steps</h2>
-      <p class="section-sub">No setup headaches, no API keys. Just install, connect, and start sourcing faster.</p>
-    </div>
+    <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>From profile to spreadsheet in four steps</h2><p class="section-sub">No setup headaches, no API keys. Just install, connect, and start sourcing faster.</p></div>
     <div class="steps">
-      <div class="step glass reveal lift" style="transition-delay:0ms">
-        <div class="step-head">
-          <div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg></div>
-          <span class="step-num">Step 01</span>
-        </div>
-        <h3>Install the extension</h3>
-        <p>Add LinkedIn to Sheets from the Chrome Web Store in seconds.</p>
-      </div>
-      <div class="step glass reveal lift" style="transition-delay:60ms">
-        <div class="step-head">
-          <div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg></div>
-          <span class="step-num">Step 02</span>
-        </div>
-        <h3>Connect Google Sheets</h3>
-        <p>Sign in with Google and pick the spreadsheet and tab you want to fill.</p>
-      </div>
-      <div class="step linkedin glass reveal lift" style="transition-delay:120ms">
-        <div class="step-head">
-          <div class="step-icon linkedin"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="12" cy="10" r="3"></circle><path d="M7 21v-2a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v2"></path></svg></div>
-          <span class="step-num">Step 03</span>
-        </div>
-        <h3>Open any LinkedIn profile</h3>
-        <p>Browse LinkedIn the way you always do. The extension reads the profile in view.</p>
-      </div>
-      <div class="step glass reveal lift" style="transition-delay:180ms">
-        <div class="step-head">
-          <div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9l5 12 1.8-5.2L21 14z"></path><path d="M7.2 2.2 8 5.1"></path><path d="m5.1 8-2.9-.8"></path><path d="M14 4.1 12 6"></path><path d="m6 12-1.9 2"></path></svg></div>
-          <span class="step-num">Step 04</span>
-        </div>
-        <h3>Click “Paste Profile” and you're done</h3>
-        <p>Name, company, title, location and profile URL land in the right columns instantly.</p>
-      </div>
+      <div class="step glass reveal lift" style="transition-delay:0ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg></div><span class="step-num">Step 01</span></div><h3>Install the extension</h3><p>Add LinkedIn to Sheets from the Chrome Web Store in seconds.</p></div>
+      <div class="step glass reveal lift" style="transition-delay:60ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg></div><span class="step-num">Step 02</span></div><h3>Connect Google Sheets</h3><p>Sign in with Google and pick the spreadsheet and tab you want to fill.</p></div>
+      <div class="step linkedin glass reveal lift" style="transition-delay:120ms"><div class="step-head"><div class="step-icon linkedin"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="12" cy="10" r="3"></circle><path d="M7 21v-2a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v2"></path></svg></div><span class="step-num">Step 03</span></div><h3>Open any LinkedIn profile</h3><p>Browse LinkedIn the way you always do. The extension reads the profile in view.</p></div>
+      <div class="step glass reveal lift" style="transition-delay:180ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9l5 12 1.8-5.2L21 14z"></path><path d="M7.2 2.2 8 5.1"></path><path d="m5.1 8-2.9-.8"></path><path d="M14 4.1 12 6"></path><path d="m6 12-1.9 2"></path></svg></div><span class="step-num">Step 04</span></div><h3>Click "Paste Profile" and you're done</h3><p>Name, company, title, location and profile URL land in the right columns instantly.</p></div>
     </div>
   </div>
 </section>
-<!-- [/SECTION: How it works] -->
-
-<!-- [SECTION: Features] Six feature cards in a 3-column grid: one-click capture, column mapping, duplicate detection, multi-sheet support, privacy, and recruiter focus -->
 <section id="features" class="section">
   <div class="container">
-    <div class="section-head reveal">
-      <p class="eyebrow">Features</p>
-      <h2>Everything you need to source faster</h2>
-      <p class="section-sub">Thoughtful details that compound over hundreds of profiles a week.</p>
-    </div>
+    <div class="section-head reveal"><p class="eyebrow">Features</p><h2>Everything you need to source faster</h2><p class="section-sub">Thoughtful details that compound over hundreds of profiles a week.</p></div>
     <div class="features">
-      <div class="feature glass reveal lift" style="transition-delay:0ms">
-        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
-        <h3>Capture profiles in one click</h3>
-        <p>Reads the LinkedIn profile you're viewing and writes a clean row to your sheet.</p>
-      </div>
-      <div class="feature glass reveal lift" style="transition-delay:50ms">
-        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="4" x2="14" y2="4"></line><line x1="10" y1="4" x2="3" y2="4"></line><line x1="21" y1="12" x2="12" y2="12"></line><line x1="8" y1="12" x2="3" y2="12"></line><line x1="21" y1="20" x2="16" y2="20"></line><line x1="12" y1="20" x2="3" y2="20"></line><line x1="14" y1="2" x2="14" y2="6"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="16" y1="18" x2="16" y2="22"></line></svg></div>
-        <h3>Custom column mapping</h3>
-        <p>Decide exactly which column receives Name, Company, Title, Location and Profile URL.</p>
-      </div>
-      <div class="feature glass reveal lift" style="transition-delay:100ms">
-        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path></svg></div>
-        <h3>Duplicate detection</h3>
-        <p>Already added that candidate? You'll be warned with the row number — no double entries.</p>
-      </div>
-      <div class="feature glass reveal lift" style="transition-delay:150ms">
-        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
-        <h3>Multi-sheet support</h3>
-        <p>Switch between spreadsheets and tabs from the popup. Great for active pipelines.</p>
-      </div>
-      <div class="feature glass reveal lift" style="transition-delay:200ms">
-        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg></div>
-        <h3>Privacy-first</h3>
-        <p>Your data stays between your browser, your Google account and your sheets.</p>
-      </div>
-      <div class="feature glass reveal lift" style="transition-delay:250ms">
-        <div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path></svg></div>
-        <h3>Designed for high-volume sourcing workflows</h3>
-        <p>Designed around real sourcing workflows — fast, focused, no bloat.</p>
-      </div>
+      <div class="feature glass reveal lift" style="transition-delay:0ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div><h3>Capture profiles in one click</h3><p>Reads the LinkedIn profile you're viewing and writes a clean row to your sheet.</p></div>
+      <div class="feature glass reveal lift" style="transition-delay:50ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="4" x2="14" y2="4"></line><line x1="10" y1="4" x2="3" y2="4"></line><line x1="21" y1="12" x2="12" y2="12"></line><line x1="8" y1="12" x2="3" y2="12"></line><line x1="21" y1="20" x2="16" y2="20"></line><line x1="12" y1="20" x2="3" y2="20"></line><line x1="14" y1="2" x2="14" y2="6"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="16" y1="18" x2="16" y2="22"></line></svg></div><h3>Custom column mapping</h3><p>Decide exactly which column receives Name, Company, Title, Location and Profile URL.</p></div>
+      <div class="feature glass reveal lift" style="transition-delay:100ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path></svg></div><h3>Duplicate detection</h3><p>Already added that candidate? You'll be warned with the row number — no double entries.</p></div>
+      <div class="feature glass reveal lift" style="transition-delay:150ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div><h3>Multi-sheet support</h3><p>Switch between spreadsheets and tabs from the popup. Great for active pipelines.</p></div>
+      <div class="feature glass reveal lift" style="transition-delay:200ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg></div><h3>Privacy-first</h3><p>Your data stays between your browser, your Google account and your sheets.</p></div>
+      <div class="feature glass reveal lift" style="transition-delay:250ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path></svg></div><h3>Designed for high-volume sourcing workflows</h3><p>Designed around real sourcing workflows — fast, focused, no bloat.</p></div>
     </div>
   </div>
 </section>
-<!-- [/SECTION: Features] -->
 
-<!-- [SECTION: Demo] Two-column layout with a bullet list describing the extension popup on the left, and a mockup screenshot of the interface on the right -->
+<!-- DEMO SECTION -->
 <section id="demo" class="section">
   <div class="container demo-grid">
     <div class="reveal">
@@ -428,172 +288,111 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       </ul>
     </div>
     <div class="demo-visual reveal">
-      <div class="frame" style="display:flex; justify-content:center; align-items:center; background: transparent;">
-        <div class="mockup-wrap">
-          <div class="chrome-bar">
-            <div class="chrome-dots">
-              <span class="cdot cdot-r"></span>
-              <span class="cdot cdot-y"></span>
-              <span class="cdot cdot-g"></span>
-            </div>
+      <!-- Chrome mockup wrapper — overflow:visible lets popup spill below -->
+      <div class="chrome-mockup">
+
+        <!-- Title bar -->
+        <div class="cm-titlebar">
+          <div class="cm-dots"><span class="cm-dot cm-dot-r"></span><span class="cm-dot cm-dot-y"></span><span class="cm-dot cm-dot-g"></span></div>
+          <div class="cm-tab-strip">
+            <div class="cm-tab cm-tab-inactive"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg><span>New Tab</span></div>
+            <div class="cm-tab cm-tab-active"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="12" height="12" alt="" style="border-radius:2px;flex-shrink:0;"><span>Sundar Pichai - LinkedIn</span><svg class="cm-tab-close" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
+            <div class="cm-tab-add"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
           </div>
-          <div class="mockup">
-            <div class="mockup-inner">
-              <img src="media/main-screen.jpg" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
+        </div>
+
+        <!-- Toolbar -->
+        <div class="cm-toolbar">
+          <div class="cm-nav-btns">
+            <button class="cm-nav-btn" aria-label="Back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <button class="cm-nav-btn cm-nav-btn-disabled" aria-label="Forward"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+            <button class="cm-nav-btn" aria-label="Reload"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+          </div>
+          <div class="cm-address-bar">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span class="cm-url"><span class="cm-url-domain">linkedin.com</span>/in/sundar-pichai/</span>
+          </div>
+          <div class="cm-toolbar-right">
+            <button class="cm-ext-btn" aria-label="LinkedIn to Sheets"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="16" height="16" alt="LinkedIn to Sheets"></button>
+            <svg class="cm-toolbar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <svg class="cm-toolbar-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
+          </div>
+        </div>
+
+        <!-- Browser content — clipped within the browser frame -->
+        <div class="cm-content">
+          <div class="li-page">
+            <div class="li-nav">
+              <svg class="li-logo" width="28" height="28" viewBox="0 0 34 34" fill="#0A66C2"><path d="M34 2.5v29A2.5 2.5 0 0 1 31.5 34h-29A2.5 2.5 0 0 1 0 31.5v-29A2.5 2.5 0 0 1 2.5 0h29A2.5 2.5 0 0 1 34 2.5zM10 13H5v16h5V13zm.45-4.5a2.75 2.75 0 1 0-5.5 0 2.75 2.75 0 0 0 5.5 0zM29 19.28c0-4.81-3.06-6.68-6.1-6.68a5.7 5.7 0 0 0-5 2.62V13h-5v16h5v-8.52a3.33 3.33 0 0 1 3-3.58c1.58 0 2.76 1 2.76 3.52V29H29z"></path></svg>
+              <div class="li-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Search</span></div>
+              <div class="li-nav-links">
+                <div class="li-nav-item li-nav-active"><svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2" stroke="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg><span>Home</span></div>
+                <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span>Network</span></div>
+                <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>Jobs</span></div>
+              </div>
+            </div>
+            <div class="li-profile">
+              <div class="li-cover">
+                <div class="li-cover-bg"></div>
+                <div class="li-avatar-wrap"><img class="li-avatar-img" src="https://media.licdn.com/dms/image/v2/D5603AQHC8_1s7IHNHg/profile-displayphoto-crop_800_800/B56Z36YnjDIkAI-/0/1778022254573?e=1779926400&amp;v=beta&amp;t=Q37a6UH9ELT7YB-8PyuS45MQTuTAZ8xhz2ug-8hYrtc" alt="Sundar Pichai"></div>
+              </div>
+              <div class="li-profile-body">
+                <div class="li-profile-info">
+                  <div class="li-name-row"><h2 class="li-name">Sundar Pichai</h2><svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                  <p class="li-headline">CEO at Google &amp; Alphabet</p>
+                  <p class="li-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>San Francisco Bay Area <span class="li-dot">·</span> <span class="li-contact">Contact info</span></p>
+                  <p class="li-followers">25,836,402 followers · 500+ connections</p>
+                  <div class="li-actions">
+                    <button class="li-btn-primary">Follow</button>
+                    <button class="li-btn-secondary">Message</button>
+                    <button class="li-btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></button>
+                  </div>
+                </div>
+                <div class="li-about-snippet"><p>Chief Executive Officer of Google LLC and Alphabet Inc. Passionate about technology and its power to transform people's lives.</p></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        <!-- /cm-content -->
+
+        <!-- Popup anchor lives OUTSIDE cm-content, inside chrome-mockup
+             This is what allows it to overflow below the browser frame -->
+        <div class="cm-popup-anchor">
+          <div class="cm-popup-arrow"></div>
+          <div class="cm-popup">
+            <img src="media/main-screen.jpg" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+      </div><!-- /chrome-mockup -->
     </div>
   </div>
 </section>
-<!-- [/SECTION: Demo] -->
 
-<!-- [SECTION: Beta CTA] Centered conversion card with decorative orbs, a "limited spots" pill badge, headline, body copy, and email + privacy policy buttons -->
 <section id="beta" class="section">
   <div class="beta-wrap">
     <div class="reveal beta-card glass-strong">
-      <div class="beta-card-bg">
-        <div class="beta-orb-1"></div>
-        <div class="beta-orb-2"></div>
-      </div>
-      <div class="beta-pill-2">
-        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path></svg>
-        Limited beta spots
-      </div>
+      <div class="beta-card-bg"><div class="beta-orb-1"></div><div class="beta-orb-2"></div></div>
+      <div class="beta-pill-2"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path></svg>Limited beta spots</div>
       <h2>Stop copy-pasting LinkedIn profiles today</h2>
       <p class="lead">Save hours every week with one click</p>
       <div class="cta-row">
-        <a class="btn-primary lg" href="mailto:qnnmgqye2@mozmail.com">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
-          Get early access
-        </a>
+        <a class="btn-primary lg" href="mailto:qnnmgqye2@mozmail.com"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>Get early access</a>
         <a class="btn-glass" href="privacy.html">Privacy Policy</a>
       </div>
     </div>
   </div>
 </section>
-<!-- [/SECTION: Beta CTA] -->
-
-<!-- [SECTION: Footer] Minimal bar with brand logo, author credit, and GitHub repository link -->
 <footer class="footer">
   <div class="footer-inner">
-    <div class="footer-brand">
-      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async">
-      <span>LinkedIn to Sheets</span>
-    </div>
+    <div class="footer-brand"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async"><span>LinkedIn to Sheets</span></div>
     <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
-    <a class="gh" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-      GitHub
-    </a>
+    <a class="gh" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>GitHub</a>
   </div>
 </footer>
-<!-- [/SECTION: Footer] -->
-
-<!-- [SCRIPT: Scroll reveal] IntersectionObserver that adds .is-visible to every .reveal element once it enters the viewport by at least 12%, triggering the CSS fade-in. Falls back to instant visibility if the API is unavailable -->
-<script>
-  (function () {
-    var els = document.querySelectorAll('.reveal');
-    if (!els.length) return;
-    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) { entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    els.forEach(function (el) { io.observe(el); });
-  })();
-</script>
-<!-- [/SCRIPT: Scroll reveal] -->
-
-<!-- [SCRIPT: Prefetch and page transition] Prefetches the three site pages on load for near-instant navigation. On internal link click, adds .page-exit to body to trigger a subtle opacity fade before the browser navigates away -->
-<script>
-  (function(){
-    var docLinks=['index.html','privacy.html','changelog.html'];
-    docLinks.forEach(function(h){ if(location.pathname.indexOf(h)===-1){ var l=document.createElement('link'); l.rel='prefetch'; l.href=h; document.head.appendChild(l);} });
-    document.addEventListener('click', function(e){
-      var a=e.target.closest('a[href]');
-      if(!a) return;
-      var href=a.getAttribute('href');
-      if(!href || href.startsWith('#') || a.target==='_blank' || a.hasAttribute('download')) return;
-      var u=new URL(a.href, location.href);
-      if(u.origin!==location.origin) return;
-      if(!/\\/(index|privacy|changelog)\\.html$/.test(u.pathname) && !/\\/LinkedIn_to_Sheets\\/$/.test(u.pathname)) return;
-      document.body.classList.add('page-exit');
-    },{passive:true});
-  })();
-</script>
-<!-- [/SCRIPT: Prefetch and page transition] -->
-
-<!-- [SCRIPT: Hero video autoplay on visibility] IntersectionObserver that plays the hero video only when at least 70% of it is visible in the viewport, and pauses it when it scrolls out. The play() Promise is tracked to avoid browser errors if pause is called while play is still resolving -->
-<script>
-  (function () {
-    var video = document.getElementById('hero-video');
-    if (!video) return;
-
-    if (!('IntersectionObserver' in window)) {
-      video.play().catch(function () {});
-      return;
-    }
-
-    var playPromise = null;
-    var playTimeout = null;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-
-        if (entry.isIntersecting) {
-
-          if (!playTimeout && video.paused && !playPromise) {
-            playTimeout = setTimeout(function () {
-
-              playPromise = video.play();
-
-              if (playPromise !== undefined) {
-                playPromise
-                .then(function () {
-                  playTimeout = null;
-                })
-                .catch(function () {
-                  playTimeout = null;
-                });
-              }
-
-            }, 1500);
-          }
-
-        } else {
-
-          if (playTimeout) {
-            clearTimeout(playTimeout);
-            playTimeout = null;
-          }
-
-          if (playPromise !== undefined) {
-            playPromise
-            .then(function () {
-              video.pause();
-              playPromise = null;
-            })
-            .catch(function () {
-              playPromise = null;
-            });
-          } else if (!video.paused) {
-            video.pause();
-          }
-
-        }
-
-      });
-    }, {
-      threshold: 0.7
-    });
-
-    observer.observe(video);
-  })();
-</script>
-<!-- [/SCRIPT: Hero video autoplay on visibility] -->"
+<script>(function(){var els=document.querySelectorAll('.reveal');if(!els.length)return;if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('is-visible');});return;}var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});els.forEach(function(el){io.observe(el);});})();</script>
+<script>(function(){var docLinks=['index.html','privacy.html','changelog.html'];docLinks.forEach(function(h){if(location.pathname.indexOf(h)===-1){var l=document.createElement('link');l.rel='prefetch';l.href=h;document.head.appendChild(l);}});document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var href=a.getAttribute('href');if(!href||href.startsWith('#')||a.target==='_blank'||a.hasAttribute('download'))return;var u=new URL(a.href,location.href);if(u.origin!==location.origin)return;if(!/\\/(index|privacy|changelog)\\.html$/.test(u.pathname)&&!/\\/LinkedIn_to_Sheets\\/$/.test(u.pathname))return;document.body.classList.add('page-exit');},{passive:true});})();</script>
+<script>(function(){var video=document.getElementById('hero-video');if(!video)return;if(!('IntersectionObserver'in window)){video.play().catch(function(){});return;}var playPromise=null,playTimeout=null;var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){if(!playTimeout&&video.paused&&!playPromise){playTimeout=setTimeout(function(){playPromise=video.play();if(playPromise!==undefined){playPromise.then(function(){playTimeout=null;}).catch(function(){playTimeout=null;});}},1500);}}else{if(playTimeout){clearTimeout(playTimeout);playTimeout=null;}if(playPromise!==undefined){playPromise.then(function(){video.pause();playPromise=null;}).catch(function(){playPromise=null;});}else if(!video.paused){video.pause();}}});},{threshold:0.7});observer.observe(video);})();</script>"
 `;
 
 exports[`Docs HTML snapshots > privacy.html snapshot 1`] = `
