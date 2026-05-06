@@ -299,6 +299,17 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
 .hero-visual * { box-shadow: none !important; transform: none !important; transition: none !important; }
 /* [/CSS: Video / mockup frame] */
 
+/* [CSS: Hero video corner fix] clip-path cannot be suppressed by the .hero * override,
+   so it's the only reliable way to clip the video corners inside the hero section */
+.hero .mockup-wrap {
+  clip-path: inset(0 round 22px);
+}
+.hero .mockup-hero {
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+/* [/CSS: Hero video corner fix] */
+
 /* [CSS: Section headings] Shared styles for eyebrow labels, h2 headlines, centered section heads, and muted subtitles */
 .eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
 h2 { margin-top: .75rem; font-size: 1.875rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; text-wrap: balance; }
@@ -381,10 +392,6 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
 .demo-list svg { color: var(--primary); margin-top: .125rem; flex-shrink: 0; }
 .demo-visual { position: relative; overflow: visible; }
 .demo-visual::before { display: none; }
-.demo-visual .mockup {
-  max-width: 420px;
-  margin: 0 auto;
-}
 /* [/CSS: Demo section] */
 
 /* [CSS: Chrome popup frame] Simulated browser chrome bar wrapping the demo popup screenshot */
@@ -392,10 +399,16 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
   max-width: 380px;
   margin: 0 auto;
   position: relative;
+  /* Kill the generic mockup-wrap lift/glow — demo-popup-card owns hover */
+  transform: none !important;
+  box-shadow: none !important;
+  transition: none !important;
 }
+.demo-visual .mockup-wrap::after { display: none !important; }
 .demo-visual .mockup {
   border-radius: 0 0 18px 18px;
   border-top: none;
+  max-width: none;
 }
 .chrome-bar {
   background: color-mix(in oklab, var(--card) 85%, var(--background));
@@ -441,6 +454,41 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
   .cdot-r { background: #FF453A; }
   .cdot-y { background: #FFD60A; }
   .cdot-g { background: #32D74B; }
+}
+/* The visible "card" is a wrapper one level deeper */
+.demo-popup-card {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 4px 16px -8px rgba(0,0,0,0.10);
+  transition:
+    box-shadow .35s cubic-bezier(.2,.7,.2,1),
+    transform   .35s cubic-bezier(.2,.7,.2,1);
+}
+.demo-popup-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.06),
+    0 16px 40px -12px rgba(0,0,0,0.22),
+    0 0 0 2px color-mix(in oklab, var(--primary) 35%, transparent),
+    0 0 32px -4px color-mix(in oklab, var(--primary) 30%, transparent),
+    0 0 56px -8px color-mix(in oklab, var(--linkedin) 20%, transparent);
+}
+
+/* chrome-bar and mockup inside the card */
+.demo-popup-card .chrome-bar {
+  border-radius: 18px 18px 0 0;
+}
+.demo-popup-card .mockup {
+  border-radius: 0 0 18px 18px;
+  border-top: none;
+}
+.demo-popup-card .mockup-inner img {
+  width: 100%;
+  height: auto;
+  object-fit: initial;
+  display: block;
 }
 /* [/CSS: Chrome popup frame] */
 
@@ -876,21 +924,27 @@ body.page-exit { opacity: .985; }
     <div class="demo-visual reveal">
       <div class="frame" style="display:flex; justify-content:center; align-items:center; background: transparent;">
         <div class="mockup-wrap">
-          <div class="chrome-bar">
-            <div class="chrome-dots">
-              <span class="cdot cdot-r"></span>
-              <span class="cdot cdot-y"></span>
-              <span class="cdot cdot-g"></span>
+          <div class="demo-popup-card">
+            <div class="chrome-bar">
+              <div class="chrome-dots">
+                <span class="cdot cdot-r"></span>
+                <span class="cdot cdot-y"></span>
+                <span class="cdot cdot-g"></span>
+              </div>
+              <div class="chrome-tab-pill">
+                <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="12" height="12" alt="" />
+                <span>LinkedIn to Sheets</span>
+              </div>
             </div>
-          </div>
-          <div class="mockup">
-            <div class="mockup-inner">
-              <img
-              src="media/main-screen.jpg"
-              alt="LinkedIn to Sheets extension popup interface"
-              loading="lazy"
-              decoding="async"
-              />
+            <div class="mockup">
+              <div class="mockup-inner">
+                <img
+                src="media/main-screen.jpg"
+                alt="LinkedIn to Sheets extension popup interface"
+                loading="lazy"
+                decoding="async"
+                />
+              </div>
             </div>
           </div>
         </div>
