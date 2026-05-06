@@ -262,7 +262,18 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
     <div class="hero-visual reveal">
       <div class="mockup-wrap glass lift">
-        <div class="mockup">
+        <div class="chrome-bar chrome-bar-hero">
+          <div class="chrome-dots">
+            <span class="cdot cdot-r"></span>
+            <span class="cdot cdot-y"></span>
+            <span class="cdot cdot-g"></span>
+          </div>
+          <div class="chrome-tab-pill">
+            <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="12" height="12" alt="">
+            <span>LinkedIn to Sheets</span>
+          </div>
+        </div>
+        <div class="mockup mockup-hero">
           <div class="mockup-inner">
             <video id="hero-video" muted="" loop="" playsinline="" preload="metadata" poster="media/preview.png">
             <source src="media/demo.mp4" type="video/mp4">
@@ -419,6 +430,13 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     <div class="demo-visual reveal">
       <div class="frame" style="display:flex; justify-content:center; align-items:center; background: transparent;">
         <div class="mockup-wrap">
+          <div class="chrome-bar">
+            <div class="chrome-dots">
+              <span class="cdot cdot-r"></span>
+              <span class="cdot cdot-y"></span>
+              <span class="cdot cdot-g"></span>
+            </div>
+          </div>
           <div class="mockup">
             <div class="mockup-inner">
               <img src="media/main-screen.jpg" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">

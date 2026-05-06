@@ -264,16 +264,6 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
 .mockup-wrap:hover::after {
   opacity: 1;
 }
-  
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--primary) 40%, transparent),
-    color-mix(in oklab, var(--linkedin) 35%, transparent)
-  );
-  box-shadow:
-  0 10px 30px -15px color-mix(in oklab, var(--primary) 40%, transparent),
-  0 20px 50px -25px color-mix(in oklab, var(--linkedin) 40%, transparent);
-}
 .mockup {
   position: relative;
   border-radius: 22px;
@@ -290,8 +280,8 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
 .mockup img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: initial;
   border-radius: 0;
   box-shadow: none;
 }
@@ -396,6 +386,63 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
   margin: 0 auto;
 }
 /* [/CSS: Demo section] */
+
+/* [CSS: Chrome popup frame] Simulated browser chrome bar wrapping the demo popup screenshot */
+.demo-visual .mockup-wrap {
+  max-width: 380px;
+  margin: 0 auto;
+  position: relative;
+}
+.demo-visual .mockup {
+  border-radius: 0 0 18px 18px;
+  border-top: none;
+}
+.chrome-bar {
+  background: color-mix(in oklab, var(--card) 85%, var(--background));
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 18px 18px 0 0;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Hero video: the mockup-wrap already has glass + border-radius, so the chrome bar
+   needs to sit flush on top — override the wrap's own border-radius on the top edge */
+.chrome-bar-hero {
+  border-radius: 22px 22px 0 0;
+  background: color-mix(in oklab, var(--glass-strong-bg) 90%, transparent);
+  backdrop-filter: saturate(160%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
+}
+.mockup-hero {
+  border-radius: 0 0 22px 22px !important;
+  border-top: none !important;
+}
+.chrome-dots { display: flex; gap: 5px; align-items: center; }
+.cdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.cdot-r { background: #FF5F57; }
+.cdot-y { background: #FFBD2E; }
+.cdot-g { background: #28C840; }
+.chrome-tab-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 3px 9px;
+  font-size: 11px;
+  color: var(--muted-fg);
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.chrome-tab-pill img { border-radius: 2px; display: inline-block; }
+@media (prefers-color-scheme: dark) {
+  .cdot-r { background: #FF453A; }
+  .cdot-y { background: #FFD60A; }
+  .cdot-g { background: #32D74B; }
+}
+/* [/CSS: Chrome popup frame] */
 
 /* [CSS: Beta CTA section] Centered call-to-action card with glass-strong surface, decorative orbs, a pill badge, headline, and action buttons */
 .beta-wrap { max-width: 56rem; margin: 0 auto; padding: 0 1.5rem; }
@@ -655,7 +702,18 @@ body.page-exit { opacity: .985; }
     </div>
     <div class="hero-visual reveal">
       <div class="mockup-wrap glass lift">
-        <div class="mockup">
+        <div class="chrome-bar chrome-bar-hero">
+          <div class="chrome-dots">
+            <span class="cdot cdot-r"></span>
+            <span class="cdot cdot-y"></span>
+            <span class="cdot cdot-g"></span>
+          </div>
+          <div class="chrome-tab-pill">
+            <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="12" height="12" alt="" />
+            <span>LinkedIn to Sheets</span>
+          </div>
+        </div>
+        <div class="mockup mockup-hero">
           <div class="mockup-inner">
             <video
             id="hero-video"
@@ -818,6 +876,13 @@ body.page-exit { opacity: .985; }
     <div class="demo-visual reveal">
       <div class="frame" style="display:flex; justify-content:center; align-items:center; background: transparent;">
         <div class="mockup-wrap">
+          <div class="chrome-bar">
+            <div class="chrome-dots">
+              <span class="cdot cdot-r"></span>
+              <span class="cdot cdot-y"></span>
+              <span class="cdot cdot-g"></span>
+            </div>
+          </div>
           <div class="mockup">
             <div class="mockup-inner">
               <img
