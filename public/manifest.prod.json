@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "LinkedIn to Sheets",
   "version": "0.1.10",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6PS5570eNKltXxMcucrCEEe+e2q/MiVqPwAn+H6MuMP39nlasPkxixiLq8SwetyXm1BOloLlejk1wiiu3y8/dAMcZmOPkEG6TjSKlQPhajl94espAISaarJpV8Z9WFGvgs/5jM7yxIhkr2t48paJtlsDomIFLgjV1FcVSvMvsd/k88kq4mwsEHt4KPFDlSsnBuu9MLHxhLVxYBHWf1Z07+DLpVvWuAigkJwn9hlV4kEXAK/cObepRMPHOUHjmqMDYNyq5ceGv1lA60eT1DfejK+oLJcxl6Niz1eVBOeqJj5GYBN5Q34tFMn4nTZTYHJHIf9uMAhxsozDQ4hyfcF27QIDAQAB",
   "description": "Paste LinkedIn profile data from LinkedIn into Google Sheets.",
   "action": {
     "default_title": "LinkedIn to Sheets",
@@ -40,7 +41,7 @@
     "128": "icon128.png"
   },
   "oauth2": {
-    "client_id": "747154493699-p58qvb1gm27npgclnkci4bc0cu0isv7v.apps.googleusercontent.com",
+    "client_id": "747154493699-c3sgoaee90qjnvrvbcohmud3p408ganp.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/spreadsheets",
       "https://www.googleapis.com/auth/drive.metadata.readonly"
