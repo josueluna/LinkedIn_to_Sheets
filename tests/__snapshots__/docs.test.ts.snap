@@ -203,7 +203,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
           <a href="#product">Product</a>
           <a href="#beta">Get access</a>
         </nav>
-        <a class="btn-primary" href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>Get early access</a>
+        <a class="btn-primary" href="https://chrome.google.com/webstore" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>Get early access</a>
       </div>
     </header>
     <section id="top" class="hero">
@@ -212,18 +212,20 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
         <div class="hero-text reveal">
           <div class="beta-pill glass"><span class="dot-wrap"><span class="dot-ping"></span><span class="dot"></span></span>Now in private beta</div>
           <h1>
-            Save LinkedIn profiles to <span class="gradient-text">Google Sheets</span> in seconds.
-          </h1>
+  Save LinkedIn profiles to <span class="gradient-text">Google Sheets</span> in one click.
+</h1>
 
           <p class="subheadline">
-            No more copy-paste. Save profiles in one click.
-          </p>
+  No more copy-paste. Capture candidates instantly while you browse.
+</p>
 
           <p class="lead">
             Built for recruiters and teams who source on LinkedIn daily.
           </p>
           <div class="cta-row">
-            <a class="btn-primary lg" href="#beta"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Get early access</a>
+            <p class="fineprint" style="margin-top:0.25rem;">
+Used by recruiters sourcing 100+ profiles per week
+</p><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Get early access
             <a class="btn-glass" href="#how">How it works</a>
           </div>
           <p class="fineprint">No data stored · Works with any Google account · No setup required</p>
@@ -403,7 +405,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
                 <h2>Stop copy-pasting LinkedIn profiles today</h2>
                 <p class="lead">Save hours every week with one click</p>
                 <div class="cta-row">
-                  <a class="btn-primary lg" href="mailto:qnnmgqye2@mozmail.com"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>Get early access</a>
+                  <a class="btn-primary lg" href="https://chrome.google.com/webstore" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>Get early access</a>
                   <a class="btn-glass" href="privacy.html">Privacy Policy</a>
                 </div>
               </div>
