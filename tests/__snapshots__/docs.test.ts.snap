@@ -289,13 +289,13 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
     <div class="demo-visual reveal">
       <!-- Chrome mockup wrapper — overflow:visible lets popup spill below -->
+      <div class="chrome-mockup-wrapper">
       <div class="chrome-mockup">
 
         <!-- Title bar -->
         <div class="cm-titlebar">
           <div class="cm-dots"><span class="cm-dot cm-dot-r"></span><span class="cm-dot cm-dot-y"></span><span class="cm-dot cm-dot-g"></span></div>
           <div class="cm-tab-strip">
-            <div class="cm-tab cm-tab-inactive"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg><span>New Tab</span></div>
             <div class="cm-tab cm-tab-active"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="12" height="12" alt="" style="border-radius:2px;flex-shrink:0;"><span>Sundar Pichai - LinkedIn</span><svg class="cm-tab-close" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
             <div class="cm-tab-add"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
           </div>
@@ -365,6 +365,7 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
         </div>
 
       </div><!-- /chrome-mockup -->
+      </div><!-- /chrome-mockup-wrapper --> 
     </div>
   </div>
 </section>
