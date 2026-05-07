@@ -414,10 +414,14 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
     0 2px 8px rgba(0,0,0,0.08),
     0 16px 48px -8px rgba(0,0,0,0.22);
 }
-.cm-popup img { width: 90%; display: block; height: auto; object-fit: initial; }
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .cm-popup-anchor {
     display: none;
+  }
+  .chrome-mockup {
+    transform: scale(0.75);
+    transform-origin: top center;
+    margin-bottom: -25%;
   }
 }
 </style>
