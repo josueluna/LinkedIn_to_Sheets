@@ -195,7 +195,8 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
 "<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
 <header class="nav glass">
   <div class="nav-inner">
-    <a class="brand" href="index.html"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async"><span>LinkedIn to Sheets</span></a>
+    <a class="brand" href="index.html"><img src="
+https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async"><span>LinkedIn to Sheets</span></a>
     <nav class="nav-links">
       <a href="index.html#how">See How It Works</a><a href="index.html#features">Features</a><a href="index.html#demo">Demo</a><a href="changelog.html">Changelog</a><a href="privacy.html">Privacy</a>
     </nav>
@@ -272,7 +273,6 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
     </div>
   </div>
 </section>
-
 <!-- DEMO SECTION -->
 <section id="demo" class="section">
   <div class="container demo-grid">
@@ -291,7 +291,6 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       <!-- Chrome mockup wrapper — overflow:visible lets popup spill below -->
       <div class="chrome-mockup-wrapper">
       <div class="chrome-mockup">
-
         <!-- Title bar -->
         <div class="cm-titlebar">
           <div class="cm-dots"><span class="cm-dot cm-dot-r"></span><span class="cm-dot cm-dot-y"></span><span class="cm-dot cm-dot-g"></span></div>
@@ -300,7 +299,6 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
             <div class="cm-tab-add"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
           </div>
         </div>
-
         <!-- Toolbar -->
         <div class="cm-toolbar">
           <div class="cm-nav-btns">
@@ -318,7 +316,6 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
             <svg class="cm-toolbar-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
           </div>
         </div>
-
         <!-- Browser content — clipped within the browser frame -->
         <div class="cm-content">
           <div class="li-page">
@@ -326,7 +323,8 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
               <svg class="li-logo" width="28" height="28" viewBox="0 0 34 34" fill="#0A66C2"><path d="M34 2.5v29A2.5 2.5 0 0 1 31.5 34h-29A2.5 2.5 0 0 1 0 31.5v-29A2.5 2.5 0 0 1 2.5 0h29A2.5 2.5 0 0 1 34 2.5zM10 13H5v16h5V13zm.45-4.5a2.75 2.75 0 1 0-5.5 0 2.75 2.75 0 0 0 5.5 0zM29 19.28c0-4.81-3.06-6.68-6.1-6.68a5.7 5.7 0 0 0-5 2.62V13h-5v16h5v-8.52a3.33 3.33 0 0 1 3-3.58c1.58 0 2.76 1 2.76 3.52V29H29z"></path></svg>
               <div class="li-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Search</span></div>
               <div class="li-nav-links">
-                <div class="li-nav-item li-nav-active"><svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2" stroke="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg><span>Home</span></div>
+                <div class="li-nav-item li-nav-active"><svg width="16" height="16" viewBox="0 0 24 24" fill="
+#0A66C2" stroke="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg><span>Home</span></div>
                 <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span>Network</span></div>
                 <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>Jobs</span></div>
               </div>
@@ -334,7 +332,8 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
             <div class="li-profile">
               <div class="li-cover">
                 <div class="li-cover-bg"></div>
-                <div class="li-avatar-wrap"><img class="li-avatar-img" src="https://media.licdn.com/dms/image/v2/D5603AQHC8_1s7IHNHg/profile-displayphoto-crop_800_800/B56Z36YnjDIkAI-/0/1778022254573?e=1779926400&amp;v=beta&amp;t=Q37a6UH9ELT7YB-8PyuS45MQTuTAZ8xhz2ug-8hYrtc" alt="Sundar Pichai"></div>
+                <div class="li-avatar-wrap"><img class="li-avatar-img" src="
+https://media.licdn.com/dms/image/v2/D5603AQHC8_1s7IHNHg/profile-displayphoto-crop_800_800/B56Z36YnjDIkAI-/0/1778022254573?e=1779926400&amp;v=beta&amp;t=Q37a6UH9ELT7YB-8PyuS45MQTuTAZ8xhz2ug-8hYrtc" alt="Sundar Pichai"></div>
               </div>
               <div class="li-profile-body">
                 <div class="li-profile-info">
@@ -354,22 +353,18 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
           </div>
         </div>
         <!-- /cm-content -->
-
         <!-- Popup anchor lives OUTSIDE cm-content, inside chrome-mockup
              This is what allows it to overflow below the browser frame -->
         <div class="cm-popup-anchor">
-          <div class="cm-popup-arrow"></div>
           <div class="cm-popup">
             <img src="media/main-screen.jpg" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async">
           </div>
         </div>
-
       </div><!-- /chrome-mockup -->
       </div><!-- /chrome-mockup-wrapper --> 
     </div>
   </div>
 </section>
-
 <section id="beta" class="section">
   <div class="beta-wrap">
     <div class="reveal beta-card glass-strong">
@@ -386,7 +381,8 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
 </section>
 <footer class="footer">
   <div class="footer-inner">
-    <div class="footer-brand"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async"><span>LinkedIn to Sheets</span></div>
+    <div class="footer-brand"><img src="
+https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async"><span>LinkedIn to Sheets</span></div>
     <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
     <a class="gh" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>GitHub</a>
   </div>
