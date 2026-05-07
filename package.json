@@ -4,9 +4,8 @@
   "version": "0.1.10",
   "type": "module",
   "scripts": {
-    "dev": "cp public/manifest.dev.json public/manifest.json && vite build",
-    "build": "cp public/manifest.prod.json public/manifest.json && vite build",
-    "build:dev": "cp public/manifest.dev.json public/manifest.json && vite build --mode development",
+    "dev": "vite",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test:e2e": "playwright test",
