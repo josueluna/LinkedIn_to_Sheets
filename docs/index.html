@@ -1,317 +1,343 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"LinkedIn to Sheets","applicationCategory":"BusinessApplication","operatingSystem":"Chrome","description":"Chrome extension to save LinkedIn profiles into Google Sheets","offers":{"@type":"Offer","price":"0"}}</script>
-<meta name="keywords" content="linkedin to google sheets, linkedin scraper chrome extension, linkedin sourcing tool, recruiter tools, sourcing automation, linkedin data to sheets">
-<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LinkedIn to Sheets - Chrome Extension for Recruiters | Save LinkedIn Profiles to Google Sheets</title>
-<meta name="description" content="Save LinkedIn profiles to Google Sheets in one click. Chrome extension built for recruiters to eliminate copy-paste and speed up sourcing." />
-<meta property="og:title" content="LinkedIn to Sheets" /><meta property="og:description" content="Effortlessly capture valuable candidate data for recruiters." />
-<meta property="og:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-<meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
-<link rel="dns-prefetch" href="https://rsms.me" /><link rel="preconnect" href="https://rsms.me/" crossorigin />
-<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-<style>
-:root {
-  --radius: 0.875rem;
-  --background: oklch(0.995 0.002 255);
-  --foreground: oklch(0.18 0.025 265);
-  --card: oklch(1 0 0);
-  --muted-fg: oklch(0.50 0.02 260);
-  --primary: oklch(0.66 0.19 145);
-  --primary-fg: oklch(0.99 0.005 145);
-  --primary-glow: oklch(0.74 0.19 145);
-  --linkedin: oklch(0.50 0.15 245);
-  --destructive: oklch(0.62 0.22 27);
-  --border: oklch(0.92 0.008 255);
-  --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
-  --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
-  --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
-  --shadow-card-hover: 0 1px 2px oklch(0.30 0.05 265 / 0.05), 0 20px 40px -20px oklch(0.30 0.05 265 / 0.18);
-  --glass-bg: color-mix(in oklab, white 65%, transparent);
-  --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
-  --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
---popup-right: clamp(40px, 12vw, 180px);
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"LinkedIn to Sheets","applicationCategory":"BusinessApplication","operatingSystem":"Chrome","description":"Chrome extension to save LinkedIn profiles into Google Sheets","offers":{"@type":"Offer","price":"0"}}</script>
+  <meta name="keywords" content="linkedin to google sheets, linkedin scraper chrome extension, linkedin sourcing tool, recruiter tools, sourcing automation, linkedin data to sheets">
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Save LinkedIn Profiles to Google Sheets | Chrome Extension for Recruiters</title>
+  <meta name="description" content="Save LinkedIn profiles to Google Sheets in one click. Built for recruiters who want to eliminate copy-paste and speed up sourcing workflows." />
+  <meta property="og:title" content="LinkedIn to Sheets" /><meta property="og:description" content="Effortlessly capture valuable candidate data for recruiters." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" />
+  <link rel="dns-prefetch" href="https://rsms.me" /><link rel="preconnect" href="https://rsms.me/" crossorigin />
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  <style>
+    :root {
+      --radius: 0.875rem;
+      --background: oklch(0.995 0.002 255);
+      --foreground: oklch(0.18 0.025 265);
+      --card: oklch(1 0 0);
+      --muted-fg: oklch(0.50 0.02 260);
+      --primary: oklch(0.66 0.19 145);
+      --primary-fg: oklch(0.99 0.005 145);
+      --primary-glow: oklch(0.74 0.19 145);
+      --linkedin: oklch(0.50 0.15 245);
+      --destructive: oklch(0.62 0.22 27);
+      --border: oklch(0.92 0.008 255);
+      --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
+      --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
+      --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
+      --shadow-card-hover: 0 1px 2px oklch(0.30 0.05 265 / 0.05), 0 20px 40px -20px oklch(0.30 0.05 265 / 0.18);
+      --glass-bg: color-mix(in oklab, white 65%, transparent);
+      --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
+      --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+      --popup-right: clamp(40px, 12vw, 180px);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: oklch(0.16 0.025 265); --foreground: oklch(0.96 0.005 255);
+        --card: oklch(0.21 0.028 265); --muted-fg: oklch(0.72 0.02 260);
+        --primary: oklch(0.74 0.19 145); --primary-fg: oklch(0.16 0.025 265);
+        --primary-glow: oklch(0.82 0.18 145); --linkedin: oklch(0.70 0.15 245);
+        --destructive: oklch(0.70 0.20 27); --border: oklch(1 0 0 / 0.10);
+        --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
+        --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
+        --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
+        --shadow-card-hover: 0 1px 2px oklch(0 0 0 / 0.35), 0 20px 40px -20px oklch(0 0 0 / 0.55);
+        --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
+        --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
+        --glass-border: color-mix(in oklab, white 10%, transparent);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+    html { scroll-behavior: smooth; scroll-padding-top: 5rem; overflow-y: scroll; }
+    html, body { background: var(--background); color: var(--foreground); }
+    body { font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh; opacity: 1; transition: opacity .14s ease-out; }
+    body.page-exit { opacity: .985; }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button, a { cursor: pointer; }
+    .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+    .section { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 5rem 0; }
+    @media (min-width: 768px) { .section { padding: 7rem 0; } }
+    .glass { background: var(--glass-bg); backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); border: 1px solid var(--glass-border); }
+    .glass-strong { background: var(--glass-strong-bg); backdrop-filter: saturate(160%) blur(20px); -webkit-backdrop-filter: saturate(160%) blur(20px); border: 1px solid var(--glass-border); }
+    .glass,.glass-strong,.btn-glass,.content-card,.version-card,.cta-band { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease-out, transform .6s ease-out; }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .lift { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s cubic-bezier(.2,.7,.2,1), border-color .35s ease; }
+    .lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
+    .nav { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1.5rem; max-width: 72rem; margin: 0 auto; }
+    .brand { display: flex; align-items: center; gap: .625rem; font-weight: 600; letter-spacing: -0.01em; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+    .brand:hover { transform: translateY(-1px); }
+    .brand img { width: 2rem; height: 2rem; border-radius: .375rem; transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s; }
+    .brand:hover img { transform: rotate(-4deg) scale(1.06); box-shadow: 0 6px 18px -8px oklch(0.66 0.19 145 / 0.55); }
+    .nav-links { display: none; gap: 2rem; font-size: .875rem; color: var(--muted-fg); }
+    .nav-links a { transition: color .2s; position: relative; padding-bottom: 2px; }
+    .nav-links a:hover { color: var(--foreground); }
+    .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--linkedin), var(--primary)); transform: scaleX(0); transform-origin: right center; transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+    .nav-links a:hover::after { transform: scaleX(1); transform-origin: left center; }
+    @media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+
+      background: var(--linkedin);
+      color: white;
+      padding: .5rem 1rem;
+      border-radius: .5rem;
+      font-size: .875rem;
+      font-weight: 500;
+      line-height: 1;
+      box-shadow: 0 10px 30px -10px oklch(0.50 0.15 245 / 0.45);
+      border: none;
+      transition: transform .25s, filter .25s, box-shadow .25s;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .btn-primary .icon {
+      display: block;
+    }
+
+    .btn-primary::before { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, white 35%, transparent) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
+    .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 14px 36px -12px oklch(0.50 0.15 245 / 0.55); }
+    .btn-primary:hover::before { transform: translateX(120%); }
+    .btn-primary.lg {
+  padding: .9rem 1.5rem;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: oklch(0.16 0.025 265); --foreground: oklch(0.96 0.005 255);
-    --card: oklch(0.21 0.028 265); --muted-fg: oklch(0.72 0.02 260);
-    --primary: oklch(0.74 0.19 145); --primary-fg: oklch(0.16 0.025 265);
-    --primary-glow: oklch(0.82 0.18 145); --linkedin: oklch(0.70 0.15 245);
-    --destructive: oklch(0.70 0.20 27); --border: oklch(1 0 0 / 0.10);
-    --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
-    --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
-    --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
-    --shadow-card-hover: 0 1px 2px oklch(0 0 0 / 0.35), 0 20px 40px -20px oklch(0 0 0 / 0.55);
-    --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
-    --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
-    --glass-border: color-mix(in oklab, white 10%, transparent);
+
+@media (max-width: 640px) {
+  .btn-primary.lg {
+    width: 100%;
+    justify-content: center;
   }
 }
-* { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
-html { scroll-behavior: smooth; scroll-padding-top: 5rem; overflow-y: scroll; }
-html, body { background: var(--background); color: var(--foreground); }
-body { font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh; opacity: 1; transition: opacity .14s ease-out; }
-body.page-exit { opacity: .985; }
-img { display: block; max-width: 100%; height: auto; }
-a { color: inherit; text-decoration: none; }
-ul { list-style: none; }
-button, a { cursor: pointer; }
-.container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
-.section { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 5rem 0; }
-@media (min-width: 768px) { .section { padding: 7rem 0; } }
-.glass { background: var(--glass-bg); backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); border: 1px solid var(--glass-border); }
-.glass-strong { background: var(--glass-strong-bg); backdrop-filter: saturate(160%) blur(20px); -webkit-backdrop-filter: saturate(160%) blur(20px); border: 1px solid var(--glass-border); }
-.glass,.glass-strong,.btn-glass,.content-card,.version-card,.cta-band { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease-out, transform .6s ease-out; }
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
-.lift { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s cubic-bezier(.2,.7,.2,1), border-color .35s ease; }
-.lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
-.nav { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1.5rem; max-width: 72rem; margin: 0 auto; }
-.brand { display: flex; align-items: center; gap: .625rem; font-weight: 600; letter-spacing: -0.01em; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
-.brand:hover { transform: translateY(-1px); }
-.brand img { width: 2rem; height: 2rem; border-radius: .375rem; transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s; }
-.brand:hover img { transform: rotate(-4deg) scale(1.06); box-shadow: 0 6px 18px -8px oklch(0.66 0.19 145 / 0.55); }
-.nav-links { display: none; gap: 2rem; font-size: .875rem; color: var(--muted-fg); }
-.nav-links a { transition: color .2s; position: relative; padding-bottom: 2px; }
-.nav-links a:hover { color: var(--foreground); }
-.nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--linkedin), var(--primary)); transform: scaleX(0); transform-origin: right center; transition: transform .35s cubic-bezier(.2,.7,.2,1); }
-.nav-links a:hover::after { transform: scaleX(1); transform-origin: left center; }
-@media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
+    .btn-primary.lg:hover { transform: translateY(-2px); box-shadow: 0 18px 42px -14px oklch(0.50 0.15 245 / 0.6); }
+    .btn-glass { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.5rem; border-radius: .5rem; font-size: .875rem; font-weight: 500; color: var(--foreground); transition: transform .25s, box-shadow .35s, border-color .35s; background: var(--glass-bg); backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); border: 1px solid var(--glass-border); }
+    .btn-glass:hover { transform: translateY(-2px); border-color: color-mix(in oklab, var(--primary) 45%, transparent); box-shadow: 0 10px 30px -14px oklch(0.66 0.19 145 / 0.35); }
+    .icon { width: 1rem; height: 1rem; flex-shrink: 0; }
+    .icon-sm { width: .875rem; height: .875rem; }
+    .icon-lg { width: 1.25rem; height: 1.25rem; }
+    .hero { position: relative; overflow: hidden; }
+    .hero-text,
+    .hero-visual {transform: none !important;}
+    .hero-visual.reveal { opacity: 0 !important; transform: translateY(14px) !important; transition: opacity .6s ease-out, transform .6s ease-out !important; }
+    .hero-visual.reveal.is-visible { opacity: 1 !important; transform: translateY(0) !important; }
+    .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+    .orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
+    .orb-1 { top: -8rem; left: -6rem; width: 480px; height: 480px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
+    .orb-2 { top: -5rem; right: -10%; width: 520px; height: 520px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.20), transparent 70%); }
+    .hero-inner { padding: 5rem 1.5rem 4rem; max-width: 72rem; margin: 0 auto; }
+    @media (min-width: 768px) { .hero-inner { padding: 7rem 1.5rem 6rem; } }
+    .hero-text { max-width: 48rem; margin: 0 auto; text-align: center; }
+    @media (min-width: 1024px) { .hero-text { max-width: 64rem; } }
+    .beta-pill { display: inline-flex; align-items: center; gap: .5rem; padding: .25rem .75rem; border-radius: 9999px; font-size: .75rem; color: var(--muted-fg); margin-bottom: 1.5rem; }
+    .dot-wrap { position: relative; display: inline-flex; width: .375rem; height: .375rem; }
+    .dot-ping { position: absolute; inset: 0; border-radius: 9999px; background: var(--primary); opacity: .6; animation: ping 1.4s cubic-bezier(0,0,.2,1) infinite; }
+    .dot { position: relative; width: .375rem; height: .375rem; border-radius: 9999px; background: var(--primary); }
+    @keyframes ping { 75%,100% { transform: scale(2); opacity: 0; } }
+    h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; text-wrap: balance; }
+    @media (min-width: 768px) { h1 { font-size: 3.75rem; } }
+    .gradient-text { background: linear-gradient(90deg, var(--linkedin), var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { max-width: 36rem; margin: 1.5rem auto 0; font-size: 1rem; color: var(--muted-fg); text-wrap: balance; }
+    .workflow-line { display: inline-block; text-align: center; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; color: var(--foreground); padding: 0.35rem 0.6rem; border-radius: 0.5rem; background: color-mix(in oklab, var(--primary) 14%, transparent); white-space: nowrap; letter-spacing: -0.01em; opacity: 0.9; }
+    @media (max-width: 640px) { 
+      .workflow-line { white-space: normal; } 
 
-  background: var(--linkedin);
-  color: white;
-  padding: .5rem 1rem;
-  border-radius: .5rem;
-  font-size: .875rem;
-  font-weight: 500;
-  line-height: 1;
-  box-shadow: 0 10px 30px -10px oklch(0.50 0.15 245 / 0.45);
-  border: none;
-  transition: transform .25s, filter .25s, box-shadow .25s;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
+      .orb-1 { 
+        opacity: 0.35; 
+        filter: blur(48px); 
+        top: -8rem; 
+        left: -6rem; 
+      } 
 
-.btn-primary .icon {
-  display: block;
-}
+      .orb-2 { 
+        opacity: 0.30; 
+        filter: blur(48px); 
+        top: -6rem; 
+        right: -10%; 
+      }
 
-.btn-primary::before { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, white 35%, transparent) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
-.btn-primary:hover { filter: brightness(1.1); box-shadow: 0 14px 36px -12px oklch(0.50 0.15 245 / 0.55); }
-.btn-primary:hover::before { transform: translateX(120%); }
-.btn-primary.lg { padding: .75rem 1.5rem; }
-.btn-primary.lg:hover { transform: translateY(-2px); box-shadow: 0 18px 42px -14px oklch(0.50 0.15 245 / 0.6); }
-.btn-glass { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.5rem; border-radius: .5rem; font-size: .875rem; font-weight: 500; color: var(--foreground); transition: transform .25s, box-shadow .35s, border-color .35s; background: var(--glass-bg); backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); border: 1px solid var(--glass-border); }
-.btn-glass:hover { transform: translateY(-2px); border-color: color-mix(in oklab, var(--primary) 45%, transparent); box-shadow: 0 10px 30px -14px oklch(0.66 0.19 145 / 0.35); }
-.icon { width: 1rem; height: 1rem; flex-shrink: 0; }
-.icon-sm { width: .875rem; height: .875rem; }
-.icon-lg { width: 1.25rem; height: 1.25rem; }
-.hero { position: relative; overflow: hidden; }
-.hero * { transform: none !important; animation: none !important; transition: none !important; }
-.hero-visual.reveal { opacity: 0 !important; transform: translateY(14px) !important; transition: opacity .6s ease-out, transform .6s ease-out !important; }
-.hero-visual.reveal.is-visible { opacity: 1 !important; transform: translateY(0) !important; }
-.hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
-.orb-1 { top: -8rem; left: -6rem; width: 480px; height: 480px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
-.orb-2 { top: -5rem; right: -10%; width: 520px; height: 520px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.20), transparent 70%); }
-.hero-inner { padding: 5rem 1.5rem 4rem; max-width: 72rem; margin: 0 auto; }
-@media (min-width: 768px) { .hero-inner { padding: 7rem 1.5rem 6rem; } }
-.hero-text { max-width: 48rem; margin: 0 auto; text-align: center; }
-@media (min-width: 1024px) { .hero-text { max-width: 64rem; } }
-.beta-pill { display: inline-flex; align-items: center; gap: .5rem; padding: .25rem .75rem; border-radius: 9999px; font-size: .75rem; color: var(--muted-fg); margin-bottom: 1.5rem; }
-.dot-wrap { position: relative; display: inline-flex; width: .375rem; height: .375rem; }
-.dot-ping { position: absolute; inset: 0; border-radius: 9999px; background: var(--primary); opacity: .6; animation: ping 1.4s cubic-bezier(0,0,.2,1) infinite; }
-.dot { position: relative; width: .375rem; height: .375rem; border-radius: 9999px; background: var(--primary); }
-@keyframes ping { 75%,100% { transform: scale(2); opacity: 0; } }
-h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; text-wrap: balance; }
-@media (min-width: 768px) { h1 { font-size: 3.75rem; } }
-.gradient-text { background: linear-gradient(90deg, var(--linkedin), var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.lead { max-width: 36rem; margin: 1.5rem auto 0; font-size: 1rem; color: var(--muted-fg); text-wrap: balance; }
-.workflow-line { display: inline-block; text-align: center; margin-top: 0.75rem; font-size: 1rem; font-weight: 500; color: var(--foreground); padding: 0.35rem 0.6rem; border-radius: 0.5rem; background: color-mix(in oklab, var(--primary) 14%, transparent); white-space: nowrap; letter-spacing: -0.01em; opacity: 0.9; }
-@media (max-width: 640px) { 
-  .workflow-line { white-space: normal; } 
+      .cm-popup-anchor {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -60px;
+      }
 
-  .orb-1 { 
-    opacity: 0.35; 
-    filter: blur(48px); 
-    top: -8rem; 
-    left: -6rem; 
-  } 
-
-  .orb-2 { 
-    opacity: 0.30; 
-    filter: blur(48px); 
-    top: -6rem; 
-    right: -10%; 
+      .cm-popup {
+        width: 280px;
+      }
+    }
+    @media (min-width: 768px) { .lead { font-size: 1.125rem; } }
+    .cta-row { margin-top: 2.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; }
+    @media (max-width: 640px) {
+  .hero-visual {
+    margin-top: 2rem;
   }
 
-  .cm-popup-anchor {
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -60px;
-  }
-
-  .cm-popup {
-    width: 280px;
+  .mockup-wrap {
+    transform: scale(0.92);
   }
 }
-@media (min-width: 768px) { .lead { font-size: 1.125rem; } }
-.cta-row { margin-top: 2.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; }
-@media (min-width: 640px) { .cta-row { flex-direction: row; } }
-.fineprint { margin-top: 1.25rem; font-size: .75rem; color: var(--muted-fg); }
-.hero-visual { position: relative; max-width: 64rem; margin: 4rem auto 0; }
-.hero-visual::before { display: none; }
-.mockup-wrap { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s cubic-bezier(.2,.7,.2,1); }
-.mockup-wrap:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
-.mockup-wrap::after { display: none;}
-.mockup-wrap:hover::after { opacity: 1; }
-.mockup { position: relative; border-radius: 22px; overflow: hidden; background: var(--card); border: 1px solid var(--border); }
-.mockup-inner { border-radius: 0; overflow: hidden; background: #ffffff; }
-.mockup video, .mockup img { display: block; width: 100%; height: auto; object-fit: initial; border-radius: 0; box-shadow: none; }
-.mockup::before, .mockup::after, .mockup-inner::before, .mockup-inner::after { content: none !important; }
-.mockup::before { display: none; }
-.mockup, .mockup-inner { box-shadow: none !important; }
-.mockup:hover { transform: none; box-shadow: inherit; border-color: inherit; }
-.mockup, .mockup-inner, .hero-visual, .hero-visual * { box-shadow: none !important; transform: none !important; transition: none !important; }
-.hero .mockup-wrap { clip-path: inset(0 round 22px); }
-.hero .mockup-hero { border-radius: 0 0 20px 20px; overflow: hidden; }
-.eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
-h2 { margin-top: .75rem; font-size: 1.875rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; text-wrap: balance; }
-@media (min-width: 768px) { h2 { font-size: 2.25rem; } }
-.section-head { max-width: 36rem; margin: 0 auto; text-align: center; }
-.section-sub { margin-top: 1rem; color: var(--muted-fg); }
-.ps-grid { display: grid; gap: 1.5rem; }
-@media (min-width: 768px) { .ps-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
-.card-pad { padding: 2rem; border-radius: 1rem; }
-.icon-chip { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: .5rem; margin-bottom: 1rem; }
-.icon-chip.dest { background: color-mix(in oklab, var(--destructive) 10%, transparent); color: var(--destructive); }
-.icon-chip.prim { background: color-mix(in oklab, var(--primary) 15%, transparent); color: var(--primary); }
-h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
-.card-text { margin-top: .75rem; color: var(--muted-fg); }
-.bullet-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .625rem; font-size: .875rem; color: var(--muted-fg); }
-.bullet-list li { display: flex; gap: .5rem; }
-.bullet-x { color: var(--destructive); }
-.bullet-ok { color: var(--primary); }
-.solution-card { position: relative; overflow: hidden; border: 1px solid color-mix(in oklab, var(--primary) 25%, transparent); background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 6%, transparent), transparent); box-shadow: var(--shadow-soft); }
-.solution-card::after { content: ""; position: absolute; top: -4rem; right: -4rem; width: 12rem; height: 12rem; border-radius: 9999px; filter: blur(48px); pointer-events: none; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.18), transparent 70%); }
-.steps { margin-top: 3.5rem; display: grid; gap: 1.25rem; }
-@media (min-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1024px) { .steps { grid-template-columns: repeat(4, 1fr); } }
-.step { position: relative; overflow: hidden; padding: 1.5rem; border-radius: 1rem; }
-.step:hover { border-color: color-mix(in oklab, var(--primary) 40%, transparent); }
-.step.linkedin:hover { border-color: color-mix(in oklab, var(--linkedin) 40%, transparent); }
-.step::after { content: ""; position: absolute; top: -3rem; right: -3rem; width: 8rem; height: 8rem; border-radius: 9999px; opacity: 0; filter: blur(32px); transition: opacity .5s; pointer-events: none; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.28), transparent 70%); }
-.step:hover::after { opacity: 1; }
-.step.linkedin::after { background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.30), transparent 70%); }
-.step-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
-.step-icon { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: .75rem; transition: background-color .2s; }
-.step-icon.prim { background: color-mix(in oklab, var(--primary) 10%, transparent); color: var(--primary); }
-.step:hover .step-icon.prim { background: color-mix(in oklab, var(--primary) 15%, transparent); }
-.step-icon.linkedin { background: color-mix(in oklab, var(--linkedin) 10%, transparent); color: var(--linkedin); }
-.step:hover .step-icon.linkedin { background: color-mix(in oklab, var(--linkedin) 15%, transparent); }
-.step-num { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted-fg); }
-.step h3 { font-size: 1rem; }
-.step p { margin-top: .5rem; font-size: .875rem; line-height: 1.6; color: var(--muted-fg); }
-.icon-chip, .step-icon, .card-icon { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; }
-.lift:hover .icon-chip, .lift:hover .card-icon, .step:hover .step-icon, .privacy-card:hover .card-icon { transform: translateY(-2px) scale(1.06); box-shadow: 0 8px 24px -10px color-mix(in oklab, var(--primary) 50%, transparent); }
-.features { margin-top: 3.5rem; display: grid; gap: 1.25rem; }
-@media (min-width: 768px) { .features { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1024px) { .features { grid-template-columns: repeat(3, 1fr); } }
-.feature { position: relative; overflow: hidden; padding: 1.5rem; border-radius: 1rem; }
-.feature::after { content: ""; position: absolute; top: -2.5rem; right: -2.5rem; width: 7rem; height: 7rem; border-radius: 9999px; opacity: 0; filter: blur(32px); transition: opacity .5s; pointer-events: none; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
-.feature:hover::after { opacity: 1; }
-.feature h3 { font-size: 1rem; }
-.feature p { margin-top: .5rem; font-size: .875rem; line-height: 1.6; color: var(--muted-fg); }
-.demo-grid { display: grid; gap: 3rem; align-items: center; }
-@media (min-width: 1024px) { .demo-grid { grid-template-columns: 1fr 1fr; } }
-.demo-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .75rem; font-size: .875rem; }
-.demo-list li { display: flex; gap: .625rem; align-items: flex-start; color: var(--muted-fg); }
-.demo-list svg { color: var(--primary); margin-top: .125rem; flex-shrink: 0; }
-.demo-visual { position: relative; overflow: visible; }
-.demo-visual::before { display: none; }
-.demo-visual .mockup-wrap { max-width: 380px; margin: 0 auto; position: relative; transform: none !important; box-shadow: none !important; transition: none !important; }
-.demo-visual .mockup-wrap::after { display: none !important; }
-.demo-visual .mockup { border-radius: 0 0 18px 18px; border-top: none; max-width: none; }
-.chrome-bar { background: color-mix(in oklab, var(--card) 85%, var(--background)); border: 1px solid var(--border); border-bottom: none; border-radius: 18px 18px 0 0; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
-.chrome-bar-hero { border-radius: 22px 22px 0 0; background: color-mix(in oklab, var(--glass-strong-bg) 90%, transparent); }
-.mockup-hero { border-radius: 0 0 22px 22px !important; border-top: none !important; }
-.chrome-dots { display: flex; gap: 5px; align-items: center; }
-.cdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-.cdot-r { background: 
-#FF5F57; } .cdot-y { background: 
-#FFBD2E; } .cdot-g { background: 
-#28C840; }
-.chrome-tab-pill { display: flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; padding: 3px 9px; font-size: 11px; color: var(--muted-fg); margin-left: 6px; white-space: nowrap; }
-.chrome-tab-pill img { border-radius: 2px; display: inline-block; }
-@media (prefers-color-scheme: dark) { .cdot-r { background: 
-#FF453A; } .cdot-y { background: 
-#FFD60A; } .cdot-g { background: 
-#32D74B; } }
-.demo-popup-card { border-radius: 18px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px -8px rgba(0,0,0,0.10); transition: box-shadow .35s cubic-bezier(.2,.7,.2,1), transform .35s cubic-bezier(.2,.7,.2,1); }
-.demo-popup-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.10),
-    0 20px 40px -10px rgba(0,0,0,0.25);
+    @media (min-width: 640px) { .cta-row { flex-direction: row; } }
+    .fineprint { margin-top: 1.25rem; font-size: .75rem; color: var(--muted-fg); }
+    .hero-visual { position: relative; max-width: 64rem; margin: 4rem auto 0; }
+    .hero-visual::before { display: none; }
+    .mockup-wrap { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s cubic-bezier(.2,.7,.2,1); }
+    .mockup-wrap:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+    .mockup-wrap::after { display: none;}
+    .mockup-wrap:hover::after { opacity: 1; }
+    .mockup { position: relative; border-radius: 22px; overflow: hidden; background: var(--card); border: 1px solid var(--border); }
+    .mockup-inner { border-radius: 0; overflow: hidden; background: #ffffff; }
+    .mockup video, .mockup img { display: block; width: 100%; height: auto; object-fit: initial; border-radius: 0; box-shadow: none; }
+    .mockup::before, .mockup::after, .mockup-inner::before, .mockup-inner::after { content: none !important; }
+    .mockup::before { display: none; }
+    .mockup, .mockup-inner { box-shadow: none !important; }
+    .mockup:hover { transform: none; box-shadow: inherit; border-color: inherit; }
+    .mockup, .mockup-inner, .hero-visual, .hero-visual * { box-shadow: none !important; transform: none !important; transition: none !important; }
+    .hero .mockup-wrap { clip-path: inset(0 round 22px); }
+    .hero .mockup-hero { border-radius: 0 0 20px 20px; overflow: hidden; }
+    .eyebrow { font-size: .875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em; color: var(--primary); }
+    h2 { margin-top: .75rem; font-size: 1.875rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; text-wrap: balance; }
+    @media (min-width: 768px) { h2 { font-size: 2.25rem; } }
+    .section-head { max-width: 36rem; margin: 0 auto; text-align: center; }
+    .section-sub { margin-top: 1rem; color: var(--muted-fg); }
+    .ps-grid { display: grid; gap: 1.5rem; }
+    @media (min-width: 768px) { .ps-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+    .card-pad { padding: 2rem; border-radius: 1rem; }
+    .icon-chip { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: .5rem; margin-bottom: 1rem; }
+    .icon-chip.dest { background: color-mix(in oklab, var(--destructive) 10%, transparent); color: var(--destructive); }
+    .icon-chip.prim { background: color-mix(in oklab, var(--primary) 15%, transparent); color: var(--primary); }
+    h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
+    .card-text { margin-top: .75rem; color: var(--muted-fg); }
+    .bullet-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .625rem; font-size: .875rem; color: var(--muted-fg); }
+    .bullet-list li { display: flex; gap: .5rem; }
+    .bullet-x { color: var(--destructive); }
+    .bullet-ok { color: var(--primary); }
+    .solution-card { position: relative; overflow: hidden; border: 1px solid color-mix(in oklab, var(--primary) 25%, transparent); background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 6%, transparent), transparent); box-shadow: var(--shadow-soft); }
+    .solution-card::after { content: ""; position: absolute; top: -4rem; right: -4rem; width: 12rem; height: 12rem; border-radius: 9999px; filter: blur(48px); pointer-events: none; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.18), transparent 70%); }
+    .steps { margin-top: 3.5rem; display: grid; gap: 1.25rem; }
+    @media (min-width: 768px) { .steps { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .steps { grid-template-columns: repeat(4, 1fr); } }
+    .step { position: relative; overflow: hidden; padding: 1.5rem; border-radius: 1rem; }
+    .step:hover { border-color: color-mix(in oklab, var(--primary) 40%, transparent); }
+    .step.linkedin:hover { border-color: color-mix(in oklab, var(--linkedin) 40%, transparent); }
+    .step::after { content: ""; position: absolute; top: -3rem; right: -3rem; width: 8rem; height: 8rem; border-radius: 9999px; opacity: 0; filter: blur(32px); transition: opacity .5s; pointer-events: none; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.28), transparent 70%); }
+    .step:hover::after { opacity: 1; }
+    .step.linkedin::after { background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.30), transparent 70%); }
+    .step-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .step-icon { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: .75rem; transition: background-color .2s; }
+    .step-icon.prim { background: color-mix(in oklab, var(--primary) 10%, transparent); color: var(--primary); }
+    .step:hover .step-icon.prim { background: color-mix(in oklab, var(--primary) 15%, transparent); }
+    .step-icon.linkedin { background: color-mix(in oklab, var(--linkedin) 10%, transparent); color: var(--linkedin); }
+    .step:hover .step-icon.linkedin { background: color-mix(in oklab, var(--linkedin) 15%, transparent); }
+    .step-num { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted-fg); }
+    .step h3 { font-size: 1rem; }
+    .step p { margin-top: .5rem; font-size: .875rem; line-height: 1.6; color: var(--muted-fg); }
+    .icon-chip, .step-icon, .card-icon { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; }
+    .lift:hover .icon-chip, .lift:hover .card-icon, .step:hover .step-icon, .privacy-card:hover .card-icon { transform: translateY(-2px) scale(1.06); box-shadow: 0 8px 24px -10px color-mix(in oklab, var(--primary) 50%, transparent); }
+    .features { margin-top: 3.5rem; display: grid; gap: 1.25rem; }
+    @media (min-width: 768px) { .features { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .features { grid-template-columns: repeat(3, 1fr); } }
+    .feature { position: relative; overflow: hidden; padding: 1.5rem; border-radius: 1rem; }
+    .feature::after { content: ""; position: absolute; top: -2.5rem; right: -2.5rem; width: 7rem; height: 7rem; border-radius: 9999px; opacity: 0; filter: blur(32px); transition: opacity .5s; pointer-events: none; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
+    .feature:hover::after { opacity: 1; }
+    .feature h3 { font-size: 1rem; }
+    .feature p { margin-top: .5rem; font-size: .875rem; line-height: 1.6; color: var(--muted-fg); }
+    .demo-grid { display: grid; gap: 3rem; align-items: center; }
+    @media (min-width: 1024px) { .demo-grid { grid-template-columns: 1fr 1fr; } }
+    .demo-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: .75rem; font-size: .875rem; }
+    .demo-list li { display: flex; gap: .625rem; align-items: flex-start; color: var(--primary); }
+    .demo-list svg { color: var(--primary); margin-top: .125rem; flex-shrink: 0; }
+    .demo-visual { position: relative; overflow: visible; }
+    .demo-visual::before { display: none; }
+    .demo-visual .mockup-wrap { max-width: 380px; margin: 0 auto; position: relative; transform: none !important; box-shadow: none !important; transition: none !important; }
+    .demo-visual .mockup-wrap::after { display: none !important; }
+    .demo-visual .mockup { border-radius: 0 0 18px 18px; border-top: none; max-width: none; }
+    .chrome-bar { background: color-mix(in oklab, var(--card) 85%, var(--background)); border: 1px solid var(--border); border-bottom: none; border-radius: 18px 18px 0 0; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
+    .chrome-bar-hero { border-radius: 22px 22px 0 0; background: color-mix(in oklab, var(--glass-strong-bg) 90%, transparent); }
+    .mockup-hero { border-radius: 0 0 22px 22px !important; border-top: none !important; }
+    .chrome-dots { display: flex; gap: 5px; align-items: center; }
+    .cdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .cdot-r { background: 
+      #FF5F57; } .cdot-y { background: 
+        #FFBD2E; } .cdot-g { background: 
+          #28C840; }
+          .chrome-tab-pill { display: flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; padding: 3px 9px; font-size: 11px; color: var(--muted-fg); margin-left: 6px; white-space: nowrap; }
+          .chrome-tab-pill img { border-radius: 2px; display: inline-block; }
+          @media (prefers-color-scheme: dark) { .cdot-r { background: 
+            #FF453A; } .cdot-y { background: 
+              #FFD60A; } .cdot-g { background: 
+                #32D74B; } }
+                .demo-popup-card { border-radius: 18px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px -8px rgba(0,0,0,0.10); transition: box-shadow .35s cubic-bezier(.2,.7,.2,1), transform .35s cubic-bezier(.2,.7,.2,1); }
+                .demo-popup-card:hover {
+                  transform: translateY(-4px);
+                  box-shadow:
+                  0 4px 12px rgba(0,0,0,0.10),
+                  0 20px 40px -10px rgba(0,0,0,0.25);
+                }
+                .demo-popup-card .chrome-bar { border-radius: 18px 18px 0 0; }
+                .demo-popup-card .mockup { border-radius: 0 0 18px 18px; border-top: none; }
+                .demo-popup-card .mockup-inner img { width: 100%; height: auto; object-fit: initial; display: block; }
+                .beta-wrap { max-width: 56rem; margin: 0 auto; padding: 0 1.5rem; }
+                .beta-card { position: relative; overflow: hidden; padding: 2.5rem; border-radius: 1.5rem; text-align: center; box-shadow: var(--shadow-elegant); }
+                @media (min-width: 768px) { .beta-card { padding: 4rem; } }
+                .beta-card-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+                .beta-orb-1 { position: absolute; top: -6rem; left: 25%; transform: translateX(-50%); width: 18rem; height: 18rem; border-radius: 9999px; filter: blur(64px); background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.25), transparent 70%); }
+                .beta-orb-2 { position: absolute; bottom: -5rem; right: 25%; transform: translateX(50%); width: 18rem; height: 18rem; border-radius: 9999px; filter: blur(64px); background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.22), transparent 70%); }
+                .beta-pill-2 { display: inline-flex; align-items: center; gap: .5rem; margin: 0 auto 1.25rem; padding: .25rem .75rem; border-radius: 9999px; font-size: .75rem; color: var(--primary); border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent); background: color-mix(in oklab, var(--primary) 10%, transparent); }
+                .footer { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 2.5rem 0; }
+                .footer-inner { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 1rem; font-size: .875rem; color: var(--muted-fg); }
+                @media (min-width: 768px) { .footer-inner { flex-direction: row; } }
+                .footer-brand { display: flex; align-items: center; gap: .625rem; }
+                .footer-brand img { width: 1.25rem; height: 1.25rem; border-radius: .25rem; }
+                .footer a.link { color: var(--foreground); transition: color .2s; }
+                .footer a.link:hover { color: var(--primary); }
+                .footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
+                .footer .gh:hover { color: var(--foreground); }
+                .footer .gh svg { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+                .footer .gh:hover svg { transform: rotate(-8deg) scale(1.1); }
+                .content-card, .cta-band { transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s; }
+                .content-card:hover, .cta-band:hover { transform: translateY(-2px); }
+                .bg-mesh { position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden; contain: layout paint; }
+                .bg-mesh::before, .bg-mesh::after, .bg-mesh > .blob { content: ""; position: absolute; border-radius: 9999px; filter: blur(72px); opacity: .45; }
+                .bg-mesh::before { width: 46vw; height: 46vw; top: -10vw; left: -8vw; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.35), transparent 70%); }
+                .bg-mesh::after { width: 50vw; height: 50vw; top: 20vh; right: -12vw; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.32), transparent 70%); }
+                .bg-mesh > .blob { width: 42vw; height: 42vw; bottom: -14vw; left: 25vw; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.28), transparent 70%); }
+                @media (prefers-color-scheme: dark) {
+                  .bg-mesh::before { opacity: .35; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.34), transparent 70%); }
+                  .bg-mesh::after  { opacity: .33; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.36), transparent 70%); }
+                  .bg-mesh > .blob { opacity: .3;  background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.28), transparent 70%); }
+                }
+                .bg-mesh::before,.bg-mesh::after,.bg-mesh>.blob { animation: none !important; filter: blur(52px); opacity: .22; }
+                .bg-mesh::before { mix-blend-mode: normal; }
+                .hero + * .bg-mesh, .hero .bg-mesh { opacity: 0.35; }
+                body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 40vh; background: linear-gradient(to bottom, var(--background) 0%, transparent 100%); z-index: -5; pointer-events: none; }
+                .nav, .hero, .page-hero, main, .content-wrap, .footer, section { position: relative; z-index: 1; }
+                .content-card,
+.version-card,
+.privacy-card,
+.feature,
+.step,
+.cta-band {
+  content-visibility: auto;
 }
-.demo-popup-card .chrome-bar { border-radius: 18px 18px 0 0; }
-.demo-popup-card .mockup { border-radius: 0 0 18px 18px; border-top: none; }
-.demo-popup-card .mockup-inner img { width: 100%; height: auto; object-fit: initial; display: block; }
-.beta-wrap { max-width: 56rem; margin: 0 auto; padding: 0 1.5rem; }
-.beta-card { position: relative; overflow: hidden; padding: 2.5rem; border-radius: 1.5rem; text-align: center; box-shadow: var(--shadow-elegant); }
-@media (min-width: 768px) { .beta-card { padding: 4rem; } }
-.beta-card-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.beta-orb-1 { position: absolute; top: -6rem; left: 25%; transform: translateX(-50%); width: 18rem; height: 18rem; border-radius: 9999px; filter: blur(64px); background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.25), transparent 70%); }
-.beta-orb-2 { position: absolute; bottom: -5rem; right: 25%; transform: translateX(50%); width: 18rem; height: 18rem; border-radius: 9999px; filter: blur(64px); background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.22), transparent 70%); }
-.beta-pill-2 { display: inline-flex; align-items: center; gap: .5rem; margin: 0 auto 1.25rem; padding: .25rem .75rem; border-radius: 9999px; font-size: .75rem; color: var(--primary); border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent); background: color-mix(in oklab, var(--primary) 10%, transparent); }
-.footer { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 2.5rem 0; }
-.footer-inner { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 1rem; font-size: .875rem; color: var(--muted-fg); }
-@media (min-width: 768px) { .footer-inner { flex-direction: row; } }
-.footer-brand { display: flex; align-items: center; gap: .625rem; }
-.footer-brand img { width: 1.25rem; height: 1.25rem; border-radius: .25rem; }
-.footer a.link { color: var(--foreground); transition: color .2s; }
-.footer a.link:hover { color: var(--primary); }
-.footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
-.footer .gh:hover { color: var(--foreground); }
-.footer .gh svg { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
-.footer .gh:hover svg { transform: rotate(-8deg) scale(1.1); }
-.content-card, .cta-band { transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s; }
-.content-card:hover, .cta-band:hover { transform: translateY(-2px); }
-.bg-mesh { position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden; contain: layout paint; }
-.bg-mesh::before, .bg-mesh::after, .bg-mesh > .blob { content: ""; position: absolute; border-radius: 9999px; filter: blur(72px); opacity: .45; }
-.bg-mesh::before { width: 46vw; height: 46vw; top: -10vw; left: -8vw; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.35), transparent 70%); }
-.bg-mesh::after { width: 50vw; height: 50vw; top: 20vh; right: -12vw; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.32), transparent 70%); }
-.bg-mesh > .blob { width: 42vw; height: 42vw; bottom: -14vw; left: 25vw; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.28), transparent 70%); }
-@media (prefers-color-scheme: dark) {
-  .bg-mesh::before { opacity: .35; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.34), transparent 70%); }
-  .bg-mesh::after  { opacity: .33; background: radial-gradient(closest-side, oklch(0.60 0.18 245 / 0.36), transparent 70%); }
-  .bg-mesh > .blob { opacity: .3;  background: radial-gradient(closest-side, oklch(0.78 0.18 145 / 0.28), transparent 70%); }
-}
-.bg-mesh::before,.bg-mesh::after,.bg-mesh>.blob { animation: none !important; filter: blur(52px); opacity: .22; }
-.bg-mesh::before { mix-blend-mode: normal; }
-.hero + * .bg-mesh, .hero .bg-mesh { opacity: 0.35; }
-body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 40vh; background: linear-gradient(to bottom, var(--background) 0%, transparent 100%); z-index: -5; pointer-events: none; }
-.nav, .hero, .page-hero, main, .content-wrap, .footer, section { position: relative; z-index: 1; }
-.hero-visual,.content-card,.version-card,.privacy-card,.feature,.step,.cta-band { content-visibility: auto; contain-intrinsic-size: 1px 520px; }
-[id] { scroll-margin-top: 5.5rem; }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-  .reveal { opacity: 1; transform: none; }
-}
-@media (hover: none) {
-  .lift:hover,.btn-primary:hover,.btn-glass:hover,.content-card:hover,.cta-band:hover,.version-card:hover,.demo-visual:hover img { transform: none !important; box-shadow: inherit !important; }
-  .btn-primary::before,.nav-links a::after,.privacy-card::after,.feature::after,.step::after { display: none !important; }
-}
+                [id] { scroll-margin-top: 5.5rem; }
+                @media (prefers-reduced-motion: reduce) {
+                  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+                  .reveal { opacity: 1; transform: none; }
+                }
+                @media (hover: none) {
+                  .lift:hover,.btn-primary:hover,.btn-glass:hover,.content-card:hover,.cta-band:hover,.version-card:hover,.demo-visual:hover img { transform: none !important; box-shadow: inherit !important; }
+                  .btn-primary::before,.nav-links a::after,.privacy-card::after,.feature::after,.step::after { display: none !important; }
+                }
 /* ── Chrome Mockup ── */
 .chrome-mockup {
   width: 100%;
@@ -320,16 +346,16 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
   border-radius: 10px;
   overflow: visible;
   background: 
-#dee1e6;
+  #dee1e6;
   font-family: -apple-system, "Segoe UI", sans-serif;
   position: relative;
   box-shadow:
-    0 0 0 1px rgba(0,0,0,0.12),
-    0 8px 16px -4px rgba(0,0,0,0.12),
-    0 24px 48px -12px rgba(0,0,0,0.20);
+  0 0 0 1px rgba(0,0,0,0.12),
+  0 8px 16px -4px rgba(0,0,0,0.12),
+  0 24px 48px -12px rgba(0,0,0,0.20);
   transition:
-    box-shadow .4s cubic-bezier(.2,.7,.2,1),
-    transform  .4s cubic-bezier(.2,.7,.2,1);
+  box-shadow .4s cubic-bezier(.2,.7,.2,1),
+  transform  .4s cubic-bezier(.2,.7,.2,1);
 }
 
 /* ── Mockup Glow ── */
@@ -343,19 +369,19 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
 @media (min-width: 1024px) { .chrome-mockup { max-width: 100%; } }
 @media (prefers-color-scheme: dark) {
   .chrome-mockup { background: 
-#202124; box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 24px 48px -12px rgba(0,0,0,0.6); }
-  .chrome-mockup:hover {
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.10),
-    0 12px 32px -8px rgba(0,0,0,0.5),
-    0 32px 64px -16px rgba(0,0,0,0.6);
-}
-}
+    #202124; box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 24px 48px -12px rgba(0,0,0,0.6); }
+    .chrome-mockup:hover {
+      box-shadow:
+      0 0 0 1px rgba(255,255,255,0.10),
+      0 12px 32px -8px rgba(0,0,0,0.5),
+      0 32px 64px -16px rgba(0,0,0,0.6);
+    }
+  }
 
 /* ── Browser Frame ── */
 .cm-titlebar {
   background: 
-#dee1e6;
+  #dee1e6;
   padding: 8px 12px 0;
   display: flex; align-items: flex-end; gap: 8px;
   user-select: none;
@@ -363,103 +389,103 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
   overflow: hidden;
 }
 @media (prefers-color-scheme: dark) { .cm-titlebar { background: 
-#202124; } }
-.cm-dots { display: flex; align-items: center; gap: 5px; padding-bottom: 6px; flex-shrink: 0; }
-.cm-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.cm-dot-r { background: 
-#ff5f57; } .cm-dot-y { background: 
-#febc2e; } .cm-dot-g { background: 
-#28c840; }
-.cm-tab-strip { display: flex; align-items: flex-end; gap: 1px; flex: 1; overflow: hidden; }
-.cm-tab { display: flex; align-items: center; gap: 6px; padding: 6px 10px 5px; border-radius: 8px 8px 0 0; font-size: 11px; color: 
-#5f6368; max-width: 180px; overflow: hidden; white-space: nowrap; cursor: default; }
-.cm-tab span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cm-tab-inactive { background: transparent; }
-.cm-tab-active { background: #fff; color: 
-#202124; font-weight: 500; }
-@media (prefers-color-scheme: dark) { .cm-tab-inactive { color: 
-#9aa0a6; } .cm-tab-active { background: 
-#35363a; color: 
-#e8eaed; } }
-.cm-tab-close { flex-shrink: 0; opacity: 0.5; margin-left: 2px; }
-.cm-tab-add { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: 
-#5f6368; cursor: default; flex-shrink: 0; }
-.cm-toolbar { background: #fff; padding: 6px 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid 
-#e0e0e0; overflow: hidden; }
-@media (prefers-color-scheme: dark) { .cm-toolbar { background: 
-#35363a; border-bottom-color: 
-#5f6368; } }
-.cm-nav-btns { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-.cm-nav-btn { width: 28px; height: 28px; border: none; background: none; cursor: default; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: 
-#3c4043; }
-@media (prefers-color-scheme: dark) { .cm-nav-btn { color: 
-#e8eaed; } }
-.cm-nav-btn-disabled { opacity: 0.35; }
-.cm-address-bar { flex: 1; display: flex; align-items: center; gap: 7px; background: 
-#f1f3f4; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: 
-#5f6368; overflow: hidden; }
-@media (prefers-color-scheme: dark) { .cm-address-bar { background: 
-#202124; color: 
-#9aa0a6; } }
-.cm-url { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cm-url-domain { color: 
-#202124; font-weight: 500; }
-@media (prefers-color-scheme: dark) { .cm-url-domain { color: 
-#e8eaed; } }
-.cm-toolbar-right { display: flex; align-items: center; gap: 2px; flex-shrink: 0; position: relative; }
-.cm-toolbar-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: 
-#5f6368; cursor: default; border-radius: 50%; }
-@media (prefers-color-scheme: dark) { .cm-toolbar-icon { color: 
-#9aa0a6; } }
-.cm-ext-btn { width: 28px; height: 28px; border: none; background: rgba(26,115,232,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: default; outline: 2px solid rgba(26,115,232,0.35); position: relative; }
-.cm-content {
-  background: #fff;
-  position: relative;
-  overflow: hidden;
-  max-height: 400px;
-  border-radius: 0 0 10px 10px;
-}
+  #202124; } }
+  .cm-dots { display: flex; align-items: center; gap: 5px; padding-bottom: 6px; flex-shrink: 0; }
+  .cm-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .cm-dot-r { background: 
+    #ff5f57; } .cm-dot-y { background: 
+      #febc2e; } .cm-dot-g { background: 
+        #28c840; }
+        .cm-tab-strip { display: flex; align-items: flex-end; gap: 1px; flex: 1; overflow: hidden; }
+        .cm-tab { display: flex; align-items: center; gap: 6px; padding: 6px 10px 5px; border-radius: 8px 8px 0 0; font-size: 11px; color: 
+          #5f6368; max-width: 180px; overflow: hidden; white-space: nowrap; cursor: default; }
+          .cm-tab span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+          .cm-tab-inactive { background: transparent; }
+          .cm-tab-active { background: #fff; color: 
+            #202124; font-weight: 500; }
+            @media (prefers-color-scheme: dark) { .cm-tab-inactive { color: 
+              #9aa0a6; } .cm-tab-active { background: 
+                #35363a; color: 
+                #e8eaed; } }
+                .cm-tab-close { flex-shrink: 0; opacity: 0.5; margin-left: 2px; }
+                .cm-tab-add { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: 
+                  #5f6368; cursor: default; flex-shrink: 0; }
+                  .cm-toolbar { background: #fff; padding: 6px 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid 
+                    #e0e0e0; overflow: hidden; }
+                    @media (prefers-color-scheme: dark) { .cm-toolbar { background: 
+                      #35363a; border-bottom-color: 
+                      #5f6368; } }
+                      .cm-nav-btns { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+                      .cm-nav-btn { width: 28px; height: 28px; border: none; background: none; cursor: default; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: 
+                        #3c4043; }
+                        @media (prefers-color-scheme: dark) { .cm-nav-btn { color: 
+                          #e8eaed; } }
+                          .cm-nav-btn-disabled { opacity: 0.35; }
+                          .cm-address-bar { flex: 1; display: flex; align-items: center; gap: 7px; background: 
+                            #f1f3f4; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: 
+                            #5f6368; overflow: hidden; }
+                            @media (prefers-color-scheme: dark) { .cm-address-bar { background: 
+                              #202124; color: 
+                              #9aa0a6; } }
+                              .cm-url { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                              .cm-url-domain { color: 
+                                #202124; font-weight: 500; }
+                                @media (prefers-color-scheme: dark) { .cm-url-domain { color: 
+                                  #e8eaed; } }
+                                  .cm-toolbar-right { display: flex; align-items: center; gap: 2px; flex-shrink: 0; position: relative; }
+                                  .cm-toolbar-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: 
+                                    #5f6368; cursor: default; border-radius: 50%; }
+                                    @media (prefers-color-scheme: dark) { .cm-toolbar-icon { color: 
+                                      #9aa0a6; } }
+                                      .cm-ext-btn { width: 28px; height: 28px; border: none; background: rgba(26,115,232,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: default; outline: 2px solid rgba(26,115,232,0.35); position: relative; }
+                                      .cm-content {
+                                        background: #fff;
+                                        position: relative;
+                                        overflow: hidden;
+                                        max-height: 400px;
+                                        border-radius: 0 0 10px 10px;
+                                      }
 
 /* ── LinkedIn Preview ── */
 .li-page { background: 
-#f3f2ef; min-height: 400px; }
-.li-nav { background: #fff; border-bottom: 1px solid 
-#e0e0e0; display: flex; align-items: center; gap: 10px; padding: 8px 16px; }
-.li-logo { flex-shrink: 0; }
-.li-search { display: flex; align-items: center; gap: 6px; background: 
-#eef3f8; border-radius: 4px; padding: 5px 10px; font-size: 12px; color: #666; width: 180px; }
-.li-nav-links { display: flex; gap: 4px; margin-left: auto; }
-.li-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 10px; font-size: 10px; color: #666; cursor: default; }
-.li-nav-active { color: 
-#0A66C2; border-bottom: 2px solid 
-#0A66C2; border-radius: 0; }
-.li-cover { position: relative; }
-.li-cover-bg { height: 110px; background: linear-gradient(135deg, 
-#0a66c2 0%, 
-#004182 40%, 
-#0d3b6e 70%, 
-#1e5c9e 100%); }
-.li-avatar-wrap { position: absolute; bottom: -28px; left: 16px; }
-.li-avatar-img { width: 64px; height: 64px; border-radius: 50%; border: 3px solid #fff; display: block; object-fit: cover; }
-.li-profile-body { background: #fff; padding: 36px 16px 12px; margin-bottom: 4px; }
-.li-name-row { display: flex; align-items: center; gap: 6px; }
-.li-name { font-size: 18px; font-weight: 700; color: #000; line-height: 1.2; font-family: -apple-system, sans-serif; }
-.li-headline { font-size: 13px; color: #333; margin-top: 3px; font-family: -apple-system, sans-serif; }
-.li-location { font-size: 12px; color: #666; margin-top: 4px; display: flex; align-items: center; gap: 4px; font-family: -apple-system, sans-serif; }
-.li-dot { color: #999; }
-.li-contact { color: 
-#0A66C2; cursor: default; }
-.li-followers { font-size: 11px; color: 
-#0A66C2; margin-top: 4px; font-weight: 500; font-family: -apple-system, sans-serif; }
-.li-actions { display: flex; gap: 8px; margin-top: 10px; }
-.li-btn-primary { background: 
-#0A66C2; color: #fff; border: none; border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; cursor: default; font-family: -apple-system, sans-serif; }
-.li-btn-secondary { background: transparent; color: 
-#0A66C2; border: 1px solid 
-#0A66C2; border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; cursor: default; font-family: -apple-system, sans-serif; }
-.li-btn-icon { background: transparent; border: 1px solid #666; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: #666; cursor: default; }
-.li-about-snippet { background: #fff; border-top: 1px solid 
-#e0e0e0; padding: 8px 0 0; font-size: 11px; color: #666; line-height: 1.5; font-family: -apple-system, sans-serif; }
+  #f3f2ef; min-height: 400px; }
+  .li-nav { background: #fff; border-bottom: 1px solid 
+    #e0e0e0; display: flex; align-items: center; gap: 10px; padding: 8px 16px; }
+    .li-logo { flex-shrink: 0; }
+    .li-search { display: flex; align-items: center; gap: 6px; background: 
+      #eef3f8; border-radius: 4px; padding: 5px 10px; font-size: 12px; color: #666; width: 180px; }
+      .li-nav-links { display: flex; gap: 4px; margin-left: auto; }
+      .li-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 10px; font-size: 10px; color: #666; cursor: default; }
+      .li-nav-active { color: 
+        #0A66C2; border-bottom: 2px solid 
+        #0A66C2; border-radius: 0; }
+        .li-cover { position: relative; }
+        .li-cover-bg { height: 110px; background: linear-gradient(135deg, 
+          #0a66c2 0%, 
+          #004182 40%, 
+          #0d3b6e 70%, 
+          #1e5c9e 100%); }
+        .li-avatar-wrap { position: absolute; bottom: -28px; left: 16px; }
+        .li-avatar-img { width: 64px; height: 64px; border-radius: 50%; border: 3px solid #fff; display: block; object-fit: cover; }
+        .li-profile-body { background: #fff; padding: 36px 16px 12px; margin-bottom: 4px; }
+        .li-name-row { display: flex; align-items: center; gap: 6px; }
+        .li-name { font-size: 18px; font-weight: 700; color: #000; line-height: 1.2; font-family: -apple-system, sans-serif; }
+        .li-headline { font-size: 13px; color: #333; margin-top: 3px; font-family: -apple-system, sans-serif; }
+        .li-location { font-size: 12px; color: #666; margin-top: 4px; display: flex; align-items: center; gap: 4px; font-family: -apple-system, sans-serif; }
+        .li-dot { color: #999; }
+        .li-contact { color: 
+          #0A66C2; cursor: default; }
+          .li-followers { font-size: 11px; color: 
+            #0A66C2; margin-top: 4px; font-weight: 500; font-family: -apple-system, sans-serif; }
+            .li-actions { display: flex; gap: 8px; margin-top: 10px; }
+            .li-btn-primary { background: 
+              #0A66C2; color: #fff; border: none; border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; cursor: default; font-family: -apple-system, sans-serif; }
+              .li-btn-secondary { background: transparent; color: 
+                #0A66C2; border: 1px solid 
+                #0A66C2; border-radius: 20px; padding: 5px 16px; font-size: 13px; font-weight: 600; cursor: default; font-family: -apple-system, sans-serif; }
+                .li-btn-icon { background: transparent; border: 1px solid #666; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: #666; cursor: default; }
+                .li-about-snippet { background: #fff; border-top: 1px solid 
+                  #e0e0e0; padding: 8px 0 0; font-size: 11px; color: #666; line-height: 1.5; font-family: -apple-system, sans-serif; }
 
 /* ── Popup Container ── */
 .cm-popup-anchor {
@@ -479,8 +505,8 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
   background: #fff;
   border: 1px solid rgba(0,0,0,0.12);
   box-shadow:
-    0 2px 8px rgba(0,0,0,0.08),
-    0 16px 48px -8px rgba(0,0,0,0.22);
+  0 2px 8px rgba(0,0,0,0.08),
+  0 16px 48px -8px rgba(0,0,0,0.22);
 }
 .cm-popup img { width: 100%; display: block; height: auto; object-fit: initial; 
 }
@@ -488,20 +514,20 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
 /* ── Hover ONLY for main-screen.jpg ── */
 .cm-popup {
   transition: transform .35s cubic-bezier(.2,.7,.2,1),
-              box-shadow .35s cubic-bezier(.2,.7,.2,1);
+  box-shadow .35s cubic-bezier(.2,.7,.2,1);
 }
 
 .cm-popup {
   box-shadow:
-    0 2px 8px rgba(0,0,0,0.08),
-    0 16px 48px -8px rgba(0,0,0,0.22);
+  0 2px 8px rgba(0,0,0,0.08),
+  0 16px 48px -8px rgba(0,0,0,0.22);
 }
 
 .cm-popup:hover {
   transform: translateY(-4px);
   box-shadow:
-    0 4px 12px rgba(0,0,0,0.10),
-    0 20px 40px -10px rgba(0,0,0,0.25);
+  0 4px 12px rgba(0,0,0,0.10),
+  0 20px 40px -10px rgba(0,0,0,0.25);
 }
 
 @media (max-width: 640px) {
@@ -521,195 +547,233 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
 <link rel="preload" as="image" href="media/preview.png" fetchpriority="high" />
 </head>
 <body>
-<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
-<header class="nav glass">
-  <div class="nav-inner">
-    <a class="brand" href="index.html"><img src="
-https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async" /><span>LinkedIn to Sheets</span></a>
-    <nav class="nav-links">
-      <a href="index.html#how">See How It Works</a><a href="index.html#features">Features</a><a href="index.html#demo">Demo</a><a href="changelog.html">Changelog</a><a href="privacy.html">Privacy</a>
-    </nav>
-    <a class="btn-primary" href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>Join the beta</a>
-  </div>
-</header>
-<section id="top" class="hero">
-  <div class="hero-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
-  <div class="hero-inner">
-    <div class="hero-text reveal">
-      <div class="beta-pill glass"><span class="dot-wrap"><span class="dot-ping"></span><span class="dot"></span></span>Now in private beta</div>
-      <h1>Save LinkedIn profiles to Google Sheets in seconds<span class="gradient-text">No copy-paste. No tab switching. Just one click.</span></h1>
-      <p class="lead">Built for recruiters, sales teams, and operators who source on LinkedIn daily.</p>
-      <p class="workflow-line">Open profile → copy → switch tab → paste → repeat… hundreds of times</p>
-      <div class="cta-row">
-        <a class="btn-primary lg" href="#beta"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Get early access</a>
-        <a class="btn-glass" href="#how">How it works</a>
+  <div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+  <header class="nav glass">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="
+        https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async" /><span>LinkedIn to Sheets</span></a>
+        <nav class="nav-links">
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#product">Product</a>
+          <a href="#beta">Get access</a>
+        </nav>
+        <a class="btn-primary" href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>Get early access</a>
       </div>
-      <p class="fineprint">No data stored · Works with any Google account · No setup required</p>
-      <p class="fineprint" style="opacity:0.8;">Used by recruiters sourcing hundreds of candidates weekly</p>
-      <p class="fineprint" style="margin-top:0.25rem;">Takes less than 30 seconds to get started</p>
-    </div>
-    <div class="hero-visual reveal">
-      <div class="mockup-wrap glass lift">
-        <div class="chrome-bar chrome-bar-hero">
-          <div class="chrome-dots"><span class="cdot cdot-r"></span><span class="cdot cdot-y"></span><span class="cdot cdot-g"></span></div>
-          <div class="chrome-tab-pill"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="12" height="12" alt="" /><span>LinkedIn to Sheets</span></div>
+    </header>
+    <section id="top" class="hero">
+      <div class="hero-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+      <div class="hero-inner">
+        <div class="hero-text reveal">
+          <div class="beta-pill glass"><span class="dot-wrap"><span class="dot-ping"></span><span class="dot"></span></span>Now in private beta</div>
+          <h1>
+            Save LinkedIn profiles to <span class="gradient-text">Google Sheets</span> in seconds.
+          </h1>
+
+          <p class="subheadline">
+            No more copy-paste. Save profiles in one click.
+          </p>
+
+          <p class="lead">
+            Built for recruiters and teams who source on LinkedIn daily.
+          </p>
+          <div class="cta-row">
+            <a class="btn-primary lg" href="#beta"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Get early access</a>
+            <a class="btn-glass" href="#how">How it works</a>
+          </div>
+          <p class="fineprint">No data stored · Works with any Google account · No setup required</p>
+          <p class="fineprint" style="opacity:0.8;">Used by recruiters sourcing hundreds of candidates weekly</p>
+          <p class="fineprint" style="margin-top:0.25rem;">Takes less than 30 seconds to get started</p>
         </div>
-        <div class="mockup mockup-hero">
-          <div class="mockup-inner">
-            <video id="hero-video" muted loop playsinline preload="metadata" poster="media/preview.png"><source src="media/demo.mp4" type="video/mp4"></video>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="section">
-  <div class="container ps-grid">
-    <div class="reveal lift card-pad glass">
-      <div class="icon-chip dest">✕</div><h3>The problem</h3>
-      <p class="card-text">You know the drill:<br>open profile → copy → switch tab → paste → repeat. Hundreds of times a week. It's slow, repetitive — and it kills your productivity.</p>
-      <ul class="bullet-list"><li><span class="bullet-x">·</span> Constant tab switching kills your flow</li><li><span class="bullet-x">·</span> Manual copy-paste leads to errors</li><li><span class="bullet-x">·</span> Duplicate candidates waste time</li></ul>
-    </div>
-    <div class="reveal lift card-pad solution-card">
-      <div class="icon-chip prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-      <h3>The solution</h3>
-      <p class="card-text">LinkedIn to Sheets automates the most repetitive part of sourcing. Stay on LinkedIn. Your data updates automatically in Google Sheets. No friction, no switching tabs, no manual errors.</p>
-      <ul class="bullet-list"><li><span class="bullet-ok">✓</span> One click captures the full profile</li><li><span class="bullet-ok">✓</span> Customisable column mapping</li><li><span class="bullet-ok">✓</span> Warns you if the candidate already exists</li></ul>
-    </div>
-  </div>
-</section>
-<section id="how" class="section">
-  <div class="container">
-    <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>From profile to spreadsheet in four steps</h2><p class="section-sub">No setup headaches, no API keys. Just install, connect, and start sourcing faster.</p></div>
-    <div class="steps">
-      <div class="step glass reveal lift" style="transition-delay:0ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg></div><span class="step-num">Step 01</span></div><h3>Install the extension</h3><p>Add LinkedIn to Sheets from the Chrome Web Store in seconds.</p></div>
-      <div class="step glass reveal lift" style="transition-delay:60ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></div><span class="step-num">Step 02</span></div><h3>Connect Google Sheets</h3><p>Sign in with Google and pick the spreadsheet and tab you want to fill.</p></div>
-      <div class="step linkedin glass reveal lift" style="transition-delay:120ms"><div class="step-head"><div class="step-icon linkedin"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 21v-2a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v2"/></svg></div><span class="step-num">Step 03</span></div><h3>Open any LinkedIn profile</h3><p>Browse LinkedIn the way you always do. The extension reads the profile in view.</p></div>
-      <div class="step glass reveal lift" style="transition-delay:180ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9l5 12 1.8-5.2L21 14z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></svg></div><span class="step-num">Step 04</span></div><h3>Click "Paste Profile" and you're done</h3><p>Name, company, title, location and profile URL land in the right columns instantly.</p></div>
-    </div>
-  </div>
-</section>
-<section id="features" class="section">
-  <div class="container">
-    <div class="section-head reveal"><p class="eyebrow">Features</p><h2>Everything you need to source faster</h2><p class="section-sub">Thoughtful details that compound over hundreds of profiles a week.</p></div>
-    <div class="features">
-      <div class="feature glass reveal lift" style="transition-delay:0ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h3>Capture profiles in one click</h3><p>Reads the LinkedIn profile you're viewing and writes a clean row to your sheet.</p></div>
-      <div class="feature glass reveal lift" style="transition-delay:50ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/><line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/><line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/><line x1="14" y1="2" x2="14" y2="6"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="16" y1="18" x2="16" y2="22"/></svg></div><h3>Custom column mapping</h3><p>Decide exactly which column receives Name, Company, Title, Location and Profile URL.</p></div>
-      <div class="feature glass reveal lift" style="transition-delay:100ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg></div><h3>Duplicate detection</h3><p>Already added that candidate? You'll be warned with the row number — no double entries.</p></div>
-      <div class="feature glass reveal lift" style="transition-delay:150ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h3>Multi-sheet support</h3><p>Switch between spreadsheets and tabs from the popup. Great for active pipelines.</p></div>
-      <div class="feature glass reveal lift" style="transition-delay:200ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Privacy-first</h3><p>Your data stays between your browser, your Google account and your sheets.</p></div>
-      <div class="feature glass reveal lift" style="transition-delay:250ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg></div><h3>Designed for high-volume sourcing workflows</h3><p>Designed around real sourcing workflows — fast, focused, no bloat.</p></div>
-    </div>
-  </div>
-</section>
-<section id="demo" class="section">
-  <div class="container demo-grid">
-    <div class="reveal">
-      <p class="eyebrow">See it in action</p>
-      <h2>The popup that saves hours every week</h2>
-      <p class="section-sub">A clean interface lives inside your browser. Connect Google, pick a spreadsheet, choose a tab, and paste the profile you're looking at — all from one focused popup.</p>
-      <ul class="demo-list">
-        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Search across all your spreadsheets</span></li>
-        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Pick the destination tab in one click</span></li>
-        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Configure custom column mapping</span></li>
-        <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Refresh the active profile anytime</span></li>
-      </ul>
-    </div>
-    <div class="demo-visual reveal">
-      <div class="chrome-mockup-wrapper">
-      <div class="chrome-mockup">
-        <div class="cm-titlebar">
-          <div class="cm-dots"><span class="cm-dot cm-dot-r"></span><span class="cm-dot cm-dot-y"></span><span class="cm-dot cm-dot-g"></span></div>
-          <div class="cm-tab-strip">
-            <div class="cm-tab cm-tab-active"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="12" height="12" alt="" style="border-radius:2px;flex-shrink:0;" /><span>Sundar Pichai - LinkedIn</span><svg class="cm-tab-close" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-            <div class="cm-tab-add"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          </div>
-        </div>
-        <div class="cm-toolbar">
-          <div class="cm-nav-btns">
-            <button class="cm-nav-btn" aria-label="Back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-            <button class="cm-nav-btn cm-nav-btn-disabled" aria-label="Forward"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-            <button class="cm-nav-btn" aria-label="Reload"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
-          </div>
-          <div class="cm-address-bar">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span class="cm-url"><span class="cm-url-domain">linkedin.com</span>/in/sundar-pichai/</span>
-          </div>
-          <div class="cm-toolbar-right">
-            <button class="cm-ext-btn" aria-label="LinkedIn to Sheets"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="16" height="16" alt="LinkedIn to Sheets" /></button>
-            <svg class="cm-toolbar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <svg class="cm-toolbar-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
-          </div>
-        </div>
-        <div class="cm-content">
-          <div class="li-page">
-            <div class="li-nav">
-              <svg class="li-logo" width="28" height="28" viewBox="0 0 34 34" fill="#0A66C2"><path d="M34 2.5v29A2.5 2.5 0 0 1 31.5 34h-29A2.5 2.5 0 0 1 0 31.5v-29A2.5 2.5 0 0 1 2.5 0h29A2.5 2.5 0 0 1 34 2.5zM10 13H5v16h5V13zm.45-4.5a2.75 2.75 0 1 0-5.5 0 2.75 2.75 0 0 0 5.5 0zM29 19.28c0-4.81-3.06-6.68-6.1-6.68a5.7 5.7 0 0 0-5 2.62V13h-5v16h5v-8.52a3.33 3.33 0 0 1 3-3.58c1.58 0 2.76 1 2.76 3.52V29H29z"/></svg>
-              <div class="li-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search</span></div>
-              <div class="li-nav-links">
-                <div class="li-nav-item li-nav-active"><svg width="16" height="16" viewBox="0 0 24 24" fill="
-#0A66C2" stroke="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span></div>
-                <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Network</span></div>
-                <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span>Jobs</span></div>
+        <div class="hero-visual reveal">
+          <div class="mockup-wrap glass lift">
+            <div class="chrome-bar chrome-bar-hero">
+              <div class="chrome-dots"><span class="cdot cdot-r"></span><span class="cdot cdot-y"></span><span class="cdot cdot-g"></span></div>
+              <div class="chrome-tab-pill"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="12" height="12" alt="" /><span>LinkedIn to Sheets</span></div>
+            </div>
+            <div class="mockup mockup-hero">
+              <div class="mockup-inner">
+                <video id="hero-video" muted loop playsinline preload="metadata" poster="media/preview.png"><source src="media/demo.mp4" type="video/mp4"></video>
+                </div>
               </div>
             </div>
-            <div class="li-profile">
-              <div class="li-cover">
-                <div class="li-cover-bg"></div>
-                <div class="li-avatar-wrap"><img class="li-avatar-img" src="
-https://media.licdn.com/dms/image/v2/D5603AQHC8_1s7IHNHg/profile-displayphoto-crop_800_800/B56Z36YnjDIkAI-/0/1778022254573?e=1779926400&v=beta&t=Q37a6UH9ELT7YB-8PyuS45MQTuTAZ8xhz2ug-8hYrtc" alt="Sundar Pichai" /></div>
-              </div>
-              <div class="li-profile-body">
-                <div class="li-profile-info">
-                  <div class="li-name-row"><h2 class="li-name">Sundar Pichai</h2><svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                  <p class="li-headline">CEO at Google &amp; Alphabet</p>
-                  <p class="li-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>San Francisco Bay Area <span class="li-dot">·</span> <span class="li-contact">Contact info</span></p>
-                  <p class="li-followers">25,836,402 followers · 500+ connections</p>
-                  <div class="li-actions">
-                    <button class="li-btn-primary">Follow</button>
-                    <button class="li-btn-secondary">Message</button>
-                    <button class="li-btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="container ps-grid">
+          <div class="reveal lift card-pad glass">
+            <div class="icon-chip dest">✕</div><h3>The problem</h3>
+            <p class="card-text">You know the drill:<br>open profile → copy → switch tab → paste → repeat. It's slow, repetitive — and it kills your productivity.</p>
+            <ul class="bullet-list"><li><span class="bullet-x">·</span> Constant tab switching kills your flow</li><li><span class="bullet-x">·</span> Manual copy-paste leads to errors</li><li><span class="bullet-x">·</span> Duplicate candidates waste time</li></ul>
+          </div>
+          <div class="reveal lift card-pad solution-card">
+            <div class="icon-chip prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <h3>The solution</h3>
+            <p class="card-text">LinkedIn to Sheets automates the most repetitive part of sourcing. Stay on LinkedIn. Your data updates automatically in Google Sheets. No friction, no switching tabs, no manual errors.</p>
+            <ul class="bullet-list"><li><span class="bullet-ok">✓</span> One click captures the full profile</li><li><span class="bullet-ok">✓</span> Customisable column mapping</li><li><span class="bullet-ok">✓</span> Warns you if the candidate already exists</li></ul>
+          </div>
+        </div>
+      </section>
+      <section id="how" class="section">
+        <div class="container">
+          <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>From profile to spreadsheet in four steps</h2><p class="section-sub">No setup headaches, no API keys. Just install, connect, and start sourcing faster.</p></div>
+          <div class="steps">
+            <div class="step glass reveal lift" style="transition-delay:0ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg></div><span class="step-num">Step 01</span></div><h3>Install the extension</h3><p>Add LinkedIn to Sheets from the Chrome Web Store in seconds.</p></div>
+            <div class="step glass reveal lift" style="transition-delay:60ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></div><span class="step-num">Step 02</span></div><h3>Connect Google Sheets</h3><p>Sign in with Google and pick the spreadsheet and tab you want to fill.</p></div>
+            <div class="step linkedin glass reveal lift" style="transition-delay:120ms"><div class="step-head"><div class="step-icon linkedin"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 21v-2a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v2"/></svg></div><span class="step-num">Step 03</span></div><h3>Open any LinkedIn profile</h3><p>Browse LinkedIn the way you always do. The extension reads the profile in view.</p></div>
+            <div class="step glass reveal lift" style="transition-delay:180ms"><div class="step-head"><div class="step-icon prim"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9l5 12 1.8-5.2L21 14z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/></svg></div><span class="step-num">Step 04</span></div><h3>Click "Save profile" and you're done</h3><p>Name, company, title, location and profile URL land in the right columns instantly.</p></div>
+          </div>
+        </div>
+      </section>
+      <section id="features" class="section">
+        <div class="container">
+          <div class="section-head reveal"><p class="eyebrow">Features</p><h2>Built for real sourcing workflows</h2><p class="section-sub">Thoughtful details that compound over hundreds of profiles a week.</p></div>
+          <div class="features">
+            <div class="feature glass reveal lift" style="transition-delay:0ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h3>Capture profiles in one click</h3><p>Reads the LinkedIn profile you're viewing and writes a clean row to your sheet.</p></div>
+            <div class="feature glass reveal lift" style="transition-delay:50ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/><line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/><line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/><line x1="14" y1="2" x2="14" y2="6"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="16" y1="18" x2="16" y2="22"/></svg></div><h3>Custom column mapping</h3><p>Decide exactly which column receives Name, Company, Title, Location and Profile URL.</p></div>
+            <div class="feature glass reveal lift" style="transition-delay:100ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg></div><h3>Duplicate detection</h3><p>Already added that candidate? You'll be warned with the row number — no double entries.</p></div>
+            <div class="feature glass reveal lift" style="transition-delay:150ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h3>Multi-sheet support</h3><p>Switch between spreadsheets and tabs from the popup. Great for active pipelines.</p></div>
+            <div class="feature glass reveal lift" style="transition-delay:200ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Privacy-first</h3><p>Your data stays between your browser, your Google account and your sheets.</p></div>
+            <div class="feature glass reveal lift" style="transition-delay:250ms"><div class="step-icon prim" style="margin-bottom:1rem"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg></div><h3>Designed for high-volume sourcing workflows</h3><p>Designed around real sourcing workflows — fast, focused, no bloat.</p></div>
+          </div>
+        </div>
+      </section>
+      <section id="product" class="section">
+        <div class="container demo-grid">
+          <div class="reveal">
+            <p class="eyebrow">Your workflow, simplified</p>
+            <h2>The popup that saves hours every week</h2>
+            <p class="section-sub">No setup. No complexity. Just one simple popup.</p>
+            <ul class="demo-list">
+              <li>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>Everything happens in one simple popup</span>
+              </li>
+
+              <li>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>No switching tabs. No interruptions</span>
+              </li>
+
+              <li>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>Set your workflow once — it just works</span>
+              </li>
+
+              <li>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>Capture profiles instantly, without friction</span>
+              </li>
+            </ul>
+          </div>
+          <div class="demo-visual reveal">
+            <div class="chrome-mockup-wrapper">
+              <div class="chrome-mockup">
+                <div class="cm-titlebar">
+                  <div class="cm-dots"><span class="cm-dot cm-dot-r"></span><span class="cm-dot cm-dot-y"></span><span class="cm-dot cm-dot-g"></span></div>
+                  <div class="cm-tab-strip">
+                    <div class="cm-tab cm-tab-active"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="12" height="12" alt="" style="border-radius:2px;flex-shrink:0;" /><span>Sundar Pichai - LinkedIn</span><svg class="cm-tab-close" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                    <div class="cm-tab-add"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
                   </div>
                 </div>
-                <div class="li-about-snippet"><p>Chief Executive Officer of Google LLC and Alphabet Inc. Passionate about technology and its power to transform people's lives.</p></div>
+                <div class="cm-toolbar">
+                  <div class="cm-nav-btns">
+                    <button class="cm-nav-btn" aria-label="Back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+                    <button class="cm-nav-btn cm-nav-btn-disabled" aria-label="Forward"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    <button class="cm-nav-btn" aria-label="Reload"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+                  </div>
+                  <div class="cm-address-bar">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span class="cm-url"><span class="cm-url-domain">linkedin.com</span>/in/sundar-pichai/</span>
+                  </div>
+                  <div class="cm-toolbar-right">
+                    <button class="cm-ext-btn" aria-label="LinkedIn to Sheets"><img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" width="16" height="16" alt="LinkedIn to Sheets" /></button>
+                    <svg class="cm-toolbar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <svg class="cm-toolbar-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                  </div>
+                </div>
+                <div class="cm-content">
+                  <div class="li-page">
+                    <div class="li-nav">
+                      <svg class="li-logo" width="28" height="28" viewBox="0 0 34 34" fill="#0A66C2"><path d="M34 2.5v29A2.5 2.5 0 0 1 31.5 34h-29A2.5 2.5 0 0 1 0 31.5v-29A2.5 2.5 0 0 1 2.5 0h29A2.5 2.5 0 0 1 34 2.5zM10 13H5v16h5V13zm.45-4.5a2.75 2.75 0 1 0-5.5 0 2.75 2.75 0 0 0 5.5 0zM29 19.28c0-4.81-3.06-6.68-6.1-6.68a5.7 5.7 0 0 0-5 2.62V13h-5v16h5v-8.52a3.33 3.33 0 0 1 3-3.58c1.58 0 2.76 1 2.76 3.52V29H29z"/></svg>
+                      <div class="li-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search</span></div>
+                      <div class="li-nav-links">
+                        <div class="li-nav-item li-nav-active"><svg width="16" height="16" viewBox="0 0 24 24" fill="
+                          #0A66C2" stroke="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span></div>
+                          <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Network</span></div>
+                          <div class="li-nav-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span>Jobs</span></div>
+                        </div>
+                      </div>
+                      <div class="li-profile">
+                        <div class="li-cover">
+                          <div class="li-cover-bg"></div>
+                          <div class="li-avatar-wrap"><img class="li-avatar-img" src="
+                            https://media.licdn.com/dms/image/v2/D5603AQHC8_1s7IHNHg/profile-displayphoto-crop_800_800/B56Z36YnjDIkAI-/0/1778022254573?e=1779926400&v=beta&t=Q37a6UH9ELT7YB-8PyuS45MQTuTAZ8xhz2ug-8hYrtc" alt="Sundar Pichai" /></div>
+                          </div>
+                          <div class="li-profile-body">
+                            <div class="li-profile-info">
+                              <div class="li-name-row"><h2 class="li-name">Sundar Pichai</h2><svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                              <p class="li-headline">CEO at Google &amp; Alphabet</p>
+                              <p class="li-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>San Francisco Bay Area <span class="li-dot">·</span> <span class="li-contact">Contact info</span></p>
+                              <p class="li-followers">25,836,402 followers · 500+ connections</p>
+                              <div class="li-actions">
+                                <button class="li-btn-primary">Follow</button>
+                                <button class="li-btn-secondary">Message</button>
+                                <button class="li-btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+                              </div>
+                            </div>
+                            <div class="li-about-snippet"><p>Chief Executive Officer of Google LLC and Alphabet Inc. Passionate about technology and its power to transform people's lives.</p></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="cm-popup-anchor">
+                      <div class="cm-popup">
+                        <img src="media/main-screen.jpg" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="cm-popup-anchor">
-          <div class="cm-popup">
-            <img src="media/main-screen.jpg" alt="LinkedIn to Sheets extension popup interface" loading="lazy" decoding="async" />
-          </div>
-        </div>
-      </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section id="beta" class="section">
-  <div class="beta-wrap">
-    <div class="reveal beta-card glass-strong">
-      <div class="beta-card-bg"><div class="beta-orb-1"></div><div class="beta-orb-2"></div></div>
-      <div class="beta-pill-2"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>Limited beta spots</div>
-      <h2>Stop copy-pasting LinkedIn profiles today</h2>
-      <p class="lead">Save hours every week with one click</p>
-      <div class="cta-row">
-        <a class="btn-primary lg" href="mailto:qnnmgqye2@mozmail.com"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>Get early access</a>
-        <a class="btn-glass" href="privacy.html">Privacy Policy</a>
-      </div>
-    </div>
-  </div>
-</section>
-<footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-brand"><img src="
-https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async" /><span>LinkedIn to Sheets</span></div>
-    <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
-    <a class="gh" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
-  </div>
-</footer>
-<script>(function(){var els=document.querySelectorAll('.reveal');if(!els.length)return;if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('is-visible');});return;}var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});els.forEach(function(el){io.observe(el);});})();</script>
-<script>(function(){var docLinks=['index.html','privacy.html','changelog.html'];docLinks.forEach(function(h){if(location.pathname.indexOf(h)===-1){var l=document.createElement('link');l.rel='prefetch';l.href=h;document.head.appendChild(l);}});document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var href=a.getAttribute('href');if(!href||href.startsWith('#')||a.target==='_blank'||a.hasAttribute('download'))return;var u=new URL(a.href,location.href);if(u.origin!==location.origin)return;if(!/\/(index|privacy|changelog)\.html$/.test(u.pathname)&&!/\/LinkedIn_to_Sheets\/$/.test(u.pathname))return;document.body.classList.add('page-exit');},{passive:true});})();</script>
-<script>(function(){var video=document.getElementById('hero-video');if(!video)return;if(!('IntersectionObserver'in window)){video.play().catch(function(){});return;}var playPromise=null,playTimeout=null;var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){if(!playTimeout&&video.paused&&!playPromise){playTimeout=setTimeout(function(){playPromise=video.play();if(playPromise!==undefined){playPromise.then(function(){playTimeout=null;}).catch(function(){playTimeout=null;});}},1500);}}else{if(playTimeout){clearTimeout(playTimeout);playTimeout=null;}if(playPromise!==undefined){playPromise.then(function(){video.pause();playPromise=null;}).catch(function(){playPromise=null;});}else if(!video.paused){video.pause();}}});},{threshold:0.7});observer.observe(video);})();</script>
-</body>
-</html>
+          </section>
+          <section id="beta" class="section">
+            <div class="beta-wrap">
+              <div class="reveal beta-card glass-strong">
+                <div class="beta-card-bg"><div class="beta-orb-1"></div><div class="beta-orb-2"></div></div>
+                <div class="beta-pill-2"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>Limited beta spots</div>
+                <h2>Stop copy-pasting LinkedIn profiles today</h2>
+                <p class="lead">Save hours every week with one click</p>
+                <div class="cta-row">
+                  <a class="btn-primary lg" href="mailto:qnnmgqye2@mozmail.com"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>Get early access</a>
+                  <a class="btn-glass" href="privacy.html">Privacy Policy</a>
+                </div>
+              </div>
+            </div>
+          </section>
+          <footer class="footer">
+            <div class="footer-inner">
+              <div class="footer-brand"><img src="
+                https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async" /><span>LinkedIn to Sheets</span></div>
+                <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
+                <a class="gh" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+              </div>
+            </footer>
+            <script>(function(){var els=document.querySelectorAll('.reveal');if(!els.length)return;if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('is-visible');});return;}var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});els.forEach(function(el){io.observe(el);});})();</script>
+            <script>(function(){var docLinks=['index.html','privacy.html','changelog.html'];docLinks.forEach(function(h){if(location.pathname.indexOf(h)===-1){var l=document.createElement('link');l.rel='prefetch';l.href=h;document.head.appendChild(l);}});document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var href=a.getAttribute('href');if(!href||href.startsWith('#')||a.target==='_blank'||a.hasAttribute('download'))return;var u=new URL(a.href,location.href);if(u.origin!==location.origin)return;if(!/\/(index|privacy|changelog)\.html$/.test(u.pathname)&&!/\/LinkedIn_to_Sheets\/$/.test(u.pathname))return;document.body.classList.add('page-exit');},{passive:true});})();</script>
+            <script>(function(){var video=document.getElementById('hero-video');if(!video)return;if(!('IntersectionObserver'in window)){video.play().catch(function(){});return;}var playPromise=null,playTimeout=null;var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){if(!playTimeout&&video.paused&&!playPromise){playTimeout=setTimeout(function(){playPromise=video.play();if(playPromise!==undefined){playPromise.then(function(){playTimeout=null;}).catch(function(){playTimeout=null;});}},1500);}}else{if(playTimeout){clearTimeout(playTimeout);playTimeout=null;}if(playPromise!==undefined){playPromise.then(function(){video.pause();playPromise=null;}).catch(function(){playPromise=null;});}else if(!video.paused){video.pause();}}});},{threshold:0.7});observer.observe(video);})();</script>
+          </body>
+          </html>
