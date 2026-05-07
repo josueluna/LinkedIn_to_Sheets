@@ -81,7 +81,31 @@ button, a { cursor: pointer; }
 .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--linkedin), var(--primary)); transform: scaleX(0); transform-origin: right center; transition: transform .35s cubic-bezier(.2,.7,.2,1); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left center; }
 @media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
-.btn-primary { background: var(--linkedin); color: white; padding: .5rem 1rem; border-radius: .5rem; font-size: .875rem; font-weight: 500; box-shadow: 0 10px 30px -10px oklch(0.50 0.15 245 / 0.45); border: none; transition: transform .25s, filter .25s, box-shadow .25s; position: relative; overflow: hidden; isolation: isolate; }
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+
+  background: var(--linkedin);
+  color: white;
+  padding: .5rem 1rem;
+  border-radius: .5rem;
+  font-size: .875rem;
+  font-weight: 500;
+  line-height: 1;
+  box-shadow: 0 10px 30px -10px oklch(0.50 0.15 245 / 0.45);
+  border: none;
+  transition: transform .25s, filter .25s, box-shadow .25s;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-primary .icon {
+  display: block;
+}
+
 .btn-primary::before { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 30%, color-mix(in oklab, white 35%, transparent) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
 .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 14px 36px -12px oklch(0.50 0.15 245 / 0.55); }
 .btn-primary:hover::before { transform: translateX(120%); }
@@ -149,7 +173,7 @@ h1 { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height
 .hero-visual::before { display: none; }
 .mockup-wrap { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s cubic-bezier(.2,.7,.2,1); }
 .mockup-wrap:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
-.mockup-wrap::after { content: ""; position: absolute; inset: -2px; border-radius: 24px; background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 25%, transparent), color-mix(in oklab, var(--linkedin) 25%, transparent)); opacity: 0; transition: opacity .4s; z-index: -1; }
+.mockup-wrap::after { display: none;}
 .mockup-wrap:hover::after { opacity: 1; }
 .mockup { position: relative; border-radius: 22px; overflow: hidden; background: var(--card); border: 1px solid var(--border); }
 .mockup-inner { border-radius: 0; overflow: hidden; background: #ffffff; }
@@ -234,7 +258,12 @@ h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
 #FFD60A; } .cdot-g { background: 
 #32D74B; } }
 .demo-popup-card { border-radius: 18px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px -8px rgba(0,0,0,0.10); transition: box-shadow .35s cubic-bezier(.2,.7,.2,1), transform .35s cubic-bezier(.2,.7,.2,1); }
-.demo-popup-card:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(0,0,0,0.06), 0 16px 40px -12px rgba(0,0,0,0.22), 0 0 0 2px color-mix(in oklab, var(--primary) 35%, transparent), 0 0 32px -4px color-mix(in oklab, var(--primary) 30%, transparent), 0 0 56px -8px color-mix(in oklab, var(--linkedin) 20%, transparent); }
+.demo-popup-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.10),
+    0 20px 40px -10px rgba(0,0,0,0.25);
+}
 .demo-popup-card .chrome-bar { border-radius: 18px 18px 0 0; }
 .demo-popup-card .mockup { border-radius: 0 0 18px 18px; border-top: none; }
 .demo-popup-card .mockup-inner img { width: 100%; height: auto; object-fit: initial; display: block; }
@@ -462,12 +491,17 @@ body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height
               box-shadow .35s cubic-bezier(.2,.7,.2,1);
 }
 
-.cm-popup:hover {
-  transform: translateY(-6px) scale(1.02);
+.cm-popup {
   box-shadow:
-    0 16px 40px -12px rgba(0,0,0,0.28),
-    0 0 0 1px color-mix(in oklab, var(--primary) 25%, transparent),
-    0 0 30px -6px color-mix(in oklab, var(--primary) 25%, transparent);
+    0 2px 8px rgba(0,0,0,0.08),
+    0 16px 48px -8px rgba(0,0,0,0.22);
+}
+
+.cm-popup:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.10),
+    0 20px 40px -10px rgba(0,0,0,0.25);
 }
 
 @media (max-width: 640px) {
@@ -495,7 +529,7 @@ https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.
     <nav class="nav-links">
       <a href="index.html#how">See How It Works</a><a href="index.html#features">Features</a><a href="index.html#demo">Demo</a><a href="changelog.html">Changelog</a><a href="privacy.html">Privacy</a>
     </nav>
-    <a class="btn-primary" href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>Start Saving LinkedIn Profiles Now</a>
+    <a class="btn-primary" href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>Join the beta</a>
   </div>
 </header>
 <section id="top" class="hero">
@@ -507,8 +541,8 @@ https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.
       <p class="lead">Built for recruiters, sales teams, and operators who source on LinkedIn daily.</p>
       <p class="workflow-line">Open profile → copy → switch tab → paste → repeat… hundreds of times</p>
       <div class="cta-row">
-        <a class="btn-primary lg" href="#beta"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Install Chrome Extension</a>
-        <a class="btn-glass" href="#how">See how it works</a>
+        <a class="btn-primary lg" href="#beta"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Get early access</a>
+        <a class="btn-glass" href="#how">How it works</a>
       </div>
       <p class="fineprint">No data stored · Works with any Google account · No setup required</p>
       <p class="fineprint" style="opacity:0.8;">Used by recruiters sourcing hundreds of candidates weekly</p>
