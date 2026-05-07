@@ -198,11 +198,13 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
       <a class="brand" href="index.html"><img src="
         https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async"><span>LinkedIn to Sheets</span></a>
         <nav class="nav-links">
-          <a href="#how">How it works</a>
-          <a href="#features">Features</a>
-          <a href="#product">Product</a>
-          <a href="#beta">Get access</a>
-        </nav>
+  <a href="#how">How it works</a>
+  <a href="#features">Features</a>
+  <a href="#demo">Product</a>
+  <a href="#beta">Get access</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="privacy.html">Privacy</a>
+</nav>
         <a class="btn-primary" href="https://chrome.google.com/webstore" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>Get early access</a>
       </div>
     </header>
@@ -223,11 +225,23 @@ exports[`Docs HTML snapshots > index.html snapshot 1`] = `
             Built for recruiters and teams who source on LinkedIn daily.
           </p>
           <div class="cta-row">
-            <p class="fineprint" style="margin-top:0.25rem;">
-Used by recruiters sourcing 100+ profiles per week
-</p><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Get early access
-            <a class="btn-glass" href="#how">How it works</a>
-          </div>
+
+  <a class="btn-primary" href="https://chrome.google.com/webstore" target="_blank" rel="noopener">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="12" cy="12" r="4"></circle>
+      <line x1="21.17" y1="8" x2="12" y2="8"></line>
+      <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
+      <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
+    </svg>
+    Get early access
+  </a>
+
+  <a class="btn-glass" href="#how">
+    How it works
+  </a>
+
+</div>
           <p class="fineprint">No data stored · Works with any Google account · No setup required</p>
           <p class="fineprint" style="opacity:0.8;">Used by recruiters sourcing hundreds of candidates weekly</p>
           <p class="fineprint" style="margin-top:0.25rem;">Takes less than 30 seconds to get started</p>
