@@ -1433,7 +1433,25 @@
 
       /* demo-grid must NOT clip — the scale wrapper
          needs space to shrink without being cut */
-      .demo-grid { overflow: visible; }
+      .demo-grid {
+        overflow: visible;
+        /* force single column, clamp each child to viewport width */
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      /* text column: hard cap at viewport width so h2 never bleeds */
+      .demo-grid > div:first-child {
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      /* h2 inside: wrap instead of overflow */
+      .demo-grid h2 {
+        overflow-wrap: break-word;
+        word-break: break-word;
+        text-wrap: pretty;
+      }
 
       /* The wrapper scales down the ENTIRE composition
          (browser + floating popup) as one unit.
@@ -1454,7 +1472,7 @@
       .chrome-mockup-wrapper {
         /* scale the whole thing (browser + floating panel) as one unit */
         transform: scale(0.58);
-        transform-origin: -13.5% top;
+        transform-origin: 42% top;
         /* compensate for the vertical dead-space scale() creates */
         margin-bottom: -220px;
         /* let the wrapper be its natural desktop width so
