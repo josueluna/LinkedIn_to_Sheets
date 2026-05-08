@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- ── Meta & SEO ── -->
+  <meta charset="UTF-8">
+  <title>LinkedIn to Sheets — Beta Feedback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Comparte tu experiencia con LinkedIn to Sheets. Tu feedback da forma a la próxima versión." />
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png">
+
+  <!-- ── Fonts ── -->
+  <link rel="dns-prefetch" href="https://rsms.me" />
+  <link rel="preconnect" href="https://rsms.me/" crossorigin>
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+  <!-- ── Prefetch sibling pages ── -->
+  <link rel="prefetch" href="index.html" />
+  <link rel="prefetch" href="privacy.html" />
+  <link rel="prefetch" href="changelog.html" />
+
+<style>
+/* ── Design tokens ── */
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.995 0.002 255);
+  --foreground: oklch(0.18 0.025 265);
+  --card: oklch(1 0 0);
+  --muted-fg: oklch(0.50 0.02 260);
+  --primary: oklch(0.66 0.19 145);
+  --primary-fg: oklch(0.99 0.005 145);
+  --linkedin: oklch(0.50 0.15 245);
+  --border: oklch(0.92 0.008 255);
+  --shadow-glow: 0 10px 30px -10px oklch(0.66 0.19 145 / 0.35);
+  --shadow-elegant: 0 24px 60px -28px oklch(0.30 0.05 265 / 0.25);
+  --shadow-soft: 0 1px 2px oklch(0.30 0.05 265 / 0.04), 0 8px 24px -12px oklch(0.30 0.05 265 / 0.10);
+  --glass-bg: color-mix(in oklab, white 65%, transparent);
+  --glass-strong-bg: color-mix(in oklab, white 78%, transparent);
+  --glass-border: color-mix(in oklab, oklch(0.30 0.05 265) 8%, transparent);
+  --gradient-brand: linear-gradient(135deg, oklch(0.50 0.15 245), oklch(0.66 0.19 145));
+  /* ── Nav — opaque like index.html ── */
+  --nav-bg: color-mix(in oklab, white 94%, transparent);
+  --nav-border: color-mix(in oklab, oklch(0.30 0.05 265) 16%, transparent);
+}
+
+/* ── Dark mode tokens ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.16 0.025 265);
+    --foreground: oklch(0.96 0.005 255);
+    --card: oklch(0.21 0.028 265);
+    --muted-fg: oklch(0.72 0.02 260);
+    --primary: oklch(0.74 0.19 145);
+    --primary-fg: oklch(0.16 0.025 265);
+    --linkedin: oklch(0.70 0.15 245);
+    --border: oklch(1 0 0 / 0.10);
+    --shadow-glow: 0 10px 30px -10px oklch(0.74 0.19 145 / 0.45);
+    --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.55);
+    --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.30), 0 8px 24px -12px oklch(0 0 0 / 0.45);
+    --glass-bg: color-mix(in oklab, oklch(0.21 0.028 265) 55%, transparent);
+    --glass-strong-bg: color-mix(in oklab, oklch(0.21 0.028 265) 75%, transparent);
+    --glass-border: color-mix(in oklab, white 10%, transparent);
+    --nav-bg: color-mix(in oklab, oklch(0.21 0.028 265) 90%, transparent);
+    --nav-border: color-mix(in oklab, white 16%, transparent);
+  }
+}
+
+/* ── Reset ── */
+* { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; overflow-y: scroll; }
+html, body { background: var(--background); color: var(--foreground); }
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5; min-height: 100vh;
+  opacity: 1; transition: opacity .14s ease-out;
+}
+body.page-exit { opacity: .985; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button, a { cursor: pointer; }
+
+/* ── Background mesh ── */
+.bg-mesh { position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden; }
+.bg-mesh::before, .bg-mesh::after, .bg-mesh > .blob {
+  content: ""; position: absolute; border-radius: 9999px;
+  filter: blur(52px); opacity: .22;
+}
+.bg-mesh::before { width: 46vw; height: 46vw; top: -10vw; left: -8vw; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.35), transparent 70%); }
+.bg-mesh::after  { width: 50vw; height: 50vw; top: 20vh; right: -12vw; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.32), transparent 70%); }
+.bg-mesh > .blob { width: 42vw; height: 42vw; bottom: -14vw; left: 25vw; background: radial-gradient(closest-side, oklch(0.74 0.19 145 / 0.28), transparent 70%); }
+
+/* ── Utility ── */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease-out, transform .6s ease-out; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.icon { width: 1rem; height: 1rem; flex-shrink: 0; }
+.icon-sm { width: .875rem; height: .875rem; flex-shrink: 0; }
+
+/* ── Nav — opaque ── */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--nav-bg);
+  backdrop-filter: saturate(160%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
+  border-bottom: 1px solid var(--nav-border);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1.5rem; max-width: 72rem; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: .625rem; font-weight: 600; letter-spacing: -0.01em; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+.brand:hover { transform: translateY(-1px); }
+.brand img { width: 2rem; height: 2rem; border-radius: .375rem; }
+.nav-links { display: none; gap: 2rem; font-size: .875rem; color: var(--muted-fg); }
+.nav-links a { transition: color .2s; position: relative; padding-bottom: 2px; }
+.nav-links a:hover { color: var(--foreground); }
+.nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--linkedin), var(--primary)); transform: scaleX(0); transform-origin: right center; transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+.nav-links a:hover::after { transform: scaleX(1); transform-origin: left center; }
+@media (min-width: 768px) { .nav-links { display: flex; align-items: center; } }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--linkedin); color: white;
+  padding: .5rem 1rem; border-radius: .5rem; font-size: .875rem; font-weight: 500;
+  border: none; transition: transform .25s, filter .25s;
+}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+/* ── Language row in hero ── */
+.lang-row {
+  display: inline-flex; align-items: center; gap: .625rem;
+  margin-top: 2rem;
+  font-size: .8125rem; color: var(--muted-fg);
+}
+.lang-label { font-weight: 500; }
+
+/* ── Language toggle ── */
+.lang-toggle {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--border); border-radius: .5rem; overflow: hidden;
+}
+.lang-toggle button {
+  padding: .3rem .7rem;
+  background: transparent; border: none;
+  color: var(--muted-fg); cursor: pointer;
+  transition: background .2s, color .2s;
+  font-family: inherit; font-size: .8125rem; font-weight: 500;
+}
+.lang-toggle button.active {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+.lang-toggle button:hover:not(.active) { color: var(--foreground); }
+.lang-toggle .lang-sep { width: 1px; background: var(--border); align-self: stretch; }
+
+/* ── Hero ── */
+.hero { position: relative; overflow: hidden; padding: 5rem 1.5rem 4rem; text-align: center; }
+@media (min-width: 768px) { .hero { padding: 7rem 1.5rem 5rem; } }
+.hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.orb { position: absolute; border-radius: 9999px; filter: blur(64px); }
+.orb-1 { top: -8rem; left: -6rem; width: 480px; height: 480px; background: radial-gradient(closest-side, oklch(0.66 0.19 145 / 0.22), transparent 70%); }
+.orb-2 { top: -5rem; right: -10%; width: 520px; height: 520px; background: radial-gradient(closest-side, oklch(0.50 0.15 245 / 0.20), transparent 70%); }
+.hero-inner { max-width: 48rem; margin: 0 auto; }
+.eyebrow { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; color: var(--primary); }
+.page-title { margin-top: .75rem; font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; text-wrap: balance; }
+.gradient-text { background: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (min-width: 768px) { .page-title { font-size: 3rem; } }
+.page-sub { margin-top: 1rem; color: var(--muted-fg); font-size: 1rem; max-width: 34rem; margin-left: auto; margin-right: auto; text-wrap: balance; }
+
+/* ── Form wrapper ── */
+.form-wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+/* ── Form card ── */
+.form-card {
+  border-radius: 1.25rem;
+  background: var(--glass-strong-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-elegant);
+  padding: 2.5rem 2rem;
+}
+@media (min-width: 768px) { .form-card { padding: 3rem; } }
+
+/* ── Section headings inside form ── */
+.form-section { margin-top: 2.25rem; }
+.form-section:first-child { margin-top: 0; }
+.form-section-title {
+  font-size: .6875rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--primary);
+  display: flex; align-items: center; gap: .5rem;
+  margin-bottom: 1.25rem; padding-bottom: .75rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+}
+.section-divider {
+  height: 1px;
+  background: color-mix(in oklab, var(--border) 60%, transparent);
+  margin: 2.25rem 0;
+}
+
+/* ── Form fields ── */
+.field { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.25rem; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  font-size: .875rem; font-weight: 500; color: var(--foreground);
+  display: flex; align-items: center; gap: .375rem; flex-wrap: wrap;
+}
+.field label .optional { font-size: .75rem; font-weight: 400; color: var(--muted-fg); }
+.field input[type="email"],
+.field textarea {
+  width: 100%;
+  background: color-mix(in oklab, var(--background) 60%, transparent);
+  border: 1px solid var(--border);
+  border-radius: .625rem;
+  padding: .625rem .875rem;
+  font-size: .9375rem; font-family: inherit;
+  color: var(--foreground);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none; resize: vertical;
+}
+.field input[type="email"]:focus,
+.field textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent);
+}
+.field textarea { min-height: 90px; }
+
+/* ── Star rating ── */
+.star-group { display: flex; gap: .375rem; flex-direction: row-reverse; justify-content: flex-end; }
+.star-group input { display: none; }
+.star-group label { font-size: 1.75rem; cursor: pointer; color: oklch(0.88 0.01 260); transition: color .12s; line-height: 1; }
+.star-group:hover label { color: var(--primary); }
+.star-group label:hover ~ label { color: var(--primary); }
+.star-group input:checked ~ label { color: oklch(0.88 0.01 260); }
+.star-group input:checked + label { color: oklch(0.82 0.18 80); }
+
+/* ── Yes/No toggle ── */
+.toggle-group { display: flex; gap: .5rem; }
+.toggle-group input[type="radio"] { display: none; }
+.toggle-group label {
+  flex: 1; text-align: center;
+  padding: .5rem .75rem; border-radius: .5rem;
+  font-size: .875rem; font-weight: 500;
+  border: 1px solid var(--border); color: var(--muted-fg);
+  cursor: pointer; transition: all .2s;
+  background: color-mix(in oklab, var(--background) 40%, transparent);
+}
+.toggle-group input[type="radio"]:checked + label {
+  border-color: var(--primary); color: var(--primary);
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+.toggle-group label:hover { border-color: color-mix(in oklab, var(--primary) 50%, transparent); color: var(--foreground); }
+
+/* ── Submit button ── */
+.submit-btn {
+  width: 100%; margin-top: 2rem;
+  padding: .875rem 1.5rem;
+  background: var(--linkedin); color: white;
+  border: none; border-radius: .75rem;
+  font-size: 1rem; font-weight: 600; font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 10px 30px -10px oklch(0.50 0.15 245 / 0.5);
+  transition: filter .25s, transform .25s;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+}
+.submit-btn:hover { filter: brightness(1.08); transform: translateY(-2px); }
+.submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+/* ── Success state ── */
+.success-card {
+  display: none; text-align: center;
+  padding: 3rem 2rem; border-radius: 1.25rem;
+  background: var(--glass-strong-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-elegant);
+}
+.success-icon {
+  width: 3.5rem; height: 3.5rem; border-radius: 9999px;
+  background: color-mix(in oklab, var(--primary) 15%, transparent);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.25rem; color: var(--primary);
+}
+.success-card h2 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: .5rem; }
+.success-card p { color: var(--muted-fg); font-size: .9375rem; }
+
+/* ── Footer ── */
+.footer { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: 2.5rem 0; }
+.footer-inner { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 1rem; font-size: .875rem; color: var(--muted-fg); }
+@media (min-width: 768px) { .footer-inner { flex-direction: row; } }
+.footer-brand { display: flex; align-items: center; gap: .625rem; }
+.footer-brand img { width: 1.25rem; height: 1.25rem; border-radius: .25rem; }
+.footer a.link { color: var(--foreground); transition: color .2s; }
+.footer a.link:hover { color: var(--primary); }
+.footer .gh { display: inline-flex; align-items: center; gap: .5rem; transition: color .2s; }
+.footer .gh:hover { color: var(--foreground); }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Background mesh ── -->
+<div class="bg-mesh" aria-hidden="true"><span class="blob"></span></div>
+
+<!-- ── Nav ── -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="LinkedIn to Sheets logo" width="32" height="32" decoding="async" />
+      <span>LinkedIn to Sheets</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html#how">See How It Works</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#demo">Demo</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+    <a class="btn-primary" href="index.html#beta">
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+      Get the extension
+    </a>
+  </div>
+</header>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+  <div class="hero-inner reveal">
+    <div class="eyebrow" data-es="Programa Beta" data-en="Beta Program">Programa Beta</div>
+    <h1 class="page-title">
+      <span data-es="Comparte tu " data-en="Share your ">Comparte tu </span><span class="gradient-text">feedback</span>
+    </h1>
+    <p class="page-sub" data-es="Son 2 minutos. Tus respuestas dan forma directa a la próxima versión de LinkedIn to Sheets." data-en="Takes 2 minutes. Your answers directly shape the next version of LinkedIn to Sheets.">Son 2 minutos. Tus respuestas dan forma directa a la próxima versión de LinkedIn to Sheets.</p>
+
+    <!-- ── Language selector ── -->
+    <div class="lang-row">
+      <span class="lang-label" data-es="Elige tu idioma:" data-en="Choose your language:">Elige tu idioma:</span>
+      <div class="lang-toggle" role="group" aria-label="Language / Idioma">
+        <button id="btn-es" class="active" onclick="setLang('es')">ES</button>
+        <span class="lang-sep" aria-hidden="true"></span>
+        <button id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Form ── -->
+<div class="form-wrap">
+
+  <!-- Success state -->
+  <div class="success-card" id="success-card">
+    <div class="success-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
+    <h2 data-es="¡Gracias! 🙌" data-en="Thank you! 🙌">¡Gracias! 🙌</h2>
+    <p data-es="Tu feedback ha sido guardado. Lo leeré con cuidado antes del próximo lanzamiento." data-en="Your feedback has been saved. It'll be read carefully before the next release.">Tu feedback ha sido guardado. Lo leeré con cuidado antes del próximo lanzamiento.</p>
+  </div>
+
+  <!-- Form card -->
+  <div class="form-card reveal" id="form-card">
+    <form id="feedback-form" novalidate>
+
+      <!-- ── Bloque 1: Experiencia general ── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>
+          <span data-es="Experiencia general" data-en="General experience">Experiencia general</span>
+        </div>
+
+        <div class="field">
+          <label data-es="¿Qué tan fácil te resultó usar la extensión?" data-en="How easy was it to use the extension?">¿Qué tan fácil te resultó usar la extensión?</label>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <span style="font-size:.75rem;color:var(--muted-fg);font-weight:500;">1</span>
+            <div class="star-group" id="stars-facilidad" data-name="facilidad">
+              <input type="radio" name="facilidad" id="f5" value="5"><label for="f5" title="5">●</label>
+              <input type="radio" name="facilidad" id="f4" value="4"><label for="f4" title="4">●</label>
+              <input type="radio" name="facilidad" id="f3" value="3"><label for="f3" title="3">●</label>
+              <input type="radio" name="facilidad" id="f2" value="2"><label for="f2" title="2">●</label>
+              <input type="radio" name="facilidad" id="f1" value="1"><label for="f1" title="1">●</label>
+            </div>
+            <span style="font-size:.75rem;color:var(--muted-fg);font-weight:500;">5</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label data-es="¿Qué tan útil te fue la extensión?" data-en="How useful was the extension for your workflow?">¿Qué tan útil te fue la extensión?</label>
+          <div style="display:flex;align-items:center;gap:.75rem;">
+            <span style="font-size:.75rem;color:var(--muted-fg);font-weight:500;">1</span>
+            <div class="star-group" id="stars-utilidad" data-name="utilidad">
+              <input type="radio" name="utilidad" id="u5" value="5"><label for="u5" title="5">●</label>
+              <input type="radio" name="utilidad" id="u4" value="4"><label for="u4" title="4">●</label>
+              <input type="radio" name="utilidad" id="u3" value="3"><label for="u3" title="3">●</label>
+              <input type="radio" name="utilidad" id="u2" value="2"><label for="u2" title="2">●</label>
+              <input type="radio" name="utilidad" id="u1" value="1"><label for="u1" title="1">●</label>
+            </div>
+            <span style="font-size:.75rem;color:var(--muted-fg);font-weight:500;">5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- ── Bloque 2: Flujo técnico ── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span data-es="Flujo técnico" data-en="Technical flow">Flujo técnico</span>
+        </div>
+
+        <div class="field">
+          <label data-es="¿Pudiste conectar tu cuenta de Google?" data-en="Were you able to connect your Google account?">¿Pudiste conectar tu cuenta de Google?</label>
+          <div class="toggle-group">
+            <input type="radio" name="conecto_google" id="cg-yes" value="Yes">
+            <label for="cg-yes" data-es="✓ Sí" data-en="✓ Yes">✓ Sí</label>
+            <input type="radio" name="conecto_google" id="cg-no" value="No">
+            <label for="cg-no" data-es="✕ No" data-en="✕ No">✕ No</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label data-es="¿Pudiste seleccionar una Google Sheet y una pestaña sin problema?" data-en="Could you select a Google Sheet and tab without issues?">¿Pudiste seleccionar una Google Sheet y una pestaña sin problema?</label>
+          <div class="toggle-group">
+            <input type="radio" name="selecciono_sheet" id="ss-yes" value="Yes">
+            <label for="ss-yes" data-es="✓ Sí" data-en="✓ Yes">✓ Sí</label>
+            <input type="radio" name="selecciono_sheet" id="ss-no" value="No">
+            <label for="ss-no" data-es="✕ No" data-en="✕ No">✕ No</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label data-es="¿La extensión mostró correctamente la información del perfil de LinkedIn?" data-en="Did the extension correctly display the LinkedIn profile info?">¿La extensión mostró correctamente la información del perfil de LinkedIn?</label>
+          <div class="toggle-group">
+            <input type="radio" name="muestra_perfil" id="mp-yes" value="Yes">
+            <label for="mp-yes" data-es="✓ Sí" data-en="✓ Yes">✓ Sí</label>
+            <input type="radio" name="muestra_perfil" id="mp-no" value="No">
+            <label for="mp-no" data-es="✕ No" data-en="✕ No">✕ No</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label data-es="¿La extensión pegó correctamente la información en Google Sheets?" data-en="Did it paste the data correctly into your sheet?">¿La extensión pegó correctamente la información en Google Sheets?</label>
+          <div class="toggle-group">
+            <input type="radio" name="pego_info" id="pi-yes" value="Yes">
+            <label for="pi-yes" data-es="✓ Sí" data-en="✓ Yes">✓ Sí</label>
+            <input type="radio" name="pego_info" id="pi-no" value="No">
+            <label for="pi-no" data-es="✕ No" data-en="✕ No">✕ No</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- ── Bloque 3: Valor y fricción ── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span data-es="Valor y fricción" data-en="Value & friction">Valor y fricción</span>
+        </div>
+
+        <div class="field">
+          <label for="valioso">
+            <span data-es="¿Qué fue lo más valioso para ti?" data-en="What was the most valuable part for you?">¿Qué fue lo más valioso para ti?</span>
+            <span class="optional" data-es="(opcional)" data-en="(optional)">(opcional)</span>
+          </label>
+          <textarea id="valioso" name="valioso" rows="3"
+            data-placeholder-es="Ej. Ahorrar tiempo, no tener que copiar y pegar, la detección de duplicados…"
+            data-placeholder-en="e.g. Saving time, not having to copy-paste, the duplicate detection…"
+            placeholder="Ej. Ahorrar tiempo, no tener que copiar y pegar, la detección de duplicados…"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="mejora_unica">
+            <span data-es="Si pudieras mejorar una sola cosa, ¿cuál sería?" data-en="If you could improve one thing, what would it be?">Si pudieras mejorar una sola cosa, ¿cuál sería?</span>
+            <span class="optional" data-es="(opcional)" data-en="(optional)">(opcional)</span>
+          </label>
+          <textarea id="mejora_unica" name="mejora_unica" rows="3"
+            data-placeholder-es="Sé tan específico como quieras…"
+            data-placeholder-en="Be as specific as you'd like…"
+            placeholder="Sé tan específico como quieras…"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="nuevas_features">
+            <span data-es="¿Qué funciones nuevas o campos extra te gustaría que capturara la extensión?" data-en="What new features or extra fields would you like the extension to capture?">¿Qué funciones nuevas o campos extra te gustaría que capturara la extensión?</span>
+            <span class="optional" data-es="(opcional)" data-en="(optional)">(opcional)</span>
+          </label>
+          <textarea id="nuevas_features" name="nuevas_features" rows="3"
+            data-placeholder-es="Ej. Número de teléfono, experiencia laboral completa, educación, idiomas, exportar a CSV…"
+            data-placeholder-en="e.g. Phone number, full work experience, education, languages, export to CSV…"
+            placeholder="Ej. Número de teléfono, experiencia laboral completa, educación, idiomas, exportar a CSV…"></textarea>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- ── Bloque 4: Lo que viene ── -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <span data-es="Lo que viene" data-en="What's next">Lo que viene</span>
+        </div>
+
+        <div class="field">
+          <label data-es="¿Es algo que usarías frecuentemente?" data-en="Would you use this extension frequently?">¿Es algo que usarías frecuentemente?</label>
+          <div class="toggle-group">
+            <input type="radio" name="usaria_frecuente" id="uf-yes" value="Yes">
+            <label for="uf-yes" data-es="✓ Sí" data-en="✓ Yes">✓ Sí</label>
+            <input type="radio" name="usaria_frecuente" id="uf-no" value="No">
+            <label for="uf-no" data-es="✕ No" data-en="✕ No">✕ No</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label data-es="¿Recomendarías su uso a alguien de tu área?" data-en="Would you recommend it to someone on your team?">¿Recomendarías su uso a alguien de tu área?</label>
+          <div class="toggle-group">
+            <input type="radio" name="recomendaria" id="rec-yes" value="Yes">
+            <label for="rec-yes" data-es="✓ Sí" data-en="✓ Yes">✓ Sí</label>
+            <input type="radio" name="recomendaria" id="rec-no" value="No">
+            <label for="rec-no" data-es="✕ No" data-en="✕ No">✕ No</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label data-es="¿Te gustaría probar nuevas funciones antes que otros?" data-en="Would you like to test new features before others?">¿Te gustaría probar nuevas funciones antes que otros?</label>
+          <div class="toggle-group">
+            <input type="radio" name="probar_nuevas" id="pn-yes" value="Yes">
+            <label for="pn-yes" data-es="✓ Sí" data-en="✓ Yes">✓ Sí</label>
+            <input type="radio" name="probar_nuevas" id="pn-no" value="No">
+            <label for="pn-no" data-es="✕ No" data-en="✕ No">✕ No</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">
+            <span data-es="Correo electrónico" data-en="Email address">Correo electrónico</span>
+            <span class="optional" data-es="(opcional — solo si quieres que te contactemos)" data-en="(optional — only if you want a follow-up)">(opcional — solo si quieres que te contactemos)</span>
+          </label>
+          <input type="email" id="email" name="email" autocomplete="email"
+            data-placeholder-es="tu@correo.com"
+            data-placeholder-en="you@example.com"
+            placeholder="tu@correo.com" />
+        </div>
+      </div>
+
+      <!-- ── Submit ── -->
+      <button type="submit" class="submit-btn" id="submit-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
+        <span data-es="Enviar feedback" data-en="Send feedback">Enviar feedback</span>
+      </button>
+
+    </form>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="https://raw.githubusercontent.com/josueluna/LinkedIn_to_Sheets/main/public/logo.png" alt="" width="20" height="20" decoding="async" />
+      <span>LinkedIn to Sheets</span>
+    </div>
+    <p>Built by <a class="link" href="https://github.com/josueluna" target="_blank" rel="noopener">Josué Luna</a></p>
+    <a class="gh" href="https://github.com/josueluna/LinkedIn_to_Sheets" target="_blank" rel="noopener">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      GitHub
+    </a>
+  </div>
+</footer>
+
+<!-- ── Scripts ── -->
+<script>
+/* ── Language switching ── */
+var currentLang = 'es';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-es]').forEach(function (el) {
+    var text = el.getAttribute('data-' + lang);
+    if (text !== null) el.textContent = text;
+  });
+
+  document.querySelectorAll('[data-placeholder-es]').forEach(function (el) {
+    var ph = el.getAttribute('data-placeholder-' + lang);
+    if (ph !== null) el.placeholder = ph;
+  });
+}
+
+/* ── Reveal on scroll ── */
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (e) { e.classList.add('is-visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+
+/* ── Page transition prefetch ── */
+(function () {
+  var docLinks = ['index.html', 'privacy.html', 'changelog.html', 'feedback.html'];
+  docLinks.forEach(function (h) {
+    if (location.pathname.indexOf(h) === -1) {
+      var l = document.createElement('link'); l.rel = 'prefetch'; l.href = h;
+      document.head.appendChild(l);
+    }
+  });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (!href || href.startsWith('#') || a.target === '_blank' || a.hasAttribute('download')) return;
+    var u = new URL(a.href, location.href);
+    if (u.origin !== location.origin) return;
+    if (!/\/(index|privacy|changelog|feedback)\.html$/.test(u.pathname) && !/\/LinkedIn_to_Sheets\/$/.test(u.pathname)) return;
+    document.body.classList.add('page-exit');
+  }, { passive: true });
+})();
+
+/* ── Form submission ── */
+(function () {
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwA65wDjBr0mE3O5vEl6CwhMgdzsad1qN1AdkwKk3oAyJ8xYLV9exOencyakgLwQqKC/exec';
+
+  var form        = document.getElementById('feedback-form');
+  var btn         = document.getElementById('submit-btn');
+  var formCard    = document.getElementById('form-card');
+  var successCard = document.getElementById('success-card');
+
+  var labels = {
+    sending: { es: 'Enviando…', en: 'Sending…' },
+    error:   { es: '⚠ Algo salió mal — intenta de nuevo', en: '⚠ Something went wrong — try again' },
+  };
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var data = {
+      facilidad:        getRadio('facilidad'),
+      utilidad:         getRadio('utilidad'),
+      conecto_google:   getRadio('conecto_google'),
+      selecciono_sheet: getRadio('selecciono_sheet'),
+      muestra_perfil:   getRadio('muestra_perfil'),
+      pego_info:        getRadio('pego_info'),
+      valioso:          form.valioso.value.trim(),
+      mejora_unica:     form.mejora_unica.value.trim(),
+      nuevas_features:  form.nuevas_features.value.trim(),
+      usaria_frecuente: getRadio('usaria_frecuente'),
+      recomendaria:     getRadio('recomendaria'),
+      probar_nuevas:    getRadio('probar_nuevas'),
+      email:            document.getElementById('email').value.trim(),
+    };
+
+    btn.disabled = true;
+    btn.querySelector('span').textContent = labels.sending[currentLang];
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    .then(function () {
+      formCard.style.display = 'none';
+      successCard.style.display = 'block';
+      successCard.querySelectorAll('[data-es]').forEach(function (el) {
+        el.textContent = el.getAttribute('data-' + currentLang);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(function () {
+      btn.disabled = false;
+      btn.querySelector('span').textContent = labels.error[currentLang];
+    });
+  });
+
+  function getRadio(name) {
+    var el = form.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : '';
+  }
+})();
+
+/* ── Star rating highlight ── */
+function updateStars(group) {
+  var checked = group.querySelector('input[type="radio"]:checked');
+  var selected = checked ? parseInt(checked.value) : 0;
+  group.querySelectorAll('label').forEach(function(label, index) {
+    var starValue = 5 - index;
+    label.style.color = selected > 0 && starValue <= selected
+      ? 'var(--primary)'
+      : 'oklch(0.88 0.01 260)';
+  });
+}
+
+document.querySelectorAll('.star-group').forEach(function(group) {
+  updateStars(group);
+
+  group.querySelectorAll('input[type="radio"]').forEach(function(input) {
+    input.addEventListener('change', function() {
+      updateStars(group);
+    });
+  });
+});
+
+</script>
+</body>
+</html>
