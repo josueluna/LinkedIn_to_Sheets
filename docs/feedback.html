@@ -572,7 +572,9 @@ button, a { cursor: pointer; }
 <!-- ── Scripts ── -->
 <script>
 /* ── Language switching ── */
-var currentLang = 'es';
+var browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+var currentLang = browserLang.startsWith('es') ? 'es' : 'en';
+if (currentLang === 'en') setLang('en');
 
 function setLang(lang) {
   currentLang = lang;
