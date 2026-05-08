@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v0.1.11
+
+### UI Improvements
+- Added subtle glow animation to the Send feedback link in the footer for better discoverability.
+
+---
+
 ## v0.1.10
 
 ### Improved

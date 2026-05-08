@@ -55,6 +55,15 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        'feedback-glow': {
+          '0%, 100%': { color: 'hsl(var(--muted-foreground))' },
+          '50%':       { color: '#086cb4' },
+        },
+      },
+      animation: {
+        'feedback-glow': 'feedback-glow 3s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

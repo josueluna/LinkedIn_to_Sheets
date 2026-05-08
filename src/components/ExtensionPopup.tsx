@@ -1351,7 +1351,7 @@ export default function ExtensionPopup() {
                     <a
                       href="https://forms.gle/xmCiUB8Tzs3ocM616"
                       target="_blank"
-                      className="hover:text-primary transition-colors"
+                      className="animate-feedback-glow hover:text-primary"
                     >
                       Send feedback
                     </a>
