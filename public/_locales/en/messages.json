@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "LinkedIn to Sheets",
+    "description": "Name of the extension"
+  },
+  "extDescription": {
+    "message": "Paste LinkedIn profile data from LinkedIn into Google Sheets.",
+    "description": "Description of the extension"
+  }
+}

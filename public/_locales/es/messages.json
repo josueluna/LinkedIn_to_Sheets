@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "LinkedIn to Sheets",
+    "description": "Nombre de la extensión"
+  },
+  "extDescription": {
+    "message": "Guarda perfiles de LinkedIn directamente en Google Sheets.",
+    "description": "Descripción de la extensión"
+  }
+}

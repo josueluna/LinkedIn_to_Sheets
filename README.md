@@ -23,8 +23,10 @@ way to capture and organize candidate data — without copy-paste.
 - One-click **Reset to Default** for column mapping
 - Duplicate detection (by profile URL)
 - Smooth popup transitions for configuration and success states
+- Multi-language support (English and Spanish)
 - Improved popup loading with a dedicated loading shell
 - Clean and simple workflow
+- Subtle visual cues to improve discoverability of key actions
 - Secure Google OAuth integration
 - Automated UI and scraper test coverage
 
