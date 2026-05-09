@@ -115,7 +115,7 @@ const messages = {
     pasting: "Pegando...",
 
     configColumns: "Configurar columnas",
-    googleSheetTemplate: "Plantilla de Google Sheet",
+    googleSheetTemplate: "Plantilla",
     customColumnMappingActive: "Configuración de columnas personalizada",
 
     loading: "Cargando...",
