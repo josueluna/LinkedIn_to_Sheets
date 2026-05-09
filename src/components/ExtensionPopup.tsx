@@ -76,11 +76,11 @@ const COLUMN_OPTIONS = [
 ] as const;
 
 const MAPPING_FIELDS = [
-  { key: "name", label: "Name", icon: User },
-  { key: "company", label: "Company", icon: Building2 },
-  { key: "title", label: "Title", icon: Briefcase },
-  { key: "location", label: "Location", icon: MapPin },
-  { key: "profileUrl", label: "Profile URL", icon: ExternalLink },
+  { key: "name", labelKey: "fieldName", icon: User },
+  { key: "company", labelKey: "fieldCompany", icon: Building2 },
+  { key: "title", labelKey: "fieldTitle", icon: Briefcase },
+  { key: "location", labelKey: "fieldLocation", icon: MapPin },
+  { key: "profileUrl", labelKey: "fieldProfileUrl", icon: ExternalLink },
 ] as const;
 
 const messages = {
@@ -99,7 +99,7 @@ const messages = {
     disconnectGoogle: "Desconectar cuenta de Google",
     notConnected: "Sin conectar",
 
-    destination: "Destino",
+    destination: "Ubicación",
     currentProfile: "Perfil actual",
     spreadsheet: "Hoja de cálculo",
     tab: "Pestaña",
@@ -154,6 +154,11 @@ const messages = {
     required: "Obligatorio",
     resetToDefault: "Restablecer",
     saveChanges: "Guardar cambios",
+    fieldName: "Nombre",
+    fieldCompany: "Empresa",
+    fieldTitle: "Puesto",
+    fieldLocation: "Ubicación",
+    fieldProfileUrl: "URL",
   },
 
   en: {
@@ -226,6 +231,11 @@ back: "← Back",
 required: "Required",
 resetToDefault: "Reset to Default",
 saveChanges: "Save changes",
+fieldName: "Name",
+    fieldCompany: "Company",
+    fieldTitle: "Title",
+    fieldLocation: "Location",
+    fieldProfileUrl: "Profile URL",
   },
 } as const;
 
@@ -446,7 +456,7 @@ function ColumnMappingPanel({
                   className="h-3.5 w-3.5 accent-primary disabled:cursor-not-allowed disabled:opacity-60"
                 />
                 <Icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                <span className="text-xs text-[#434343]">{field.label}</span>
+                <span className="text-xs text-[#434343]">{t[field.labelKey]}</span>
                 {field.key === "profileUrl" && (
                   <span className="text-[10px] text-muted-foreground">
                     {t.required}
