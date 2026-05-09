@@ -631,7 +631,7 @@ function setLang(lang) {
 
 /* ── Form submission ── */
 (function () {
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwA65wDjBr0mE3O5vEl6CwhMgdzsad1qN1AdkwKk3oAyJ8xYLV9exOencyakgLwQqKC/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlJDc0UhmTSekx1Dp8QJHSCDJb-zlr0YGrXaPwGVFK33UKyajospMp7K8NOKnvspJn/exec';
 
   var form        = document.getElementById('feedback-form');
   var btn         = document.getElementById('submit-btn');
@@ -660,6 +660,7 @@ function setLang(lang) {
       recomendaria:     getRadio('recomendaria'),
       probar_nuevas:    getRadio('probar_nuevas'),
       email:            document.getElementById('email').value.trim(),
+      lang:             currentLang,
     };
 
     btn.disabled = true;
