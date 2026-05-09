@@ -101,7 +101,7 @@ const messages = {
 
     destination: "Destino",
     currentProfile: "Perfil actual",
-    spreadsheet: "Hoja de cálculo destino",
+    spreadsheet: "Hoja de cálculo",
     tab: "Pestaña",
     chooseSpreadsheet: "Elige una hoja de cálculo…",
     chooseTab: "Elige una pestaña…",
