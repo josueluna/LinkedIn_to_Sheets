@@ -38,6 +38,14 @@ const defaultProfile = {
   profileUrl: "https://linkedin.com/in/ada",
 };
 
+// ── Force English so all text assertions match regardless of test runner locale ──
+beforeEach(() => {
+  Object.defineProperty(navigator, "language", {
+    value: "en-US",
+    configurable: true,
+  });
+});
+
 function createChromeMock({
   storageState,
   profile = defaultProfile,
@@ -50,16 +58,16 @@ function createChromeMock({
 
   const sendMessage = vi.fn(async (payload: SendMessagePayload) => {
     switch (payload.type) {
-    case "GET_ACTIVE_PROFILE":
-      return { ok: true, profile };
-    case "LIST_SPREADSHEETS":
-      return { ok: true, spreadsheets: [] };
-    case "GET_SHEET_TABS":
-      return { ok: true, tabs: [] };
-    case "GET_SHEET_HEADERS":
-      return { ok: true, headers: [] };
-    default:
-      return { ok: true };
+      case "GET_ACTIVE_PROFILE":
+        return { ok: true, profile };
+      case "LIST_SPREADSHEETS":
+        return { ok: true, spreadsheets: [] };
+      case "GET_SHEET_TABS":
+        return { ok: true, tabs: [] };
+      case "GET_SHEET_HEADERS":
+        return { ok: true, headers: [] };
+      default:
+        return { ok: true };
     }
   });
 
@@ -86,14 +94,37 @@ function renderPopupWithStorage(storageState: StorageState) {
   return render(<ExtensionPopup />);
 }
 
-function getSectionByTitle(title: string) {
+/**
+ * getSectionByTitle — finds a labeled section by its visible text.
+ *
+ * The redesigned popup uses <div> containers instead of <section> elements,
+ * so we walk up from the label text node to the nearest ancestor that also
+ * contains the section's interactive content (inputs, buttons, etc.).
+ * We stop at the first <div> whose textContent includes the title AND has
+ * more than one direct child (i.e. it is a real section wrapper, not just
+ * the label span itself).
+ */
+function getSectionByTitle(title: string): HTMLElement {
   const titleNode = screen.getByText(title);
-  const section = titleNode.closest("section");
-  if (!section) {
-    throw new Error(`Could not find section for title: ${title}`);
+
+  // Walk up the DOM until we find a div that wraps the whole section
+  let el: HTMLElement | null = titleNode.parentElement;
+  while (el && el !== document.body) {
+    if (
+      el.tagName === "DIV" &&
+      el.children.length > 1 &&
+      el.textContent?.includes(title)
+    ) {
+      return el;
+    }
+    el = el.parentElement;
   }
 
-  return section;
+  // Fallback: return the closest named container
+  const fallback = titleNode.closest("[class]") as HTMLElement | null;
+  if (fallback) return fallback;
+
+  throw new Error(`Could not find section wrapper for title: "${title}"`);
 }
 
 describe("ExtensionPopup UI", () => {
@@ -109,11 +140,12 @@ describe("ExtensionPopup UI", () => {
   it("shows disconnected initial state", async () => {
     renderPopupWithStorage({ isConnected: false });
 
-    await screen.findByRole("button", { name: "Connect Google Account" });
+    // Wait for hydration — the Connect button should appear
+    await screen.findByRole("button", { name: /connect google account/i });
 
-    expect(screen.getAllByText("Google Account").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Connect Google Account").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Not connected").length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/google account/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/connect google account/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/not connected/i).length).toBeGreaterThan(0);
   });
 
   it("renders connected sections when connected state is hydrated", async () => {
@@ -125,89 +157,89 @@ describe("ExtensionPopup UI", () => {
       sheetName: "Leads",
     });
 
-    await screen.findByText("Destination");
+    // Wait for hydration
+    await screen.findByText(/destination/i);
 
     const destinationSection = getSectionByTitle("Destination");
-    const profileSection = getSectionByTitle("Current Profile");
 
     expect(destinationSection).toBeInTheDocument();
-    expect(profileSection).toBeInTheDocument();
+    expect(screen.getByText(/^destination$/i)).toBeInTheDocument();
 
-    expect(screen.getByText("Destination")).toBeInTheDocument();
-    expect(screen.getByText("Current Profile")).toBeInTheDocument();
+    // Use getAllByText to avoid collision with "Paste Current Profile" button
+    const profileLabelEls = screen.getAllByText(/current profile/i);
+    expect(profileLabelEls.some((el) => el.tagName === "SPAN")).toBe(true);
   });
 
   it("current profile preview respects enabled mapping fields", async () => {
     renderPopupWithStorage({
       isConnected: true,
       columnMapping: {
-        name: { enabled: true, column: "B" },
-        company: { enabled: false, column: "C" },
-        title: { enabled: true, column: "D" },
-        location: { enabled: false, column: "E" },
-        profileUrl: { enabled: true, column: "F" },
+        name:       { enabled: true,  column: "B" },
+        company:    { enabled: false, column: "C" },
+        title:      { enabled: true,  column: "D" },
+        location:   { enabled: false, column: "E" },
+        profileUrl: { enabled: true,  column: "F" },
       },
     });
 
-    await screen.findByText("Current Profile");
+    // Wait for the profile name to appear — the mock returns defaultProfile
+    // so we wait for the name directly instead of the empty-state placeholder
+    await screen.findByText(defaultProfile.name);
 
-    const profileSection = getSectionByTitle("Current Profile");
-    const profileCard = profileSection.querySelector(".rounded-lg");
-    if (!profileCard) {
-      throw new Error("Could not find current profile card");
-    }
+    // Assert enabled fields are visible
+    expect(screen.getByText(defaultProfile.name)).toBeInTheDocument();
+    expect(screen.getByText(defaultProfile.title)).toBeInTheDocument();
+    expect(screen.getByText(defaultProfile.profileUrl)).toBeInTheDocument();
 
-    const scoped = within(profileCard);
-
-    expect(await scoped.findByText(defaultProfile.name)).toBeInTheDocument();
-    expect(scoped.getByText(defaultProfile.title)).toBeInTheDocument();
-    expect(scoped.getByText(defaultProfile.profileUrl)).toBeInTheDocument();
-
-    expect(scoped.queryByText(defaultProfile.company)).not.toBeInTheDocument();
-    expect(scoped.queryByText(defaultProfile.location)).not.toBeInTheDocument();
+    // Assert disabled fields are NOT visible
+    expect(screen.queryByText(defaultProfile.company)).not.toBeInTheDocument();
+    expect(screen.queryByText(defaultProfile.location)).not.toBeInTheDocument();
   });
 
   it("disables Save changes when active mapping columns are duplicated", async () => {
     renderPopupWithStorage({ isConnected: true });
 
-    await screen.findByText("Destination");
+    await screen.findByText(/destination/i);
     const destinationSection = getSectionByTitle("Destination");
 
     fireEvent.click(
       within(destinationSection).getByRole("button", {
         name: /config columns/i,
       })
-      );
+    );
 
-    expect(await screen.findByText("Column Mapping")).toBeInTheDocument();
+    // Column mapping panel title (EN: "Column Mapping")
+    expect(await screen.findByText(/column mapping/i)).toBeInTheDocument();
 
     const selects = screen.getAllByRole("combobox");
     fireEvent.change(selects[1], { target: { value: "B" } });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Save changes" })).toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /save changes/i })
+      ).toBeDisabled();
     });
   });
 
   it("keeps Profile URL required and not user-disableable", async () => {
     renderPopupWithStorage({ isConnected: true });
 
-    await screen.findByText("Destination");
+    await screen.findByText(/destination/i);
     const destinationSection = getSectionByTitle("Destination");
 
     fireEvent.click(
       within(destinationSection).getByRole("button", {
         name: /config columns/i,
       })
-      );
+    );
 
-    expect(await screen.findByText("Column Mapping")).toBeInTheDocument();
+    expect(await screen.findByText(/column mapping/i)).toBeInTheDocument();
 
     const checkboxes = screen.getAllByRole("checkbox");
     const profileUrlCheckbox = checkboxes[checkboxes.length - 1];
 
     expect(profileUrlCheckbox).toBeDisabled();
     expect(profileUrlCheckbox).toBeChecked();
-    expect(screen.getByText("Required")).toBeInTheDocument();
+    expect(screen.getByText(/required/i)).toBeInTheDocument();
   });
 });
