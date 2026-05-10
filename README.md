@@ -1,6 +1,6 @@
 # LinkedIn to Sheets
 
-![Version](https://img.shields.io/badge/version-v0.1.12-blue)
+![Version](https://img.shields.io/badge/version-v0.1.13-blue)
 ![Status](https://img.shields.io/badge/status-beta-orange)
 ![Platform](https://img.shields.io/badge/platform-chrome-lightgrey)
 
@@ -29,6 +29,7 @@ way to capture and organize candidate data — without copy-paste.
 - Subtle visual cues to improve discoverability of key actions
 - Secure Google OAuth integration
 - Automated UI and scraper test coverage
+- Refined popup UI details and on-brand iconography
 
 ---
 

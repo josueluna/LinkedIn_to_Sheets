@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v0.1.13
+
+### UI Improvements
+- Refined current profile preview iconography for a more on-brand visual style.
+- Improved the post-paste flow so the feedback prompt can appear before the success confirmation.
+
+### Features
+- Added smarter feedback prompt timing based on successful paste count.
+
+### Changes
+- Adjusted feedback prompt recurrence after dismissing or sending feedback.
+
+---
+
 ## v0.1.12
 
 ### Features
