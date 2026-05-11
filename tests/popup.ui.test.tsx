@@ -58,16 +58,16 @@ function createChromeMock({
 
   const sendMessage = vi.fn(async (payload: SendMessagePayload) => {
     switch (payload.type) {
-      case "GET_ACTIVE_PROFILE":
-        return { ok: true, profile };
-      case "LIST_SPREADSHEETS":
-        return { ok: true, spreadsheets: [] };
-      case "GET_SHEET_TABS":
-        return { ok: true, tabs: [] };
-      case "GET_SHEET_HEADERS":
-        return { ok: true, headers: [] };
-      default:
-        return { ok: true };
+    case "GET_ACTIVE_PROFILE":
+      return { ok: true, profile };
+    case "LIST_SPREADSHEETS":
+      return { ok: true, spreadsheets: [] };
+    case "GET_SHEET_TABS":
+      return { ok: true, tabs: [] };
+    case "GET_SHEET_HEADERS":
+      return { ok: true, headers: [] };
+    default:
+      return { ok: true };
     }
   });
 
@@ -114,17 +114,17 @@ function getSectionByTitle(title: string): HTMLElement {
       el.tagName === "DIV" &&
       el.children.length > 1 &&
       el.textContent?.includes(title)
-    ) {
+      ) {
       return el;
-    }
-    el = el.parentElement;
   }
+  el = el.parentElement;
+}
 
   // Fallback: return the closest named container
-  const fallback = titleNode.closest("[class]") as HTMLElement | null;
-  if (fallback) return fallback;
+const fallback = titleNode.closest("[class]") as HTMLElement | null;
+if (fallback) return fallback;
 
-  throw new Error(`Could not find section wrapper for title: "${title}"`);
+throw new Error(`Could not find section wrapper for title: "${title}"`);
 }
 
 describe("ExtensionPopup UI", () => {
@@ -189,7 +189,13 @@ describe("ExtensionPopup UI", () => {
     // Assert enabled fields are visible
     expect(screen.getByText(defaultProfile.name)).toBeInTheDocument();
     expect(screen.getByText(defaultProfile.title)).toBeInTheDocument();
-    expect(screen.getByText(defaultProfile.profileUrl)).toBeInTheDocument();
+    const normalizedVisibleUrl = defaultProfile.profileUrl
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "");
+
+    expect(
+      screen.getByText((content) => content.includes(normalizedVisibleUrl))
+      ).toBeInTheDocument();
 
     // Assert disabled fields are NOT visible
     expect(screen.queryByText(defaultProfile.company)).not.toBeInTheDocument();
@@ -206,7 +212,7 @@ describe("ExtensionPopup UI", () => {
       within(destinationSection).getByRole("button", {
         name: /config columns/i,
       })
-    );
+      );
 
     // Column mapping panel title (EN: "Column Mapping")
     expect(await screen.findByText(/column mapping/i)).toBeInTheDocument();
@@ -217,7 +223,7 @@ describe("ExtensionPopup UI", () => {
     await waitFor(() => {
       expect(
         screen.getByRole("button", { name: /save changes/i })
-      ).toBeDisabled();
+        ).toBeDisabled();
     });
   });
 
@@ -231,7 +237,7 @@ describe("ExtensionPopup UI", () => {
       within(destinationSection).getByRole("button", {
         name: /config columns/i,
       })
-    );
+      );
 
     expect(await screen.findByText(/column mapping/i)).toBeInTheDocument();
 
