@@ -1,4 +1,3 @@
-import { Toast } from "@/components/ui/toast";
 import { useEffect, useMemo, useState, type ReactNode, type SetStateAction } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,6 @@ import {
 
 type ConnectionStatus = "disconnected" | "connected";
 type AppState = "empty" | "connected" | "saving" | "success" | "error";
-type FeedbackTone = "success" | "error" | "warning" | "";
 type Lang = "es" | "en";
 
 type LinkedinProfile = {
@@ -83,7 +81,7 @@ function TablerUser({ size = 14 }: { size?: number }) {
       <circle cx="12" cy="7" r="4"/>
       <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
     </svg>
-  );
+    );
 }
 
 function TablerBuildingSkyscraper({ size = 14 }: { size?: number }) {
@@ -98,7 +96,7 @@ function TablerBuildingSkyscraper({ size = 14 }: { size?: number }) {
       <line x1="9" y1="15" x2="9" y2="15.01"/>
       <line x1="9" y1="18" x2="9" y2="18.01"/>
     </svg>
-  );
+    );
 }
 
 function TablerBriefcase({ size = 14 }: { size?: number }) {
@@ -110,7 +108,7 @@ function TablerBriefcase({ size = 14 }: { size?: number }) {
       <line x1="12" y1="12" x2="12" y2="12.01"/>
       <path d="M3 13a20 20 0 0 0 18 0"/>
     </svg>
-  );
+    );
 }
 
 function TablerMapPin({ size = 14 }: { size?: number }) {
@@ -120,7 +118,7 @@ function TablerMapPin({ size = 14 }: { size?: number }) {
       <circle cx="12" cy="11" r="3"/>
       <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"/>
     </svg>
-  );
+    );
 }
 
 function TablerBrandLinkedin({ size = 14 }: { size?: number }) {
@@ -133,7 +131,7 @@ function TablerBrandLinkedin({ size = 14 }: { size?: number }) {
       <line x1="12" y1="16" x2="12" y2="11"/>
       <path d="M16 16v-3a2 2 0 0 0 -4 0"/>
     </svg>
-  );
+    );
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -338,71 +336,111 @@ function formatMessage(template: string, values: Record<string, string>) {
   return template.replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
 }
 
-function useAutoClearingFeedback() {
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>("");
-
-  function showError(message: string) {
-    setFeedbackMessage(message);
-    setFeedbackTone("error");
-  }
-
-  function clearFeedback() {
-    setFeedbackMessage("");
-    setFeedbackTone("");
-  }
+// ── Unified toast hook — success (2s), warning (3.5s), error (3.5s) ──────────
+function useToast() {
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType]       = useState<"success" | "warning" | "error">("success");
 
   useEffect(() => {
-    if (!feedbackMessage) return;
-    const timeout = window.setTimeout(() => clearFeedback(), 3000);
-    return () => window.clearTimeout(timeout);
-  }, [feedbackMessage]);
+    if (!toastMessage) return;
+    const duration = toastType === "success" ? 2000 : 3500;
+    const timer = window.setTimeout(() => setToastMessage(null), duration);
+    return () => window.clearTimeout(timer);
+  }, [toastMessage, toastType]);
 
-  return { feedbackMessage, feedbackTone, showError, clearFeedback };
-}
-
-function usePopupToast() {
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [toastType, setToastType] = useState<"success" | "error" | "warning">("warning");
-
-  function showToast(message: string, type: "success" | "error" | "warning") {
+  function showToast(message: string, type: "success" | "warning" | "error") {
     setToastMessage(message);
     setToastType(type);
   }
+  function dismissToast() { setToastMessage(null); }
 
-  return { toastMessage, toastType, setToastMessage, setToastType, showToast };
+  return { toastMessage, toastType, showToast, dismissToast, setToastMessage, setToastType };
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-/** Inline feedback strip (errors / warnings) */
-function FeedbackBanner({
-  feedbackMessage,
-  feedbackTone,
+/**
+ * BrandToast — floats above the Paste button, light palette, three variants:
+ *
+ *  success  → verde menta   bg: oklch(0.96 0.030 145)  text: oklch(0.28 0.10 145)
+ *  warning  → ámbar claro   bg: oklch(0.97 0.025  80)  text: oklch(0.34 0.09  65)
+ *  error    → rojo claro    bg: oklch(0.97 0.020  15)  text: oklch(0.32 0.10  15)
+ */
+function BrandToast({
+  message,
+  type,
+  onClose,
 }: {
-  feedbackMessage: string;
-  feedbackTone: FeedbackTone;
+  message: string;
+  type: "success" | "warning" | "error";
+  onClose: () => void;
 }) {
-  if (!feedbackMessage) return null;
+  const isSuccess = type === "success";
+  const isWarning = type === "warning";
 
-  const isError   = feedbackTone === "error";
-  const isWarning = feedbackTone === "warning";
+  // ── palette tokens ────────────────────────────────────────────────────────
+  const bg = isSuccess ? "oklch(0.96 0.030 145)"
+  : isWarning ? "oklch(0.97 0.025  80)"
+  :              "oklch(0.97 0.020  15)";
+
+  const border = isSuccess ? "oklch(0.72 0.13 145 / 0.55)"
+  : isWarning ? "oklch(0.72 0.14  65 / 0.50)"
+  :              "oklch(0.72 0.14  15 / 0.50)";
+
+  const iconColor = isSuccess ? "oklch(0.42 0.17 145)"
+  : isWarning ? "oklch(0.52 0.15  65)"
+  :              "oklch(0.50 0.18  15)";
+
+  const textColor = isSuccess ? "oklch(0.28 0.10 145)"
+  : isWarning ? "oklch(0.34 0.09  65)"
+  :              "oklch(0.32 0.10  15)";
+
+  const barBg   = isSuccess ? "oklch(0.75 0.13 145 / 0.28)"
+  : isWarning ? "oklch(0.75 0.13  65 / 0.28)"
+  :              "oklch(0.75 0.13  15 / 0.28)";
+
+  const barFill = isSuccess ? "oklch(0.50 0.17 145)"
+  : isWarning ? "oklch(0.58 0.15  65)"
+  :              "oklch(0.55 0.18  15)";
+
+  const duration = isSuccess ? 2000 : 3500;
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
     <div
-      className={[
-        "flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-medium",
-        isError   ? "bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-800/40 dark:text-red-400" :
-        isWarning ? "bg-amber-50 border border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400" :
-        "bg-green-50 border border-green-200 text-green-700 dark:bg-green-950/30 dark:border-green-800/40 dark:text-green-400",
-        ].join(" ")}
+      className="absolute left-3 right-3 z-50 overflow-hidden rounded-xl"
+      style={{ bottom: "52px", background: bg, border: `1px solid ${border}` }}
+      role="alert"
+    >
+      <div className="flex items-center gap-2.5 px-3 py-2.5">
+        {isSuccess
+        ? <Check        className="w-3.5 h-3.5 shrink-0" style={{ color: iconColor }} />
+        : <AlertCircle  className="w-3.5 h-3.5 shrink-0" style={{ color: iconColor }} />
+      }
+      <span className="text-[11px] font-medium flex-1 leading-snug" style={{ color: textColor }}>
+        {message}
+      </span>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Dismiss"
+        className="shrink-0 transition-opacity hover:opacity-100 opacity-40"
+        style={{ color: iconColor }}
       >
-        {isError || isWarning
-        ? <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-        : <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />}
-        <span>{feedbackMessage}</span>
-      </div>
-      );
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div className="h-[2px]" style={{ background: barBg }}>
+      <div
+        className="h-full"
+        style={{ background: barFill, animation: `toast-shrink ${duration}ms linear forwards` }}
+      />
+    </div>
+    <style>{`@keyframes toast-shrink { from { width:100% } to { width:0% } }`}</style>
+  </div>
+  );
 }
 
 /** Full-screen success animation */
@@ -742,7 +780,10 @@ export default function ExtensionPopup() {
   const [isHydrating, setIsHydrating] = useState(true);
 
   const [profile, setProfile] = useState<LinkedinProfile | null>(null);
-  const { feedbackMessage, feedbackTone, showError, clearFeedback } = useAutoClearingFeedback();
+  const { toastMessage, toastType, showToast, dismissToast, setToastMessage, setToastType } = useToast();
+  // convenience aliases that preserve existing call-sites unchanged
+  function showError(msg: string)   { showToast(msg, "error"); }
+  function clearFeedback()          { dismissToast(); }
 
   const [spreadsheetId, setSpreadsheetId]     = useState("");
   const [spreadsheetName, setSpreadsheetName] = useState("");
@@ -765,7 +806,7 @@ export default function ExtensionPopup() {
   const [isDisconnecting, setIsDisconnecting]         = useState(false);
   const [showFeedbackOverlay, setShowFeedbackOverlay] = useState(false);
 
-  const { toastMessage, toastType, setToastMessage, setToastType, showToast } = usePopupToast();
+
   const [showColumnMapping, setShowColumnMapping] = useState(false);
   const [columnMapping, setColumnMapping]         = useState<ColumnMapping>(defaultColumnMapping);
   const [draftColumnMapping, setDraftColumnMapping] = useState<ColumnMapping | null>(null);
@@ -1438,7 +1479,8 @@ export default function ExtensionPopup() {
                       key === "name" ? profile.name :
                       key === "company" ? profile.company :
                       key === "title" ? profile.title :
-                      key === "location" ? profile.location : profile.profileUrl;
+                      key === "location" ? profile.location :
+                      profile.profileUrl.replace(/^https?:\/\/(www\.)?/, "");
                       return (
                         <div key={key} className="flex items-center gap-2">
                           <Icon size={12} />
@@ -1464,9 +1506,8 @@ export default function ExtensionPopup() {
                 </button>
 
                 {/* Inline feedback */}
-                {feedbackMessage && (
-                  <FeedbackBanner feedbackMessage={feedbackMessage} feedbackTone={feedbackTone} />
-                  )}
+
+
 
                 <PopupFooter t={t} version={version} />
               </div>
@@ -1529,12 +1570,12 @@ export default function ExtensionPopup() {
         </div>
       </div>
 
-      {/* Toast */}
+      {/* Toast — floats above the Paste button, unified for success / warning / error */}
       {toastMessage && (
-        <Toast
+        <BrandToast
           message={toastMessage}
           type={toastType}
-          onClose={() => setToastMessage(null)}
+          onClose={dismissToast}
           />
           )}
     </div>

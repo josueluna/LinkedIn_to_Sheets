@@ -6,15 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ## v0.1.13
 
-### UI Improvements
-- Refined current profile preview iconography for a more on-brand visual style.
-- Improved the post-paste flow so the feedback prompt can appear before the success confirmation.
+### Improved
+- Refined the popup UI with cleaner spacing and more polished visual hierarchy.
+- Replaced profile preview icons with custom inline Tabler-style icons for a more on-brand look.
+- Improved LinkedIn URL preview formatting by removing `https://` and `www.`.
+- Unified popup notifications under a single toast system for success, warning, and error states.
+- Improved toast placement and styling so notifications remain visible inside the extension popup.
+- Refined the feedback prompt flow:
+  - first appears after 20 successful pastes
+  - reappears after 30 more successful pastes if dismissed
+  - reappears after 100 more successful pastes if feedback is sent
 
-### Features
-- Added smarter feedback prompt timing based on successful paste count.
-
-### Changes
-- Adjusted feedback prompt recurrence after dismissing or sending feedback.
+### Changed
+- When feedback is due, the feedback prompt now appears before the success confirmation screen.
+- Minor copy and UI polish updates across the popup.
 
 ---
 
