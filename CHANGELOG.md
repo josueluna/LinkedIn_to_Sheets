@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v1.0.0
+
+### Added
+- Milestone-based feedback prompt flow after successful pastes.
+- Unified toast system for success, warning, and error states.
+- Improved profile preview icons with a more branded visual style.
+
+### Improved
+- Refined popup UX and visual hierarchy across the main sourcing flow.
+- Improved feedback prompt timing so it appears before the success confirmation when needed.
+- Improved toast visibility and placement inside the popup.
+- Trimmed LinkedIn profile URL preview for a cleaner layout.
+- Improved overall consistency of popup interactions, confirmations, and status messages.
+
+### Changed
+- Project promoted from beta to stable v1.0.0 release.
+
+### Fixed
+- Prevented warning and error toasts from being visually obscured near the bottom of the popup.
+- Improved visibility of duplicate-profile and validation messages.
+
+---
+
 ## v0.1.13
 
 ### Improved

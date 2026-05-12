@@ -1,7 +1,7 @@
 # LinkedIn to Sheets
 
-![Version](https://img.shields.io/badge/version-v0.1.13-blue)
-![Status](https://img.shields.io/badge/status-beta-orange)
+![Version](https://img.shields.io/badge/version-v1.0.0-blue)
+![Status](https://img.shields.io/badge/status-stable-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-chrome-lightgrey)
 
 Save LinkedIn profiles directly into Google Sheets in seconds.
@@ -30,6 +30,9 @@ way to capture and organize candidate data — without copy-paste.
 - Secure Google OAuth integration
 - Automated UI and scraper test coverage
 - Refined popup UI details and on-brand iconography
+- Unified success, warning, and error toast notifications
+- Milestone-based feedback prompt after successful pastes
+- More polished profile preview with branded field icons
 
 ---
 
@@ -38,9 +41,9 @@ way to capture and organize candidate data — without copy-paste.
 1. Open any LinkedIn profile
 2. Click the extension
 3. Connect your Google account
-4. Select your Google Sheet and tab
-5. Optionally configure which fields to capture and where to place them
-6. Click **"Paste Current Profile"**
+4. Choose the spreadsheet and tab
+5. Optionally adjust column mapping
+6. Paste the current profile into Google Sheets
 
 Done. The profile is instantly saved.
 
