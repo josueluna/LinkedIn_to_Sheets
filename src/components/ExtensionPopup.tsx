@@ -176,7 +176,7 @@ const MAPPING_FIELDS = [
 const messages = {
   es: {
     appTitle: "LinkedIn to Sheets",
-    appSubtitle: "Pega información de perfiles de LinkedIn en Google Sheets",
+    appSubtitle: "Copia información de LinkedIn a Google Sheets",
     profilePasted: "Perfil pegado",
     thisProfile: "Este perfil",
     yourSpreadsheet: "tu hoja de cálculo",
@@ -201,7 +201,7 @@ const messages = {
     searchSpreadsheets: "Buscar hojas de cálculo…",
 
     refresh: "Actualizar",
-    pasteCurrentProfile: "Pegar perfil actual",
+    pasteCurrentProfile: "Copiar perfil actual",
     pasting: "Pegando...",
 
     configColumns: "Config. columnas",
